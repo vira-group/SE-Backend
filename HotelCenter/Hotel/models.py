@@ -11,21 +11,23 @@ class Facility(models.Model):
 
 
 class Hotel(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64)
-    city = models.CharField(max_length=64)
-    state = models.CharField(max_length=64)
+    creator = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
+    name = models.CharField(max_length=64, null=False)  # hotel name showed on profile
+    address = models.CharField(max_length=256)
+    phone_numbers = models.CharField(max_length=64)
+    city = models.CharField(max_length=64, null=False)
+    state = models.CharField(max_length=64, null=False)
     start_date = models.DateField(auto_created=True)
-    description = models.CharField(max_length=1024)
+    description = models.CharField(max_length=1024, default="desc")
     rate = models.DecimalField(
         max_digits=2, decimal_places=1, default=5, blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(5)])
 
-    reply_count = models.IntegerField()
+    reply_count = models.IntegerField(default=0, )
     check_out_range = models.CharField(max_length=30)  # range of checkout
     check_in_range = models.CharField(max_length=30)  # range of checkout
     facilities = models.ManyToManyField(Facility, related_name="hotels")
 
     def __str__(self):
-        return "%s Hotel" % self.name
+        return "%s Hotel, from %s" % (self.name, self.city)
