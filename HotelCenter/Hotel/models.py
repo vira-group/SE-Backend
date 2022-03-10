@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Facility(models.Model):
-    name = models.CharField(unique=True, primary_key=True)
+    name = models.CharField(max_length=100, unique=True, primary_key=True)
 
     def __str__(self):
         return self.name
@@ -12,13 +12,13 @@ class Facility(models.Model):
 
 class Hotel(models.Model):
     creator = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
-    name = models.CharField(max_length=64, null=False)  # hotel name showed on profile
-    address = models.CharField(max_length=256)
-    phone_numbers = models.CharField(max_length=64)
-    city = models.CharField(max_length=64, null=False)
-    state = models.CharField(max_length=64, null=False)
-    start_date = models.DateField(auto_created=True)
+        settings.AUTH_USER_MODEL, related_name='hotel', on_delete=models.CASCADE, null=False)
+    name = models.CharField(max_length=64, blank=False, null=False)  # hotel name showed on profile
+    address = models.CharField(max_length=256, blank=False, null=False)
+    phone_numbers = models.CharField(max_length=64, blank=True, )
+    city = models.CharField(max_length=64, blank=False, null=False)
+    state = models.CharField(max_length=64, null=False, blank=True)
+    start_date = models.DateField(auto_now_add=True)
     description = models.CharField(max_length=1024, default="desc")
     rate = models.DecimalField(
         max_digits=2, decimal_places=1, default=5, blank=True,

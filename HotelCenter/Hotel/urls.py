@@ -16,9 +16,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+
+from .api.hotel import HotelViewSet
+
+router = routers.DefaultRouter()
+router.register('hotels', HotelViewSet, basename='user-hotel')
 
 urlpatterns = [
-
+    path('', include(router.urls))
 
 ]
-

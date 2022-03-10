@@ -1,21 +1,22 @@
 from rest_framework import serializers
-from HotelCenter.Hotel.models import Hotel, Facility
+from ..models import Hotel, Facility
 
 
 class FacilitiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class HotelSerializer(serializers.ModelSerializer):
-    facilities = FacilitiesSerializer(required=False, many=True)
+    facilities = FacilitiesSerializer(required=False, many=True, read_only=True)
 
     class Meta:
         model = Hotel
-        fields = ['id', 'name', 'city', 'state', 'description', 'facilities', 'rate',
-                  'phone_numbers', 'start_date']
-        read_only_fields = ["rate", 'reply_count', 'start_date']
+        fields = ['id',  'name', 'city', 'state', 'description', 'facilities', 'rate',
+                  'reply_count', 'phone_numbers', 'start_date']
+        read_only_fields = ['id',  "rate", 'reply_count', 'start_date']
+        # lookup_field = 'id'
 
     def create(self, validated_data):
         request = self.context.get("request")
