@@ -146,21 +146,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
+EMAIL_HOST_USER = "hotelcenter.noreply@gmail.com"
+EMAIL_HOST_PASSWORD = "Vira1400SE"
+# DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
-    # "SEND_ACTIVATION_EMAIL": True, # login ro tahte tasir gharar mide
-    # "SEND_CONFIRMATION_EMAIL": True,
+    "SEND_ACTIVATION_EMAIL": True,  # login ro tahte tasir gharar mide
+    "SEND_CONFIRMATION_EMAIL": True,
     "USER_CREATE_PASSWORD_RETYPE": True,
     "SET_PASSWORD_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "LOGOUT_ON_PASSWORD_CHANGE": True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password/?uid={uid}&token={token}',  # Reset password Email
 
-    'USERNAME_RESET_CONFIRM_URL': 'accounts/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'accounts/activate/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'auth/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
     # "SERIALIZERS": {
     #     'user_create': 'main.serializers.UserCreateSerializer',
     #     'current_user': 'main.serializers.UserSerializer',
