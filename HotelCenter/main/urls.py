@@ -9,5 +9,6 @@ router.register('users', publicUserDetail)
 router.register('users', publicUserList)
 
 urlpatterns = [
+    path('users/me/', userApi.myProfileDetail),
     path('', include(router.urls)),
 ]

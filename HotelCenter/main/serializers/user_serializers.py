@@ -12,3 +12,9 @@ class PublicUserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ['avatar','firstName','lastName']
 
+
+class MyProfileSerializer(serializers.HyperlinkedModelSerializer):
+    email = serializers.EmailField(read_only = True)
+    class Meta:
+        model = User
+        fields = ['avatar','firstName','lastName', 'email']
