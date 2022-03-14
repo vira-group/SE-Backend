@@ -30,7 +30,8 @@ class HotelViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
                             , content_type='json')
         else:
-            super().create(request, *args, **kwargs)
+            request.data
+            return super().create(request, *args, **kwargs)
 
 
 class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
