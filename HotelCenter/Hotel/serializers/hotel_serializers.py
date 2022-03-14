@@ -21,12 +21,6 @@ class HotelSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get("request")
 
-        # tags = list(request.data.get("tags", []))
-        # validated_data["tags"] = []
-        #
-        # for t in tags:
-        #     if Facility.objects.filter(name=t).exist():
-        #         validated_data["tags"].append(Facility.objects.get(name=t))
 
         validated_data['creator'] = request.user
         validated_data['rate'] = 5

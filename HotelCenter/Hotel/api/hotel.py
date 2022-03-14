@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 
 from ..permissions import *
 from ..models import Hotel, Facility
@@ -21,8 +22,18 @@ class HotelViewSet(viewsets.ModelViewSet):
             'view': self
         }
 
+    def create(self, request, *args, **kwargs):
+        """
+            if current user does not have a hotel already create a hotel
+        """
+        if Hotel.objects.filter(creator=request.user).count() > 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
+                            , content_type='json')
+        else:
+            super().create(request, *args, **kwargs)
 
-class FacilityViewSet(viewsets.mixins.ListModelMixin):
+
+class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Facility.objects.all()
     serializer_class = FacilitiesSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

@@ -14,3 +14,12 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the snippet.
         return obj.creator == request.user
+
+
+class IsEditor(permissions.IsAuthenticated):
+    """
+    Custom permission to only allow editors or creator of an hotel to edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return obj.creator == request.user or request.user in obj.editors
