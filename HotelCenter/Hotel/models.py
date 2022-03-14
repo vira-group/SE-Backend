@@ -15,9 +15,12 @@ class Hotel(models.Model):
         settings.AUTH_USER_MODEL, related_name='hotel', on_delete=models.CASCADE, null=False)
     name = models.CharField(max_length=64, blank=False, null=False)  # hotel name showed on profile
     address = models.CharField(max_length=256, blank=False, null=False)
+    header = models.ImageField(null=True, blank=True)
     phone_numbers = models.CharField(max_length=64, blank=True, )
     city = models.CharField(max_length=64, blank=False, null=False)
     state = models.CharField(max_length=64, null=False, blank=True)
+    country = models.CharField(max_length=64, null=False, blank=True)
+    type = models.CharField(max_length=64, default='Hotel', null=False, blank=False)
     start_date = models.DateField(auto_now_add=True)
     description = models.CharField(max_length=1024, default="desc")
     rate = models.DecimalField(
@@ -31,3 +34,11 @@ class Hotel(models.Model):
 
     def __str__(self):
         return "%s Hotel, from %s" % (self.name, self.city)
+
+    @property
+    def image_url(self):
+        try :
+            img = self.header.url
+        except :
+            img = ''
+        return img
