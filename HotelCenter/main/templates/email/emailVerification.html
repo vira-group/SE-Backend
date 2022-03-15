@@ -1,3 +1,22 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Account activation on {{ domain }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}You're receiving this email because you need to finish activation process on {{ domain }}.{% endblocktrans %}
+
+{% trans "Please go to the following page to activate account:" %}
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ domain }} team{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -29,13 +48,13 @@
                 <div class="card-body">
                     <h5 class="card-title">you need to confirm your account. Just press the button below.</h5>
                     </br>
-                    <a style="background-color: #669BBC; border-color: #669BBC;" href="#" class="btn btn-primary">confirm account</a>
+                    <a style="background-color: #669BBC; border-color: #669BBC;" href="{{protocol}}://{{ domain }}/{{ url }}" class="btn btn-primary">confirm account</a>
                     </br>
                     <p></p>
                     <p style="direction: ltr;" class="card-text">If you have any questions, just reply to this email—we're always happy to help out. <i class="bi bi-emoji-smile"></i></p>
                     <p>
                         "Have a good trip"
-                        
+
                     </p>
                 </div>
                 <div class="card-footer text-muted">
@@ -60,3 +79,8 @@
     -->
   </body>
 </html>
+
+
+
+{% endblock html_body %}
+

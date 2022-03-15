@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
@@ -86,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
-    'test': {
+    'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'testdb.sqlite3',
     }
@@ -152,8 +153,8 @@ EMAIL_HOST_PASSWORD = "Vira1400SE"
 # DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
-    "SEND_ACTIVATION_EMAIL": True,  # login ro tahte tasir gharar mide
-    "SEND_CONFIRMATION_EMAIL": True,
+    "SEND_ACTIVATION_EMAIL": True,
+    # "SEND_CONFIRMATION_EMAIL": True,
     "USER_CREATE_PASSWORD_RETYPE": True,
     "SET_PASSWORD_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
@@ -162,8 +163,9 @@ DJOSER = {
 
     'USERNAME_RESET_CONFIRM_URL': 'auth/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
-    # "SERIALIZERS": {
-    #     'user_create': 'main.serializers.UserCreateSerializer',
-    #     'current_user': 'main.serializers.UserSerializer',
-    # },
+    "EMAIL":
+        {
+            "activation": "main.email.ActivationEmail",
+
+        }
 }
