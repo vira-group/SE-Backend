@@ -30,6 +30,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000'
+]
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
 
     "user",
     'Hotel',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'HotelCenter.urls'
@@ -142,6 +149,7 @@ REST_FRAMEWORK = {
 }
 
 # EMAIL
+DOMAIN = 'localhost:3000'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
