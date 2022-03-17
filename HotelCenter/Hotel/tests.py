@@ -21,3 +21,6 @@ class HotelTestCase(APITestCase):
 
     def test_hotel_creation(self):
         print(get_user_model().objects.get(pk=2).password)
+        res = self.client.post("/auth/users/", data={"email": "koxigat465@snece.com",
+                                                                  "password": "nima1234", "re_password": "nima1234"})
+        print(res.status_code, "\n", res.content)
