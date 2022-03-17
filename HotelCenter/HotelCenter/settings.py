@@ -98,8 +98,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'testdb.sqlite3',
     }
 }
-if 'test' in sys.argv:
-    DATABASES['default'] = DATABASES['TEST']
+# if 'test' in sys.argv:
+#     DATABASES['default'] = DATABASES['TEST']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
