@@ -1,5 +1,7 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, \
+    filters, status
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from ..permissions import *
 from ..models import Hotel, Facility
@@ -11,6 +13,10 @@ class HotelViewSet(viewsets.ModelViewSet):
     serializer_class = HotelSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
+
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['city', 'state']
+    filterset_fields = ['name']
 
     def get_serializer_context(self):
         """
