@@ -26,4 +26,3 @@ urlpatterns = [
     path('accounts/',include("main.urls"))
 
 ]
-
