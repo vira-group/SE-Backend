@@ -48,9 +48,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
 
-    'main',
+    'Account',
 
-    "user",
     'Hotel',
     'corsheaders',
 ]
@@ -141,7 +140,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'main.User'
+AUTH_USER_MODEL = 'Account.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -172,7 +171,7 @@ DJOSER = {
     'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
     "EMAIL":
         {
-            "activation": "main.email.ActivationEmail",
+            "activation": "Account.email.ActivationEmail",
 
         }
 }

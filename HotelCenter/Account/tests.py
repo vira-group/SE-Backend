@@ -1,7 +1,7 @@
 import json
 from rest_framework import status
 from django.test import TestCase
-from main import models
+from Account import models
 import json
 from urllib import response
 import http
@@ -13,8 +13,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
-from main.models import User
-from main.serializers import user_serializers
+from Account.models import User
+from Account.serializers import user_serializers
 
 class UserRegisterAPITests(TestCase):
     def setUp(self):
