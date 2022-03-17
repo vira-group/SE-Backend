@@ -30,6 +30,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000'
+]
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,10 +48,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
 
-    'main',
+    'Account',
 
-    "user",
     'Hotel',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'HotelCenter.urls'
@@ -92,8 +98,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'testdb.sqlite3',
     }
 }
-if 'test' in sys.argv:
-    DATABASES['default'] = DATABASES['TEST']
+# if 'test' in sys.argv:
+#     DATABASES['default'] = DATABASES['TEST']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -134,7 +140,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'main.User'
+AUTH_USER_MODEL = 'Account.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -165,7 +171,7 @@ DJOSER = {
     'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
     "EMAIL":
         {
-            "activation": "main.email.ActivationEmail",
+            "activation": "Account.email.ActivationEmail",
 
         }
 }

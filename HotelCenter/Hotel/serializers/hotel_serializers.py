@@ -20,6 +20,8 @@ class HotelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
+        # validated_data["facilities"] = []
+
         validated_data['creator'] = request.user
         validated_data['rate'] = 5
         validated_data['reply_count'] = 0
