@@ -26,12 +26,12 @@ class HotelSerializer(serializers.ModelSerializer):
         validated_data['rate'] = 5
         validated_data['reply_count'] = 0
         cr: Hotel = super().create(validated_data)
-        print('in hotel serializer\nNew hotel: ', cr)
+        # print('in hotel serializer\nNew hotel: ', cr)
         for f in request.data.get('facilities', []):
             if Facility.objects.filter(name=f['name']).count() > 0:
                 cr.facilities.add(Facility.objects.get(pk=f['name']))
 
         cr.save()
-        print('in hotel serializer\nNew hotel with facility: ', cr)
+        # print('in hotel serializer\nNew hotel with facility: ', cr)
 
         return cr
