@@ -34,4 +34,5 @@ jobs:
         cd HotelCenter
     - name: Run Tests
       run: |
+        cd HotelCenter
         python manage.py test
