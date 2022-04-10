@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+
+    environment:
+      - MYSQL_USER=h_user
+      - MYSQL_PASSWORD=StrOng1-paSs2
+      - MYSQL_DATABASE=Hotel_center
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+    ports:
+      - 3036:3036
+    volumes:
+      - data-mysql:/var/lib/mysql
+
+
+  back:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 3036:3036
+      - 8000:8000
+    command: python manage.py runserver 0.0.0.0:8000
+
+    depends_on:
+      - db
+volumes:
+  data-mysql:
