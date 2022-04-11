@@ -10,6 +10,7 @@ __pycache__/
 Scripts/
 local_settings.py
 db.sqlite3
+testdb.sqlite3
 db.sqlite3-journal
 media
 

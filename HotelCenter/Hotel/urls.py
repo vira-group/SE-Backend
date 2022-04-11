@@ -18,13 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from .api.hotel import HotelViewSet, FacilityViewSet
+from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet
 
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
 router.register('facilities', FacilityViewSet, basename='facility-list')
+hotel_router = routers.DefaultRouter()
+hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('<int:hid>/', include(hotel_router.urls)),
 
 ]

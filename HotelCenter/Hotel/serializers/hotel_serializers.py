@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Hotel, Facility
+from ..models import Hotel, Facility, HotelImage
 
 
 class FacilitiesSerializer(serializers.ModelSerializer):
@@ -25,6 +25,7 @@ class HotelSerializer(serializers.ModelSerializer):
         validated_data['creator'] = request.user
         validated_data['rate'] = 5
         validated_data['reply_count'] = 0
+        validated_data['header'] = request.Files.get('header')
         cr: Hotel = super().create(validated_data)
         # print('in hotel serializer\nNew hotel: ', cr)
         for f in request.data.get('facilities', []):
@@ -33,5 +34,19 @@ class HotelSerializer(serializers.ModelSerializer):
 
         cr.save()
         # print('in hotel serializer\nNew hotel with facility: ', cr)
-
         return cr
+
+
+class HotelImgSerializer(serializers.ModelSerializer):
+    # hotel_name = serializers.RelatedField(source='Hotel.name', read_only=True)
+
+    class Meta:
+        model = HotelImage
+        fields = ['image', 'id', 'hotel']
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        view = self.context.get('view')
+        validated_data['hotel'] = view.req_hotel
+
+        return super(HotelImgSerializer, self).create(self, validated_data)

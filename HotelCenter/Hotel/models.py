@@ -13,7 +13,7 @@ class Facility(models.Model):
 class Hotel(models.Model):
     creator = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name='hotel', on_delete=models.CASCADE, null=False)
-    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="editable_hotels")
+    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="editable_hotels", )
     name = models.CharField(max_length=64, blank=False, null=False)  # hotel name showed on profile
     address = models.CharField(max_length=256, blank=False, null=False)
     header = models.ImageField(null=True, blank=True)
@@ -43,3 +43,11 @@ class Hotel(models.Model):
         except:
             img = ''
         return img
+
+
+class HotelImage(models.Model):
+    image = models.ImageField(null=False, blank=False, upload_to='hotel')
+    hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_query_name='images')
+
+    def __str__(self):
+        return self.image
