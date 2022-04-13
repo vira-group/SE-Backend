@@ -51,6 +51,8 @@ class Room(models.Model):
     size = models.IntegerField(default = 0, null = False, blank = False)
     view = models.CharField(max_length = 100, null = False, blank = False, default=None)
     sleeps = models.IntegerField(default = 1, blank = False, null = False)
+    price = models.IntegerField(blank = False, null = False)
+    option = models.CharField(max_length=100, blank=True, null = True)
 
 
 

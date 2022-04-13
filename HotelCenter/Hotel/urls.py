@@ -17,14 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-
 from .api.hotel import HotelViewSet, FacilityViewSet
-
+from .api.room import RoomList
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
 router.register('facilities', FacilityViewSet, basename='facility-list')
 
 urlpatterns = [
+    path('room/<int:hotel_id>/', RoomList.as_view()),
     path('', include(router.urls))
-
 ]
