@@ -51,7 +51,7 @@ class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
 
 class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                       viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin):
-    permission_classes = [IsEditorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly]
     serializer_class = HotelImgSerializer
 
     def get_queryset(self):
@@ -88,7 +88,6 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         """
 
         print(self.req_hotel.header.url)
-        #
 
         is_header = request.GET.get("is_header", None)
         if is_header == 'true':
@@ -118,3 +117,20 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         except:
             print('in image', hotelimg)
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
+
+
+class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # queryset = Hotel.objects.order(rate).all()
+    serializer_class = HotelSerializer
+
+    def dispatch(self, request: rest_framework.request.Request, *args, **kwargs):
+        self.request = request
+        self.in_kwargs = kwargs
+        self.count = int(request.GET.get('count'))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        self.queryset = Hotel.objects.order_by('rate').all()[0:self.count]
+        return self.queryset

@@ -35,7 +35,7 @@ class IsEditorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             print('in obj prem ', request.method)
             return True
-        if not bool(request.user and request.user.is_authenticated):
+        if not bool(request.user.is_authenticated):
             return False
 
         return obj.creator == request.user or request.user in obj.editors

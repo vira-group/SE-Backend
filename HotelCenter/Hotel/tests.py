@@ -6,26 +6,42 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Hotel
+from .models import Hotel, Facility
 
 
 class HotelTestCase(APITestCase):
     test_urls = {
         "hotel-list": "/hotel/hotels/",
         "hotel-obj": "/hotel/hotels/{}/",
+        "hotel-images": "/hotel/{}/images",
+
     }
 
     def setUp(self) -> None:
         """
             RUNS BEFORE EACH TEST
         """
+        self.facility1 = {"name": "free_wifi"}
+        self.facility2 = {"name": "parking"}
+
+
         self.hotel_data1 = {
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
+
             "facilities": [{"name": "free_wifi"}]
+        }
+        self.hotel_data2 = {
+            "name": "Ferdosi",
+            "city": "Khorasan",
+            "state": "mashhad",
+            "description": "with best view of the city and places",
+            "phone_numbers": "09123456709",
+            'rate': 4.4,
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}]
         }
 
         self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
@@ -100,10 +116,9 @@ class HotelTestCase(APITestCase):
 
         self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
-        # resp = self.client.put(self.test_urls["hotel-obj"], data=data, format="json")
-        #
-        #
-        # self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+        resp = self.client.put(self.test_urls["hotel-obj"], data=data, format="json")
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
     def test_hotel_retrieve(self):
         self.hotel_data1.pop("facilities")
@@ -120,3 +135,12 @@ class HotelTestCase(APITestCase):
         content = resp.data
         self.assertTrue(resp.status_code == http.HTTPStatus.OK)
         self.assertTrue(content['name'] == self.hotel_data1['name'])
+
+    def test_Hotel_header_set(self):
+        pass
+
+    def test_Hotel_image_UnAuthorized(self):
+        pass
+
+    def test_Best_hotel_list(self):
+        pass

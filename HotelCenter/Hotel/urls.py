@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet
+from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet
 
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
 router.register('facilities', FacilityViewSet, basename='facility-list')
+router.register('best', BestHotelViewSet, basename='best-hotel')
 hotel_router = routers.DefaultRouter()
 hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 

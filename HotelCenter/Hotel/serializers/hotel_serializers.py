@@ -25,7 +25,8 @@ class HotelSerializer(serializers.ModelSerializer):
         validated_data['creator'] = request.user
         validated_data['rate'] = 5
         validated_data['reply_count'] = 0
-        validated_data['header'] = request.Files.get('header')
+
+        validated_data['header'] = request.FILES.get('header')
         cr: Hotel = super().create(validated_data)
         # print('in hotel serializer\nNew hotel: ', cr)
         for f in request.data.get('facilities', []):
