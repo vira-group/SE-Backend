@@ -64,7 +64,7 @@ class Room(models.Model):
 
 
 class RoomImage(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(upload_to='roomImages')
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False) #The room taht this image is for
 
 

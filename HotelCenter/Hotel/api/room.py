@@ -1,7 +1,7 @@
 from email import message
 from django.shortcuts import get_object_or_404
-from Hotel.models import Room, roomFacility
-from Hotel.serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer
+from Hotel.models import Room, roomFacility, RoomImage
+from Hotel.serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -36,3 +36,23 @@ class roomFacilityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = roomFacility.objects.all()
     serializer_class = roomFacilitiesSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class ImageList( APIView):
+
+    def get(self, request, room_id, format=None):
+        room = get_object_or_404(Room, id=room_id)
+        images = RoomImage.objects.filter(room = room)
+        serializer = RoomImageSerializer(images, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, room_id, format=None):
+        
+        room = get_object_or_404(Room, id=room_id)
+        serializer = RoomImageSerializer(data=request.data)
+        if (not request.user == room.hotel.creator) and (not request.user in room.hotel.editors) :
+            return Response(serializer.data ,status=status.HTTP_403_FORBIDDEN, message="You can not add a picture to this room")
+        else:
+            if serializer.is_valid():
+                serializer.save(room = room)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
