@@ -17,7 +17,12 @@ COPY ./HotelCenter .
 #RUN echo | ls
 RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
+RUN python3 manage.py collectstatic
 
+#running tests
+RUN python3 manage.py test
+#CMD ["python3","manage.py", "test"]
 
-CMD ["python3","manage.py", "test"]
-CMD ['python3','manage.py', 'runserver', '0.0.0.0:8000']
+# wsgi webserver on linux
+CMD ['gunicorn','HotelsCenter.wsgi','--bind', "0.0.0.0:8000"]
+#CMD ['python3','manage.py', 'runserver', '0.0.0.0:8000']

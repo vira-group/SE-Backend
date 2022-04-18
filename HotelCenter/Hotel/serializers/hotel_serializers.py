@@ -46,6 +46,7 @@ class HotelImgSerializer(serializers.ModelSerializer):
         fields = ['image', 'id', 'hotel']
 
     def create(self, validated_data):
+        print("validated data is ", validated_data)
         request = self.context.get("request")
         view = self.context.get('view')
         validated_data['hotel'] = view.req_hotel

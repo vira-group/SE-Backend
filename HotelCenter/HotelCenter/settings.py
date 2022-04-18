@@ -35,7 +35,9 @@ CORS_ORIGIN_WHITELIST = [
      'http://localhost:3000'
 ]
 
-
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

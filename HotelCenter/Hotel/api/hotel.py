@@ -87,33 +87,30 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             add new image to hotel images
         """
 
-        print(self.req_hotel.header.url)
-
         is_header = request.GET.get("is_header", None)
         if is_header == 'true':
-
             try:
                 # self.req_hotel.header = request.FILES['image']
                 img = request.FILES['image']
+                # print("in changing header2", self.h_id)
                 self.req_hotel = Hotel.objects.get(pk=self.h_id)
+                # print("req_hotel", self.req_hotel)
                 self.req_hotel.header = img
                 self.req_hotel.save()
-                print('change header')
-                # self.req_hotel.header = request.FILES['image']
-
+                # print('change header')
                 return Response(HotelSerializer(self.req_hotel).data, 200)
             except:
-                print(' in is header')
+                print(' in is header error')
                 return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
         hotelimg = HotelImgSerializer(request.FILES)
         try:
-            print("image\n", request.FILES['image'])
-            print(hotelimg.is_valid(raise_exception=True))
-            print('not saved\n', hotelimg['image'])
+            # print("image\n", request.FILES['image'])
+            print("hotel img, ", hotelimg.is_valid(raise_exception=True))
+            # print('not saved\n', hotelimg.image)
             img = hotelimg.save()
-            print("img saved\n", img)
-            return Response(img, status=http.HTTPStatus.OK)
+            # print("img saved\n", img)
+            return Response(img.data, status=http.HTTPStatus.OK)
         except:
             print('in image', hotelimg)
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
@@ -127,10 +124,10 @@ class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     def dispatch(self, request: rest_framework.request.Request, *args, **kwargs):
         self.request = request
         self.in_kwargs = kwargs
-        self.count = int(request.GET.get('count'))
+        self.count = int(request.GET.get('count', 5))
 
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        self.queryset = Hotel.objects.order_by('rate').all()[0:self.count]
+        self.queryset = Hotel.objects.order_by('-rate').all()[0:self.count]
         return self.queryset
