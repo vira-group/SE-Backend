@@ -43,3 +43,28 @@ class Hotel(models.Model):
         except:
             img = ''
         return img
+
+
+
+class roomFacility(models.Model):
+    name = models.CharField(max_length=100, unique=True, primary_key=True)
+    def __str__(self):
+        return self.name 
+
+
+class Room(models.Model):
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  #The hotel that this room is for
+    type = models.CharField(max_length = 100, null = False, blank = False, default = None)
+    size = models.IntegerField(default = 0, null = False, blank = False)
+    view = models.CharField(max_length = 100, null = False, blank = False, default=None)
+    sleeps = models.IntegerField(default = 1, blank = False, null = False)
+    price = models.IntegerField(blank = False, null = False)
+    option = models.CharField(max_length=100, blank=True, null = True)
+    facilities = models.ManyToManyField(roomFacility)
+
+
+class RoomImage(models.Model):
+    image = models.ImageField(upload_to='roomImages')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False) #The room taht this image is for
+
+
