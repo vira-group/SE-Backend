@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet
-from .api.room import RoomList
+from .api.room import RoomList, roomFacilityViewSet
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
 router.register('facilities', FacilityViewSet, basename='facility-list')
+router.register('roomfacilities', FacilityViewSet, basename='roomfacility-list')
 
 urlpatterns = [
     path('room/<int:hotel_id>/', RoomList.as_view()),
