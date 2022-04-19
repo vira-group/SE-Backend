@@ -21,8 +21,8 @@ services:
 #      dockerfile: Dockerfile
     restart: on-failure
     ports:
-#      - 80:80
-#      - 3031:3036
+      - 80:80
+#      - 3036:3036
       - 8000:8000
 
     command: python manage.py runserver 0.0.0.0:8000

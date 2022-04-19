@@ -13,7 +13,7 @@ class Facility(models.Model):
 class Hotel(models.Model):
     creator = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name='hotel', on_delete=models.CASCADE, null=False)
-    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="editable_hotels", )
+    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="editable_hotels")
     name = models.CharField(max_length=64, blank=False, null=False)  # hotel name showed on profile
     address = models.CharField(max_length=256, blank=False, null=False)
     header = models.ImageField(null=True, blank=True)
@@ -49,5 +49,25 @@ class HotelImage(models.Model):
     image = models.ImageField(null=False, blank=False, upload_to='hotel')
     hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_query_name='images')
 
+class roomFacility(models.Model):
+    name = models.CharField(max_length=100, unique=True, primary_key=True)
     def __str__(self):
-        return self.image
+        return self.name
+
+
+class Room(models.Model):
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  #The hotel that this room is for
+    type = models.CharField(max_length = 100, null = False, blank = False, default = None)
+    size = models.IntegerField(default = 0, null = False, blank = False)
+    view = models.CharField(max_length = 100, null = False, blank = False, default=None)
+    sleeps = models.IntegerField(default = 1, blank = False, null = False)
+    price = models.IntegerField(blank = False, null = False)
+    option = models.CharField(max_length=100, blank=True, null = True)
+    facilities = models.ManyToManyField(roomFacility)
+
+
+class RoomImage(models.Model):
+    image = models.ImageField(upload_to='roomImages')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False) #The room taht this image is for
+
+

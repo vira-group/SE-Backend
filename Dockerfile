@@ -17,7 +17,7 @@ COPY ./HotelCenter .
 #RUN echo | ls
 RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
-RUN python3 manage.py collectstatic
+#RUN python3 manage.py collectstatic
 
 #running tests
 RUN python3 manage.py test

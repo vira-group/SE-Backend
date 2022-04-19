@@ -32,7 +32,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
+     'http://localhost:3000'
 ]
 
 
@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django_nose',
-    # 'coverage',
 
     'django_filters',
     'rest_framework',
@@ -137,6 +135,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
 STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
 
@@ -186,14 +187,3 @@ DJOSER = {
 
         }
 }
-
-# Use nose to run all tests
-# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-# Tell nose to measure coverage apps
-# NOSE_ARGS = [
-# '--with-coverage',
-# '--cover-tests',
-# '--cover-package=Hotel,Account',
-
-# ]
