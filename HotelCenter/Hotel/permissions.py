@@ -1,3 +1,4 @@
+import rest_framework.request
 from rest_framework import permissions
 
 
@@ -23,3 +24,18 @@ class IsEditor(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
         return obj.creator == request.user or request.user in obj.editors
+
+
+class IsEditorOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow editors or creator of an hotel to edit it.
+    """
+
+    def has_object_permission(self, request:rest_framework.request.Request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            # print('in obj prem ', request.method)
+            return True
+        # if not bool(request.user.is_authenticated):
+        #     return False
+
+        return obj.hotel.creator == request.user or request.user in obj.hotel.editors.all()

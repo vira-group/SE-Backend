@@ -45,11 +45,14 @@ class Hotel(models.Model):
         return img
 
 
+class HotelImage(models.Model):
+    image = models.ImageField(null=False, blank=False, upload_to='hotel')
+    hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_query_name='images')
 
 class roomFacility(models.Model):
     name = models.CharField(max_length=100, unique=True, primary_key=True)
     def __str__(self):
-        return self.name 
+        return self.name
 
 
 class Room(models.Model):
