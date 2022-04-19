@@ -32,12 +32,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost:3000'
+    'http://localhost:3000'
 ]
 
-FILE_UPLOAD_HANDLERS = [
-    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
-]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -151,6 +149,8 @@ MEDIA_ROOT = os.path.join(STATIC_ROOT, "media")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
+
 AUTH_USER_MODEL = 'Account.User'
 
 REST_FRAMEWORK = {
@@ -192,8 +192,8 @@ DJOSER = {
 
 # Tell nose to measure coverage apps
 # NOSE_ARGS = [
-    # '--with-coverage',
-    # '--cover-tests',
-    # '--cover-package=Hotel,Account',
+# '--with-coverage',
+# '--cover-tests',
+# '--cover-package=Hotel,Account',
 
 # ]

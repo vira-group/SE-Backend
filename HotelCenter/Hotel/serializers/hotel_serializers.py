@@ -44,11 +44,12 @@ class HotelImgSerializer(serializers.ModelSerializer):
     class Meta:
         model = HotelImage
         fields = ['image', 'id', 'hotel']
+        # read_only_fields = ['hotel']
 
-    def create(self, validated_data):
-        print("validated data is ", validated_data)
-        request = self.context.get("request")
-        view = self.context.get('view')
-        validated_data['hotel'] = view.req_hotel
-
-        return super(HotelImgSerializer, self).create(self, validated_data)
+    # def create(self, validated_data):
+    #     print("validated data is ", validated_data)
+    #     request = self.context.get("request")
+    #     view = self.context.get('view')
+    #     validated_data['hotel'] = view.req_hotel
+    #
+    #     return super(HotelImgSerializer, self).create(self, validated_data)

@@ -103,16 +103,15 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                 print(' in is header error')
                 return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
-        hotelimg = HotelImgSerializer(request.FILES)
+        files = request.data.copy()
+        files['hotel'] = self.h_id
+        hotelimg = HotelImgSerializer(data=files)
         try:
-            # print("image\n", request.FILES['image'])
-            print("hotel img, ", hotelimg.is_valid(raise_exception=True))
-            # print('not saved\n', hotelimg.image)
-            img = hotelimg.save()
-            # print("img saved\n", img)
-            return Response(img.data, status=http.HTTPStatus.OK)
+            hotelimg.is_valid(raise_exception=True)
+            hotelimg.save()
+            return Response(hotelimg.data, status=http.HTTPStatus.OK)
         except:
-            print('in image', hotelimg)
+            # print('in image', hotelimg)
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 

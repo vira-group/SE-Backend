@@ -189,19 +189,13 @@ class HotelTestCase(APITestCase):
         resp = self.client.post(self.test_urls['hotel-images'].format(1))
         self.assertTrue(resp.status_code == http.HTTPStatus.UNAUTHORIZED)
 
-        # img = self.generate_photo_file()
-        # print("test unauth : image ", img.name)
-        # data = {
-        #     "image": img
-        # }
+
         with open('./test_img/img1.jpg', 'rb') as img:
-            # print("hotel header type:", img.read())
             data = {
                 "image": img
             }
             resp = self.client.post(self.test_urls['hotel-images'].format(1), data, format='multipart')
 
-        # print("auth\n\n", resp.status_code, 'data ', resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
         # wrong permission
@@ -257,6 +251,7 @@ class HotelTestCase(APITestCase):
         #     "image": img
         # }
         self.set_credential(self.token1)
+        count = HotelImage.objects.count()
 
         with open('./test_img/img1.jpg', 'rb') as img:
             # print("hotel header type:", img.read())
@@ -265,10 +260,16 @@ class HotelTestCase(APITestCase):
             }
             resp = self.client.post(self.test_urls['hotel-images'].format(1), data, format='multipart')
 
-        count = HotelImage.objects.count()
-        print("image created", resp.data)
-        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+
+        # print("\nimage created", count)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        count2 = HotelImage.objects.count()
+
+        self.assertTrue(count2 == count + 1)
 
         image1 = HotelImage.objects.last()
         resp = self.client.delete(self.test_urls['hotel-image'].format(hotel1.id, image1.id))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        count3 = HotelImage.objects.count()
+
+        self.assertTrue(count3 == count2 - 1)
