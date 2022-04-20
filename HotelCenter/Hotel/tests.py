@@ -216,10 +216,10 @@ class HotelTestCase(APITestCase):
         hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=1)
         self.set_credential(self.token1)
 
-        tex = open('hotel/test_img/text1.txt', 'w')
+        tex = open('text1.txt', 'w')
         tex.close()
 
-        with open('Hotel/test_img/text1.txt') as txt:
+        with open('text1.txt') as txt:
             resp = self.client.post(self.test_urls['hotel-images'].format(hotel1.id), data={"image": txt})
         # print("invalid\n\n", resp.status_code, 'data ', resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
