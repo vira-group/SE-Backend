@@ -170,7 +170,9 @@ class HotelTestCase(APITestCase):
         hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user1.id)
         self.set_credential(self.token1)
 
-        with open('./test_img/img1.jpg', 'rb') as img:
+        imag = self.generate_photo_file()
+
+        with open(imag.name, 'rb') as img:
             # print("hotel header type:", img.read())
             data = {
                 "image": img
@@ -214,10 +216,10 @@ class HotelTestCase(APITestCase):
         hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=1)
         self.set_credential(self.token1)
 
-        tex = open('./test_img/text1.txt', 'w')
+        tex = open('hotel/test_img/text1.txt', 'w')
         tex.close()
 
-        with open('./test_img/text1.txt') as txt:
+        with open('Hotel/test_img/text1.txt') as txt:
             resp = self.client.post(self.test_urls['hotel-images'].format(hotel1.id), data={"image": txt})
         # print("invalid\n\n", resp.status_code, 'data ', resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
