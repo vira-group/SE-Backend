@@ -89,12 +89,11 @@ class HotelTestCase(APITestCase):
     def generate_photo_file(self):
         file = io.BytesIO()
         r = random.Random().random()
-        image = Image.new('RGB', size=(100, 100), color=(155, int(r * 120), 0))
-        file.name = './test.jpeg'
-        image.save(file, 'JPEG')
+        image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
+        file.name = './test.png'
+        image.save("test.png", 'PNG')
 
         file.seek(0)
-        # django_friendly_file = ContentFile(file.read(), './test.jpeg')
         return file
 
     def test_hotel_creation_success(self):
@@ -188,9 +187,9 @@ class HotelTestCase(APITestCase):
         hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=1)
         resp = self.client.post(self.test_urls['hotel-images'].format(1))
         self.assertTrue(resp.status_code == http.HTTPStatus.UNAUTHORIZED)
+        imag = self.generate_photo_file()
 
-
-        with open('./test_img/img1.jpg', 'rb') as img:
+        with open(imag.name, 'rb') as img:
             data = {
                 "image": img
             }
@@ -201,7 +200,7 @@ class HotelTestCase(APITestCase):
         # wrong permission
         self.set_credential(self.token3)
         # print("permission\n\n", resp.status_code, 'data ', resp.data)
-        with open('./test_img/img1.jpg', 'rb') as img:
+        with open(imag.name, 'rb') as img:
             # print("hotel header type:", img.read())
             data = {
                 "image": img
@@ -214,6 +213,9 @@ class HotelTestCase(APITestCase):
         self.hotel_data2.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=1)
         self.set_credential(self.token1)
+
+        tex = open('./test_img/text1.txt', 'w')
+        tex.close()
 
         with open('./test_img/text1.txt') as txt:
             resp = self.client.post(self.test_urls['hotel-images'].format(hotel1.id), data={"image": txt})
@@ -245,21 +247,20 @@ class HotelTestCase(APITestCase):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
 
-        # imag = self.generate_photo_file()
+        imag = self.generate_photo_file()
 
         # data = {
         #     "image": img
         # }
         self.set_credential(self.token1)
         count = HotelImage.objects.count()
-
-        with open('./test_img/img1.jpg', 'rb') as img:
+        # './test_img/img1.jpg'
+        with open(imag.name, 'rb') as img:
             # print("hotel header type:", img.read())
             data = {
                 "image": img
             }
             resp = self.client.post(self.test_urls['hotel-images'].format(1), data, format='multipart')
-
 
         # print("\nimage created", count)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
