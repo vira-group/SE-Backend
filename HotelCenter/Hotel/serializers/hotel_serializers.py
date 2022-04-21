@@ -14,7 +14,7 @@ class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotel
         fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate',
-                  'reply_count', 'phone_numbers', 'start_date']
+                  'reply_count', 'phone_numbers', 'start_date', 'address']
         read_only_fields = ['id', "rate", 'reply_count', 'start_date']
         # lookup_field = 'id'
 
