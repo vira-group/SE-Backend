@@ -46,7 +46,8 @@ class HotelTestCase(APITestCase):
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
-            "facilities": [{"name": "free_wifi"}]
+            "facilities": [{"name": "free_wifi"}],
+            "address" : "Esfahan,Iran"
         }
         self.hotel_data2 = {
             "name": "Ferdosi",
@@ -55,7 +56,8 @@ class HotelTestCase(APITestCase):
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,
-            "facilities": [{"name": "free_wifi"}, {"name": "parking"}]
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address" : "Khorasan,Iran"
         }
 
         self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
