@@ -1,8 +1,15 @@
 version: '3.8'
 
 services:
-#  server:
-#    image: nginx
+  nginx:
+    build: ./nginx
+    volumes:
+    - ./HotelCenter/static:/static
+    - ./HotelCenter/staticfiles:/staticfiles
+    ports:
+    - 80:80
+    depends_on:
+      - back
 
   db:
     image: mysql:5.7
@@ -24,20 +31,20 @@ services:
 #      dockerfile: Dockerfile
     restart: on-failure
     ports:
-#      - 80:80
-#      - 3036:3036
       - 8000:8000
       - 90:90
 
-#    command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn HotelCenter.wsgi:application -b :90
 
     volumes:
     - ./HotelCenter:/hotel
-    links:
-      - db
+#    links:
+#      - db
     depends_on:
       - db
+
 volumes:
   data-mysql:
   HotelCenter:
+#  static:
+#  staticfiles:
