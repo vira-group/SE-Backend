@@ -145,10 +145,11 @@ STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(STATIC_ROOT, "media")
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
-STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
-STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
+#
+# # Default primary key field type
+# # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+# STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
+# STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
 
 # URL used to access the media
 MEDIA_URL = '/media/'
