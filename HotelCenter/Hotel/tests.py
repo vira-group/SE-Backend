@@ -2,7 +2,7 @@ import http
 import os
 import io
 import random
-
+from rest_framework import status
 from PIL import Image
 from django.core.files import File
 from django.http import HttpResponseBadRequest
@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Hotel, Facility, HotelImage
+from .models import Hotel, Facility, HotelImage, Room, roomFacility
 
 
 class HotelTestCase(APITestCase):
@@ -278,3 +278,175 @@ class HotelTestCase(APITestCase):
         count3 = HotelImage.objects.count()
 
         self.assertTrue(count3 == count2 - 1)
+
+
+
+
+
+
+
+class RoomTestCase(APITestCase):
+    test_urls = {
+        "add_room" : '/hotel/room/{}/',
+        "get_hotel_rooms" : '/hotel/room/{}',
+        "add_room_image" : '/hotel/room/{}/images/'
+    }
+
+    def setUp(self) -> None:
+        """
+            RUNS BEFORE EACH TEST
+        """
+        self.facility1 = {"name": "free_wifi"}
+        self.facility2 = {"name": "parking"}
+
+        Facility.objects.create(**self.facility1)
+        Facility.objects.create(**self.facility2)
+
+
+        self.roomfacility1 = {"name": "rf1"}
+        self.roomfacility2 = {"name": "rf2"}
+
+        roomFacility.objects.create(**self.roomfacility1)
+        roomFacility.objects.create(**self.roomfacility2)
+
+        self.hotel_data1 = {
+            "name": "parsian",
+            "city": "Esfehan",
+            "state": "Esfehan",
+            "description": "good quality including breakfast",
+            "phone_numbers": "09123456700",
+
+            "facilities": [{"name": "free_wifi"}],
+            "address" : "Esfahan,Iran"
+        }
+        self.hotel_data2 = {
+            "name": "Ferdosi",
+            "city": "Khorasan",
+            "state": "mashhad",
+            "description": "with best view of the city and places",
+            "phone_numbers": "09123456709",
+            'rate': 4.4,
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address" : "Khorasan,Iran"
+        }
+
+        self.room_data1 = {
+            "type":"Standard Double Room",
+            "view": "no view",
+            "sleeps":"2",
+            "price":"10000",
+            "option":"free wifi",
+            "room_facilities": [],
+        }
+
+        self.user1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+
+        self.user2 = get_user_model().objects.create(is_active=True, email="hediyeh1@gmail.com")
+        self.user2.set_password("some-strong2pass")
+        self.user2.save()
+
+        self.user3 = get_user_model().objects.create(is_active=True, email="hediyeh3@gmail.com")
+        self.user3.set_password("some-strong2pass")
+        self.user3.save()
+
+        self.token1 = Token.objects.create(user=self.user1)
+        self.token2 = Token.objects.create(user=self.user2)
+        self.token3 = Token.objects.create(user=self.user3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def generate_photo_file(self):
+        file = io.BytesIO()
+        r = random.Random().random()
+        image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
+        file.name = './test.png'
+        image.save("test.png", 'PNG')
+
+        file.seek(0)
+        return file
+
+    def test_room_creation_success(self):
+        # create hotel for user1
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(self.token1)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+    def test_room_creation_unauthorized(self):
+        # create hotel for user1
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_add_room_imgae(self):
+
+        
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(self.token1)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        imag = self.generate_photo_file()
+
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            resp: HttpResponseBadRequest = self.client.post(
+                self.test_urls['add_room_image'].format(Room.objects.filter(hotel=hotel1)[0].id) , data,
+                format='multipart')
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+    
+    def test_Invalide_room_image(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(self.token1)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        tex = open('text1.txt', 'w')
+        tex.close()
+
+        with open('text1.txt') as txt:
+            resp = self.client.post(self.test_urls['add_room_image'].format(hotel1.id), data={"image": txt})
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+    
+
+    def test_room_image_Fali(self): 
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        imag = self.generate_photo_file()
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            resp = self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
+        self.assertEqual(resp.status_code, 404)
+        self.set_credential(self.token3)
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
+
+        self.assertEqual(resp.status_code, 404)
+
+
+
+
+    
