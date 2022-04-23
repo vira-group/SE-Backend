@@ -1,5 +1,4 @@
-FROM python:3.9
-
+FROM python:3.9-slim
 
 #change working directory
 #WORKDIR /app
@@ -22,7 +21,7 @@ RUN python3 manage.py migrate
 RUN yes yes | python3 manage.py collectstatic
 
 #running tests
-RUN python3 manage.py test
+# RUN python3 manage.py test
 
 #CMD ["python3","manage.py", "test"]
 # wsgi webserver on linux
