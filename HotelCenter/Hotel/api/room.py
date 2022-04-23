@@ -20,8 +20,8 @@ class RoomList( APIView):
     def post(self, request, hotel_id, format=None):
         hotel = get_object_or_404(Hotel, id=hotel_id)
         serializer = PublicRoomSerializer(data=request.data)
-        if (not request.user == hotel.creator) and (not request.user in hotel.editors) :
-            return Response(serializer.data ,status=status.HTTP_403_FORBIDDEN, message="You can not add a room to this hotel")
+        if (not request.user == hotel.creator) and (not request.user in hotel.editors.all()) :
+            return Response(status=status.HTTP_403_FORBIDDEN)
         else:
             if serializer.is_valid():
                 room = serializer.save(hotel = hotel)
