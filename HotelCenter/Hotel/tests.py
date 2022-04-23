@@ -19,11 +19,11 @@ from .models import Hotel, Facility, HotelImage
 
 class HotelTestCase(APITestCase):
     test_urls = {
-        "hotel-list": "/hotel/hotels/",
-        "hotel-obj": "/hotel/hotels/{}/",
-        "hotel-images": "/hotel/{}/images/",
-        "hotel-image": "/hotel/{}/images/{}/",
-        "best-hotel": '/hotel/best/'
+        "hotel-list": "/api/hotel/hotels/",
+        "hotel-obj": "/api/hotel/hotels/{}/",
+        "hotel-images": "/api/hotel/{}/images/",
+        "hotel-image": "/api/hotel/{}/images/{}/",
+        "best-hotel": '/api/hotel/best/'
 
     }
 
