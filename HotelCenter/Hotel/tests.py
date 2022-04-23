@@ -287,9 +287,9 @@ class HotelTestCase(APITestCase):
 
 class RoomTestCase(APITestCase):
     test_urls = {
-        "add_room" : '/hotel/room/{}/',
-        "get_hotel_rooms" : '/hotel/room/{}',
-        "add_room_image" : '/hotel/room/{}/images/'
+        "add_room" : '/api/hotel/room/{}/',
+        "get_hotel_rooms" : '/api/hotel/room/{}',
+        "add_room_image" : '/api/hotel/room/{}/images/'
     }
 
     def setUp(self) -> None:
