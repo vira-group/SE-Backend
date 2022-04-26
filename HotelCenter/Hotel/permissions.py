@@ -31,7 +31,7 @@ class IsEditorOrReadOnly(permissions.BasePermission):
     Custom permission to only allow editors or creator of an hotel to edit it.
     """
 
-    def has_object_permission(self, request:rest_framework.request.Request, view, obj):
+    def has_object_permission(self, request: rest_framework.request.Request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             # print('in obj prem ', request.method)
             return True
@@ -39,3 +39,8 @@ class IsEditorOrReadOnly(permissions.BasePermission):
         #     return False
 
         return obj.hotel.creator == request.user or request.user in obj.hotel.editors.all()
+
+
+class IsRoomSpaceOwnerOrEditor(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.room.hotel.creator == request.user or request.user in obj.room.hotel.editors.all()

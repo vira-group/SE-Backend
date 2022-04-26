@@ -20,7 +20,8 @@ from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet
 from .api.room import RoomList, roomFacilityViewSet, ImageList
 from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet
-from .api.room import RoomList, roomFacilityViewSet, ImageList
+from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet
+
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
 router.register('facilities', FacilityViewSet, basename='facility-list')
