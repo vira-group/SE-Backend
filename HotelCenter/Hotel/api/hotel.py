@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from ..permissions import *
 from ..models import Hotel, Facility, HotelImage
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer
+from ..filter_backends import HotelMinRateFilters
 
 
 class HotelViewSet(viewsets.ModelViewSet):
@@ -18,8 +19,9 @@ class HotelViewSet(viewsets.ModelViewSet):
                           IsOwnerOrReadOnly]
 
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
-    filterset_fields = ['name']
+    # filterset_fields = ['name', 'rate', 'facilities']
 
     def get_serializer_context(self):
         """

@@ -67,5 +67,3 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                        viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin,
                        viewsets.mixins.UpdateModelMixin):
     permission_classes = [permissions.IsAuthenticated, IsRoomSpaceOwnerOrEditor]
-
-
