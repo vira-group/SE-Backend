@@ -17,4 +17,4 @@ class MyProfileSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(read_only = True)
     class Meta:
         model = User
-        fields = ['avatar','firstName','lastName', 'email']
+        fields = ['email', 'avatar','firstName','lastName','birthday','gender','phone_number','national_code','description']
