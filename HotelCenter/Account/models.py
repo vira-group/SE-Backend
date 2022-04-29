@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from birthday import BirthdayField, BirthdayManager
 # Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -41,7 +42,7 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    avatar = models.ImageField(null=True, blank=True, default=None)
+    avatar = models.ImageField(null=True, blank=True, default=None, upload_to='users')
     firstName = models.CharField(max_length=30, null=True, blank=True, default=None)
     lastName = models.CharField(max_length=30, null=True, blank=True, default=None)
 
@@ -49,6 +50,13 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
+    birthday = BirthdayField(null=True, blank = True)
+    objectsBirthday = BirthdayManager()
+
+    gender = models.CharField(max_length=20, null=True, blank=True, default=None)
+    phone_number = models.CharField(max_length=64, blank=True, null=True)
+    national_code = models.CharField(max_length=64, blank=True, null=True)
+    description = models.CharField(max_length=250, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
