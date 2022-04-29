@@ -21,6 +21,7 @@ class HotelViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
+
     # filterset_fields = ['name', 'rate', 'facilities']
 
     def get_serializer_context(self):
@@ -132,3 +133,32 @@ class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     def get_queryset(self):
         self.queryset = Hotel.objects.order_by('-rate').all()[0:self.count]
         return self.queryset
+
+
+class MyHotelsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
+    serializer_class = HotelSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     owners = Hotel.objects.filter(owner=user).all()
+    #     editors = Hotel.objects.filter(editors__in=[user]).all()
+    #
+    #     return owners, editors
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        return super(MyHotelsViewSet, self).dispatch(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        owners = list(Hotel.objects.filter(creator=user).all())
+        editors = list(Hotel.objects.filter(editors__in=[user]).all())
+        owners_data = self.serializer_class(instance=owners, many=True)
+        editors_data = self.serializer_class(instance=editors, many=True)
+
+        data = {
+            "owners": owners_data.data,
+            'editors': editors_data.data,
+        }
+        return Response(data=data, status=http.HTTPStatus.OK)
