@@ -30,12 +30,15 @@ router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
 hotel_router = routers.DefaultRouter()
 hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 
+room_router = routers.DefaultRouter()
+room_router.register('spaces', RoomSpaceViewSet, basename='room-space')
 
 urlpatterns = [
     path('room/<int:hotel_id>/', RoomList.as_view()),
     path('room/<int:room_id>/images/', ImageList.as_view()),
     path('', include(router.urls)),
     path('<int:hid>/', include(hotel_router.urls)),
-    # path('', include(my_hotel_router.urls)),
+
+    path('room/<int:room_id>/', include(room_router.urls)),
 
 ]

@@ -1,5 +1,6 @@
 import rest_framework.request
 from rest_framework import permissions
+from .models import Room
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -44,3 +45,16 @@ class IsEditorOrReadOnly(permissions.BasePermission):
 class IsRoomSpaceOwnerOrEditor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.room.hotel.creator == request.user or request.user in obj.room.hotel.editors.all()
+
+    def has_permission(self, request, view):
+        # print(view.room_id, "preere\n")
+        try:
+
+            room: Room = Room.objects.get(view.room_id)
+            if room.hotel.creator == request.user or request.user in room.hotel.editors:
+                return True
+        except:
+            # print('not found per')
+            return False
+
+        return False

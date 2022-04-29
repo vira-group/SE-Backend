@@ -46,4 +46,4 @@ class RoomSpaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomSpace
         fields = ['room', 'name', 'id']
-        read_only_fields = ['room']
+        read_only_fields = ['room', 'id']
