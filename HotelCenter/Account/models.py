@@ -42,7 +42,7 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    avatar = models.ImageField(null=True, blank=True, default=None)
+    avatar = models.ImageField(null=True, blank=True, default=None, upload_to='users')
     firstName = models.CharField(max_length=30, null=True, blank=True, default=None)
     lastName = models.CharField(max_length=30, null=True, blank=True, default=None)
 
@@ -50,7 +50,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
-    birthday = BirthdayField(null=True)
+    birthday = BirthdayField(null=True, blank = True)
     objectsBirthday = BirthdayManager()
 
     gender = models.CharField(max_length=20, null=True, blank=True, default=None)
