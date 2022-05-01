@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from ..permissions import *
-from ..models import Hotel, Facility, HotelImage
+from ..models import Hotel, Facility, HotelImage, Room,RoomSpace
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer
 from ..filter_backends import HotelMinRateFilters
 
@@ -162,3 +162,22 @@ class MyHotelsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
             'editors': editors_data.data,
         }
         return Response(data=data, status=http.HTTPStatus.OK)
+
+class HotelSearchViewSet(viewsets.GenericViewSet,viewsets.mixins.ListModelMixin):
+    """
+    search among the rooms
+    """
+    def get_queryset(self):
+        query_set = Room.objects.filter(hotel=self.hotel_id)
+
+    # def list(self, request, *args, **kwargs):
+
+
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        self.hotel_id = kwargs['hotel_id']
+        self.args = args
+        self.kwargs = kwargs
+
+        return super(HotelSearchViewSet, self).dispatch(request,*args,**kwargs)

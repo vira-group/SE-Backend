@@ -68,7 +68,7 @@ class Room(models.Model):
     facilities = models.ManyToManyField(roomFacility)
 
     def __str__(self):
-        return 'Room of type {} for hotel "{}" '.format(self.type,self.hotel)
+        return 'Room of type {} for hotel "{}" '.format(self.type, self.hotel)
 
 
 class RoomImage(models.Model):
@@ -78,7 +78,8 @@ class RoomImage(models.Model):
 
 class RoomSpace(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name='spaces', on_delete=models.CASCADE)
+
     # available = models.BooleanField(default=True)
 
     def __str__(self):
