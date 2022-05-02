@@ -90,9 +90,19 @@ class Reserve(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     roomspace =  models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING)
     price_per_day = models.IntegerField(default = None)
+    firstname = models.CharField(max_length=64, blank=False, null=False)
+    lastname = models.CharField(max_length=64, blank=False, null=False)
+    national_code = models.CharField(max_length=64, blank=True, null=True)
+    phonen_umber = models.CharField(max_length=64, blank=True, null=True)
 
     @property
     def total_price(self):
         total_days = (self.end_day - self.start_day)
         total_price = total_days.days * self.price_per_day
         return total_price
+
+    @property
+    def hotel_id(self):
+        room = self.roomspace.room
+        hotel = room.hotel
+        return(hotel.id)
