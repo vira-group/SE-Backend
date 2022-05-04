@@ -1,6 +1,7 @@
 import http
 
 # import rest_framework.request
+from django.utils.datetime_safe import datetime
 from rest_framework import viewsets, permissions, \
     filters, status
 from rest_framework.response import Response
@@ -61,18 +62,37 @@ class HotelViewSet(viewsets.ModelViewSet):
 
         return valid_h
 
+    def filter_date(self, hotels, check_in, check_out):
+        if check_in >= check_out:
+            raise ValueError('not valid dates')
+        if check_in < datetime.today().date():
+            raise ValueError('not valid dates')
+
+        valid_hotels = set()
+        reserves = Reserve.objects.filter(start_day__gte=check_out, end_day__lte=check_in
+                                          , roomspace__room__hotel__in=hotels).select_related('roomspace').all()
+        spaces = [r.roomspace_id for r in reserves]
+        spaces = RoomSpace.objects.filter(room__hotel__in=hotels).exclude(pk__in=spaces).all()
+        for s in spaces:
+            valid_hotels.add(s.room.hotel)
+
+        return list(valid_hotels)
+
+
+
+
     def list(self, request, *args, **kwargs):
 
         query_set = self.filter_queryset(queryset=self.queryset)
         size = 0
-        print('\nquery.size: ', request.query_params.get('size'))
+        # print('\nquery.size: ', request.query_params.get('size'))
         if request.query_params.get('size'):
             try:
-                print("before cast Size")
+                # print("before cast Size")
                 size = int(request.query_params['size'])
                 if size < 0:
                     size = 0
-                print('before filter size\n', size)
+                # print('before filter size\n', size)
                 query_set = self.filter_size(query_set, size)
 
             except:
@@ -83,6 +103,12 @@ class HotelViewSet(viewsets.ModelViewSet):
                 check_in = parse_date(request.query_params['check_in'])
                 check_out = parse_date(request.query_params['check_out'])
 
+                print("check_in", check_in)
+                print("check_out", check_out)
+
+                if (check_in is None) or (check_out is None):
+                    raise ValueError(message='Not valid date')
+                query_set = self.filter_date(query_set, check_in, check_out)
             except:
                 return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
 
