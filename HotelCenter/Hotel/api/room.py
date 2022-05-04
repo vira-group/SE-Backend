@@ -1,15 +1,17 @@
 from email import message
 from django.shortcuts import get_object_or_404
-from ..models import Room, roomFacility, RoomImage
+from ..models import Room, roomFacility, RoomImage, RoomSpace
 from ..permissions import IsRoomSpaceOwnerOrEditor
-from ..serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer
+from ..serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer \
+    , RoomSpaceSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework import viewsets
 from ..models import Hotel
-
+from rest_framework.exceptions import NotFound, PermissionDenied
+import http
 
 class RoomList(APIView):
 
@@ -66,4 +68,32 @@ class ImageList(APIView):
 class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                        viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin,
                        viewsets.mixins.UpdateModelMixin):
+
     permission_classes = [permissions.IsAuthenticated, IsRoomSpaceOwnerOrEditor]
+    serializer_class = RoomSpaceSerializer
+
+    def get_queryset(self):
+        queryset = RoomSpace.objects.filter(room_id=self.room_id).all()
+        return queryset
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        self.room_id = kwargs['room_id']
+        print('\nroom_id ', self.room_id)
+
+        return super(RoomSpaceViewSet, self).dispatch(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            room_id = int(kwargs['room_id'])
+            room = Room.objects.get(pk=room_id)
+
+        except:
+            return Response('Room not found', status=http.HTTPStatus.NOT_FOUND)
+
+        space = RoomSpaceSerializer(data=request.data)
+        if space.is_valid():
+            space.save(room=room)
+            return Response(data=space.data, status=http.HTTPStatus.CREATED)
+        else:
+            return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
