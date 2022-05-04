@@ -173,7 +173,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "hotelcenter.noreply@gmail.com"
-EMAIL_HOST_PASSWORD = "Vira1400SE"
+EMAIL_HOST_PASSWORD = "Vira1400SE1"
 # DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
