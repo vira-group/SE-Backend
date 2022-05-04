@@ -93,7 +93,7 @@ class Reserve(models.Model):
     firstname = models.CharField(max_length=64, blank=False, null=False)
     lastname = models.CharField(max_length=64, blank=False, null=False)
     national_code = models.CharField(max_length=64, blank=True, null=True)
-    phonen_umber = models.CharField(max_length=64, blank=True, null=True)
+    phone_number = models.CharField(max_length=64, blank=True, null=True)
 
     @property
     def total_price(self):
