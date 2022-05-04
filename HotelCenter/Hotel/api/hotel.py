@@ -5,10 +5,12 @@ from rest_framework import viewsets, permissions, \
     filters, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.dateparse import parse_date
 
 from ..permissions import *
-from ..models import Hotel, Facility, HotelImage, Room,RoomSpace
+from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer
+from ..serializers.room_serializers import PublicRoomSerializer
 from ..filter_backends import HotelMinRateFilters
 
 
@@ -21,8 +23,6 @@ class HotelViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
-
-    # filterset_fields = ['name', 'rate', 'facilities']
 
     def get_serializer_context(self):
         """
@@ -44,6 +44,54 @@ class HotelViewSet(viewsets.ModelViewSet):
         else:
             request.data
             return super().create(request, *args, **kwargs)
+
+    def filter_size(self, hotels, size: int):
+
+        valid_h = []
+        print('\nhotels ', hotels)
+        for h in hotels:
+            print('\nh in hotels ', h)
+            rooms = h.rooms.all()
+            print('\n rooms : ', rooms)
+
+            for r in rooms:
+                if r.size >= size:
+                    valid_h.append(h)
+                    break
+
+        return valid_h
+
+    def list(self, request, *args, **kwargs):
+
+        query_set = self.filter_queryset(queryset=self.queryset)
+        size = 0
+        print('\nquery.size: ', request.query_params.get('size'))
+        if request.query_params.get('size'):
+            try:
+                print("before cast Size")
+                size = int(request.query_params['size'])
+                if size < 0:
+                    size = 0
+                print('before filter size\n', size)
+                query_set = self.filter_size(query_set, size)
+
+            except:
+                return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
+
+        if request.query_params.get('check_in'):
+            try:
+                check_in = parse_date(request.query_params['check_in'])
+                check_out = parse_date(request.query_params['check_out'])
+
+            except:
+                return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
+
+        # valid_hotel=[]
+        # for hotel in query_set
+
+        return Response(self.serializer_class(query_set, many=True).data, status=http.HTTPStatus.OK)
+
+    # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
 
 class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -163,21 +211,69 @@ class MyHotelsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
         }
         return Response(data=data, status=http.HTTPStatus.OK)
 
-class HotelSearchViewSet(viewsets.GenericViewSet,viewsets.mixins.ListModelMixin):
+
+class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     """
-    search among the rooms
+    search among one hotel rooms
     """
+
+    serializer_class = PublicRoomSerializer
+
     def get_queryset(self):
-        query_set = Room.objects.filter(hotel=self.hotel_id)
+        min_size = int(self.request.query_params.get('size', 0))
+        print("\n min size: ", min_size)
 
-    # def list(self, request, *args, **kwargs):
+        if min_size < 0:
+            min_size = 0
+        all_rooms = Room.objects.filter(hotel=self.hotel_id, size__gte=min_size).all()
 
+        if self.request.query_params.get('check_in'):
+            check_in = parse_date(self.request.query_params['check_in'])
+            check_out = parse_date(self.request.query_params['check_out'])
 
+            rooms = self.filter_date(all_rooms, check_in, check_out)
+            return rooms
+
+        return all_rooms
+
+    def filter_date(self, rooms, check_in, check_out):
+
+        valid_rooms = []
+        for room in rooms:
+            spaces = room.spaces.all()
+
+            print('\n\nspaces: ', spaces)
+            resv = Reserve.objects.filter(roomspace__in=spaces, start_day__gte=check_out, end_day__lte=check_in).all()
+            spa_id = [r.roomspace for r in resv]
+            for s in spaces:
+                if not (s in spa_id):
+                    valid_rooms.append(room)
+                    break
+
+        return valid_rooms
 
     def dispatch(self, request, *args, **kwargs):
         self.request = request
-        self.hotel_id = kwargs['hotel_id']
+        self.hotel_id = kwargs['hid']
         self.args = args
         self.kwargs = kwargs
 
-        return super(HotelSearchViewSet, self).dispatch(request,*args,**kwargs)
+        return super(HotelSearchViewSet, self).dispatch(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('check_in'):
+            try:
+                check_in = parse_date(request.query_params['check_in'])
+                check_out = parse_date(request.query_params['check_out'])
+
+            except:
+                return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
+
+        if request.query_params.get('size'):
+            try:
+                size = int(request.query_params['size'])
+
+            except:
+                return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
+
+        return super(HotelSearchViewSet, self).list(request, *args, **kwargs)
