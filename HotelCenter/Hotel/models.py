@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from Account.models import User
 
+
 class Facility(models.Model):
     name = models.CharField(max_length=100, unique=True, primary_key=True)
 
