@@ -14,8 +14,11 @@ from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
 from Account.models import User
+import io
+import random
+from PIL import Image
 from Account.serializers import user_serializers
-
+from django.http import HttpResponseBadRequest
 
 class UserRegisterAPITests(TestCase):
     def setUp(self):
@@ -98,3 +101,190 @@ class UserLoginApiTest(APITestCase):
         data = {"email": "hello1@gmail.com", "password": "str"}
         response = self.client.post("/api/auth/token/login/", data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileApiTest(APITestCase):
+
+    test_urls = {
+        "edit-profile": "/api/accounts/users/me/",
+        "my-profile" : "/api/accounts/users/me/"
+    }
+
+
+    def setUp(self) -> None:
+        self.user1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+        self.token1 = Token.objects.create(user=self.user1)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+
+    def generate_photo_file(self):
+        file = io.BytesIO()
+        r = random.Random().random()
+        image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
+        file.name = './mypic.png'
+        image.save("mypic.png", 'PNG')
+
+        file.seek(0)
+        return file
+
+
+    def test_edit_firstName(self):
+        self.set_credential(token=self.token1)
+        data = {"firstName": "myfirstname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+    
+    def test_edit_firstName_invalid_length(self):
+        self.set_credential(token=self.token1)
+        data = {"firstName": "myfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_edit_firstName_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"firstName": "myfirstname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+    
+    def test_edit_lastname(self):
+        self.set_credential(token=self.token1)
+        data = {"lastName": "mylastname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_edit_lastname_invalid_length(self):
+        self.set_credential(token=self.token1)
+        data = {"lastName": "mylastnamemylastnamemylastnamemylastnamemylastnamemylastnamemylastname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_edit_lastname_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"lastName": "mylastname"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_edit_birthday_invalid_date(self):
+        self.set_credential(token=self.token1)
+        data = {"birthday": "1"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_edit_birthday_valid_date(self):
+        self.set_credential(token=self.token1)
+        data = {"birthday": "2022-04-01"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+    
+    def test_edit_birthday_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"birthday": "2022-04-01"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_edit_phone_number_invalid_length(self):
+        self.set_credential(token=self.token1)
+        data = {"phone_number": "0000000000000000000000000000000000000000000000000000000000000000000000"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_edit_phone_number(self):
+        self.set_credential(token=self.token1)
+        data = {"phone_number": "09199999999"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK) 
+
+    def test_edit_phone_number_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"phone_number": "09199999999"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_edit_national_code_invalid_length(self):
+        self.set_credential(token=self.token1)
+        data = {"national_code": "0000000000000000000000000000000000000000000000000000000000000000000000"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_edit_national_code(self):
+        self.set_credential(token=self.token1)
+        data = {"national_code": "000000111"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK) 
+
+    def test_edit_national_code_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"national_code": "000000111"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_edit_description_invalid_length(self):
+        self.set_credential(token=self.token1)
+        data = {"description": "this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_edit_description(self):
+        self.set_credential(token=self.token1)
+        data = {"description": "this is a test description"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_edit_description_UNAUTHORIZED(self):
+        self.unset_credential()
+        data = {"description": "this is a test description"}
+        response = self.client.put(self.test_urls["edit-profile"], data)
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_edit_avatar(self):  
+
+        self.set_credential(self.token1)
+
+        imag = self.generate_photo_file()
+
+        with open(imag.name, 'rb') as img:
+            data = {
+                "avatar": img
+            }
+            resp: HttpResponseBadRequest = self.client.put(
+                self.test_urls['edit-profile'], data,
+                format='multipart')
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+    def test_edit_avatar_UNAUTHORIZED(self):  
+
+        self.unset_credential()
+
+        imag = self.generate_photo_file()
+
+        with open(imag.name, 'rb') as img:
+            data = {
+                "avatar": img
+            }
+            resp: HttpResponseBadRequest = self.client.put(
+                self.test_urls['edit-profile'], data,
+                format='multipart')
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_get_profile(self):
+        self.set_credential(token=self.token1)
+        response = self.client.get(self.test_urls["my-profile"])
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_get_profiel_UNAUTHORIZED(self):
+        self.unset_credential()
+        response = self.client.get(self.test_urls["my-profile"])
+        self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
