@@ -69,6 +69,7 @@ class ImageList(APIView):
 class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                        viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin,
                        viewsets.mixins.UpdateModelMixin):
+
     permission_classes = [permissions.IsAuthenticated, IsRoomSpaceOwnerOrEditor]
     serializer_class = RoomSpaceSerializer
 
@@ -80,14 +81,6 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         self.request = request
         self.room_id = kwargs['room_id']
         print('\nroom_id ', self.room_id)
-
-        # self.room = Room.objects.get(self.room_id)
-        # print('\nroom ', self.room)
-
-
-        print('wrong')
-            # return PermissionDenied('Room Not Found')
-            # return Response('Room not found', status=http.HTTPStatus.NOT_FOUND)
 
         return super(RoomSpaceViewSet, self).dispatch(request, *args, **kwargs)
 

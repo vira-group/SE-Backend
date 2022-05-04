@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from Account.models import User
 
+
 class Facility(models.Model):
     name = models.CharField(max_length=100, unique=True, primary_key=True)
 
@@ -58,7 +59,7 @@ class roomFacility(models.Model):
 
 
 class Room(models.Model):
-    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # The hotel that this room is for
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')  # The hotel that this room is for
     type = models.CharField(max_length=100, null=False, blank=False, default=None)
     size = models.IntegerField(default=0, null=False, blank=False)
     view = models.CharField(max_length=100, null=False, blank=False, default=None)
@@ -85,12 +86,17 @@ class RoomSpace(models.Model):
     def __str__(self):
         return f'RoomSpace {self.name} for {self.room}'
 
+    @property
+    def hotel_id(self):
+        return self.room.hotel.id
+
+
 class Reserve(models.Model):
     start_day = models.DateField()
-    end_day =  models.DateField()
+    end_day = models.DateField()
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    roomspace =  models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING)
-    price_per_day = models.IntegerField(default = None)
+    roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING, related_name='reserves')
+    price_per_day = models.IntegerField(default=None)
     firstname = models.CharField(max_length=64, blank=False, null=False)
     lastname = models.CharField(max_length=64, blank=False, null=False)
     national_code = models.CharField(max_length=64, blank=True, null=True)
@@ -106,4 +112,4 @@ class Reserve(models.Model):
     def hotel_id(self):
         room = self.roomspace.room
         hotel = room.hotel
-        return(hotel.id)
+        return (hotel.id)
