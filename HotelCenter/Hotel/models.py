@@ -66,7 +66,7 @@ class Room(models.Model):
     sleeps = models.IntegerField(default=1, blank=False, null=False)
     price = models.IntegerField(blank=False, null=False)
     option = models.CharField(max_length=100, blank=True, null=True)
-    facilities = models.ManyToManyField(roomFacility)
+    facilities = models.ManyToManyField(roomFacility, related_name='rooms')
 
     def __str__(self):
         return 'Room of type {} for hotel "{}" '.format(self.type, self.hotel)
