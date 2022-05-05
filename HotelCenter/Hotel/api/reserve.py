@@ -34,9 +34,13 @@ class ReserveList(APIView):
             today = datetime.today()
             if(today.date()>serializer.validated_data["start_day"] or serializer.validated_data["start_day"] > serializer.validated_data["end_day"]):
                 return Response(status=status.HTTP_403_FORBIDDEN)
+            if(request.user.balance < ((serializer.validated_data["end_day"]-serializer.validated_data["start_day"]).days+1)* serializer.validated_data["price_per_day"]):
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
             for roomspace in roomspace_list:
                 if(checkCondition(roomspace, serializer.validated_data["start_day"], serializer.validated_data["end_day"])):
                     serializer.save(user= user, roomspace=roomspace)
+                    user.balance -= ((serializer.validated_data["end_day"]-serializer.validated_data["start_day"]).days+1)* serializer.validated_data["price_per_day"]
+                    user.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
