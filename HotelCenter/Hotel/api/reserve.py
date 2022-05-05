@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from ..models import Reserve, RoomSpace
+from ..models import Reserve, Room, RoomSpace
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer
@@ -26,17 +26,25 @@ class ReserveList(APIView):
         return Response(serializer.data)
     def post(self, request):
         user = request.user
-        roomspace_id = request.data['roomspace']
-        roomspace = get_object_or_404(RoomSpace, id=roomspace_id)
-        roomspace_reserve_list = Reserve.objects.filter(roomspace = roomspace)
+        room_id = request.data['room']
+        room = get_object_or_404(Room, id=room_id)
+        roomspace_list = RoomSpace.objects.filter(room = room).all()
         serializer = ReserveSerializer(data=request.data)
         if serializer.is_valid():
             today = datetime.today()
             if(today.date()>serializer.validated_data["start_day"] or serializer.validated_data["start_day"] > serializer.validated_data["end_day"]):
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            for roomspace_reserve in roomspace_reserve_list:
-                if((roomspace_reserve.start_day <= serializer.validated_data["start_day"] <= roomspace_reserve.end_day) or (roomspace_reserve.start_day <= serializer.validated_data["end_day"] <= roomspace_reserve.end_day)):
-                    return Response(status=status.HTTP_403_FORBIDDEN)
-            serializer.save(user= user, roomspace=roomspace)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            for roomspace in roomspace_list:
+                if(checkCondition(roomspace, serializer.validated_data["start_day"], serializer.validated_data["end_day"])):
+                    serializer.save(user= user, roomspace=roomspace)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def checkCondition(roomspace, start, end):
+    roomspace_reserve_list = Reserve.objects.filter(roomspace = roomspace).all()
+    for roomspace_reserve in roomspace_reserve_list:
+        if((roomspace_reserve.start_day <= start <= roomspace_reserve.end_day) or (roomspace_reserve.start_day <= end <= roomspace_reserve.end_day)):
+            return False
+    return True
