@@ -1,20 +1,20 @@
 import json
 from rest_framework import status
 from django.test import TestCase
-from Account import models
+from . import models
 import json
 from urllib import response
 import http
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import status, reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
-from Account.models import User
-from Account.serializers import user_serializers
+from .models import User
+from .serializers import user_serializers
 
 
 class UserRegisterAPITests(TestCase):
@@ -98,3 +98,59 @@ class UserLoginApiTest(APITestCase):
         data = {"email": "hello1@gmail.com", "password": "str"}
         response = self.client.post("/api/auth/token/login/", data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserPaymentAPITest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+
+        self.user2 = get_user_model().objects.create(is_active=True, email="mohammad@gmail.com")
+        self.user2.set_password("some-strong2pass")
+        self.user2.save()
+
+        self.user3 = get_user_model().objects.create(is_active=True, email="reza@gmail.com")
+        self.user3.set_password("some-strong2pass")
+        self.user3.save()
+
+        self.token1 = Token.objects.create(user=self.user1)
+        self.token2 = Token.objects.create(user=self.user2)
+        self.token3 = Token.objects.create(user=self.user3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def test_pay_unauth(self):
+        data = {"credit": 10}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_pay_not_valid(self):
+        self.set_credential(self.token1)
+        data = {"credit": -10}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"credit": 'NaN'}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+    def test_pay_success(self):
+        self.set_credential(self.token1)
+        data = {"credit": 10}
+        old_cred = get_user_model().objects.get(pk=1).balance
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        new_cred = get_user_model().objects.get(pk=1).balance
+        self.assertEqual(old_cred + data['credit'], new_cred)
