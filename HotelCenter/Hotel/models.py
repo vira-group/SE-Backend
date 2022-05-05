@@ -106,7 +106,7 @@ class Reserve(models.Model):
     @property
     def total_price(self):
         total_days = (self.end_day - self.start_day)
-        total_price = total_days.days * self.price_per_day
+        total_price = (total_days.days+1) * self.price_per_day
         return total_price
 
     @property
