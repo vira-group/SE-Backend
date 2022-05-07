@@ -46,7 +46,9 @@ jobs:
     - name: Set server
       run: |
         cd /home/ubuntu/vira/
-        sudo su $USER
+        sudo systemctl start docker
+        sudo service docker start
+        sudo /etc/init.d/docker restart
         docker-compose down
         docker-compose build
         docker-compose up -d
