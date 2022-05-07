@@ -40,3 +40,4 @@ jobs:
     - name: Copy Files
       run: |
         cp -r ./ /home/ubuntu/vira/backendtest/
+        ls /home/ubuntu/vira/backendtest/
