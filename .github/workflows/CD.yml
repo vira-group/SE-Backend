@@ -39,5 +39,5 @@ jobs:
         python manage.py test
     - name: Copy Files
       run: |
-        sodu cp -r ./ /home/ubuntu/vira/backendtest/
+        sudo cp -r ./ /home/ubuntu/vira/backendtest/
         ls /home/ubuntu/vira/backendtest/ -l
