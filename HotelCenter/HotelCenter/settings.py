@@ -164,6 +164,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+
 }
 
 # EMAIL
