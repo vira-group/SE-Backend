@@ -37,3 +37,6 @@ jobs:
       run: |
         cd HotelCenter
         python manage.py test
+    - name: Copy Files
+      run: |
+        cp -r ./ /home/ubuntu/vira/backendtest/
