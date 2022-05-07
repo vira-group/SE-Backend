@@ -2,19 +2,36 @@ import http
 import os
 import io
 import random
-from rest_framework import status
+
+from django.utils.datetime_safe import datetime
+from rest_framework import status, reverse
 from PIL import Image
 from django.core.files import File
 from django.http import HttpResponseBadRequest
 from django.core.files.base import ContentFile
 from django.test import TestCase
 import json
+from django.utils.http import urlencode
 
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Hotel, Facility, HotelImage, Reserve, Room, roomFacility, RoomSpace
+from .models import Hotel, Facility, HotelImage, Room, roomFacility, Reserve, RoomSpace
+
+
+def my_reverse(viewname, kwargs=None, query_kwargs=None):
+    """
+    Custom reverse to add a query string after the url
+    Example usage:
+    url = my_reverse('my_test_url', kwargs={'pk': object.id}, query_kwargs={'next': reverse('home')})
+    """
+    url = reverse.reverse(viewname, kwargs=kwargs)
+
+    if query_kwargs:
+        return f'{url}?{urlencode(query_kwargs)}'
+
+    return url
 
 
 class HotelTestCase(APITestCase):
@@ -47,7 +64,7 @@ class HotelTestCase(APITestCase):
             "phone_numbers": "09123456700",
 
             "facilities": [{"name": "free_wifi"}],
-            "address" : "Esfahan,Iran"
+            "address": "Esfahan,Iran"
         }
         self.hotel_data2 = {
             "name": "Ferdosi",
@@ -57,7 +74,7 @@ class HotelTestCase(APITestCase):
             "phone_numbers": "09123456709",
             'rate': 4.4,
             "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
-            "address" : "Khorasan,Iran"
+            "address": "Khorasan,Iran"
         }
 
         self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
@@ -279,17 +296,41 @@ class HotelTestCase(APITestCase):
 
         self.assertTrue(count3 == count2 - 1)
 
+    def test_my_hotels_noauth(self):
+        resp = self.client.post(reverse.reverse('my_hotels-list'))
 
+        self.assertEqual(http.HTTPStatus.UNAUTHORIZED, resp.status_code)
 
+        resp = self.client.get(reverse.reverse('my_hotels-list'))
 
+        self.assertEqual(http.HTTPStatus.UNAUTHORIZED, resp.status_code)
 
+    def test_my_hotels_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+        hotel2.editors.add(self.user1)
+        hotel2.save()
+        hotel3.editors.add(self.user1)
+        hotel3.save()
+
+        self.set_credential(self.token1)
+
+        resp = self.client.get(reverse.reverse('my_hotels-list'))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        self.assertTrue((len(resp.data['owners']) == 1) and (len(resp.data['editors']) == 2))
 
 
 class RoomTestCase(APITestCase):
     test_urls = {
-        "add_room" : '/api/hotel/room/{}/',
-        "get_hotel_rooms" : '/api/hotel/room/{}',
-        "add_room_image" : '/api/hotel/room/{}/images/'
+        "add_room": '/api/hotel/room/{}/',
+        "get_hotel_rooms": '/api/hotel/room/{}',
+        "add_room_image": '/api/hotel/room/{}/images/'
     }
 
     def setUp(self) -> None:
@@ -301,7 +342,6 @@ class RoomTestCase(APITestCase):
 
         Facility.objects.create(**self.facility1)
         Facility.objects.create(**self.facility2)
-
 
         self.roomfacility1 = {"name": "rf1"}
         self.roomfacility2 = {"name": "rf2"}
@@ -317,7 +357,7 @@ class RoomTestCase(APITestCase):
             "phone_numbers": "09123456700",
 
             "facilities": [{"name": "free_wifi"}],
-            "address" : "Esfahan,Iran"
+            "address": "Esfahan,Iran"
         }
         self.hotel_data2 = {
             "name": "Ferdosi",
@@ -327,15 +367,24 @@ class RoomTestCase(APITestCase):
             "phone_numbers": "09123456709",
             'rate': 4.4,
             "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
-            "address" : "Khorasan,Iran"
+            "address": "Khorasan,Iran"
         }
 
         self.room_data1 = {
-            "type":"Standard Double Room",
+            "type": "Standard Double Room",
             "view": "no view",
-            "sleeps":"2",
-            "price":"10000",
-            "option":"free wifi",
+            "sleeps": "2",
+            "price": "20000",
+            "option": "free wifi",
+            "room_facilities": [],
+        }
+        self.room_data2 = {
+            "type": "Single Bed Room",
+            "view": "sea",
+            "sleeps": 1,
+            'size': 1,
+            "price": "15000",
+            "option": "free wifi",
             "room_facilities": [],
         }
 
@@ -393,8 +442,6 @@ class RoomTestCase(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_add_room_imgae(self):
-
-        
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
         self.set_credential(self.token1)
@@ -407,10 +454,10 @@ class RoomTestCase(APITestCase):
                 "image": img
             }
             resp: HttpResponseBadRequest = self.client.post(
-                self.test_urls['add_room_image'].format(Room.objects.filter(hotel=hotel1)[0].id) , data,
+                self.test_urls['add_room_image'].format(Room.objects.filter(hotel=hotel1)[0].id), data,
                 format='multipart')
         self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
-    
+
     def test_Invalide_room_image(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
@@ -424,9 +471,8 @@ class RoomTestCase(APITestCase):
         with open('text1.txt') as txt:
             resp = self.client.post(self.test_urls['add_room_image'].format(hotel1.id), data={"image": txt})
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
-    
 
-    def test_room_image_Fali(self): 
+    def test_room_image_Failed(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
         resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
@@ -446,15 +492,90 @@ class RoomTestCase(APITestCase):
 
         self.assertEqual(resp.status_code, 404)
 
+    def test_room_search(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+        # hotel2.editors.add(self.user1)
+        # hotel2.save()
+        # hotel3.editors.add(self.user1)
+        # hotel3.save()
+        self.room_data1.pop("room_facilities")
+        self.room_data2.pop("room_facilities")
+        room3 = self.room_data1.copy()
+        room3['sleeps'] = 3
+        room3['size'] = 3
+
+        Room.objects.create(hotel=hotel1, **self.room_data2)
+        Room.objects.create(hotel=hotel1, **self.room_data1, size=2)
+        Room.objects.create(hotel=hotel1, **room3)
+
+        self.set_credential(self.token1)
+        # print(my_reverse("hotel-room-search-list", kwargs={"hid": 1}, query_kwargs={'size': 2}))
+        resp = self.client.get(reverse.reverse("hotel-room-search-list", kwargs={"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 3)
+
+        resp = self.client.get(my_reverse("hotel-room-search-list", kwargs={"hid": 1}, query_kwargs={'size': 2}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 2)
+
+        resp = self.client.get(my_reverse("hotel-room-search-list", kwargs={"hid": 1},
+                                          query_kwargs={'size': 2, "check_in": datetime.today().date()}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        resp = self.client.get(my_reverse("hotel-room-search-list", kwargs={"hid": 1},
+                                          query_kwargs={'size': 2, "check_in": '2022-10-12',
+                                                        "check_out": '2022-10-14'}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 0)
+
+    def test_room_space_create(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+        # hotel2.editors.add(self.user1)
+        # hotel2.save()
+        # hotel3.editors.add(self.user1)
+        # hotel3.save()
+        self.room_data1.pop("room_facilities")
+        self.room_data2.pop("room_facilities")
+        room3 = self.room_data1.copy()
+        room3['sleeps'] = 3
+        room3['size'] = 3
+
+        room = Room.objects.create(hotel=hotel1, **self.room_data2)
+        Room.objects.create(hotel=hotel1, **self.room_data1, size=2)
+        Room.objects.create(hotel=hotel1, **room3)
+
+        self.set_credential(self.token1)
+
+        data = {'name': 'R100'}
+        # print('hotel', room.hotel.creator)
+        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data)
+        # print(resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
 
 
 class ReserveTestCase(APITestCase):
     test_urls = {
-        "reserve_roomspace" : '/api/hotel/reserve/',
-        "user_reserve_list" : '/api/hotel/reserve',
-        "roomspace_reservation_list" : '/api/hotel/reserve/roomspace/{}/'
+        "reserve_roomspace": '/api/hotel/reserve/',
+        "user_reserve_list": '/api/hotel/reserve',
+        "roomspace_reservation_list": '/api/hotel/reserve/roomspace/{}/'
     }
-    
+
     def setUp(self) -> None:
         """
             RUNS BEFORE EACH TEST
@@ -465,7 +586,6 @@ class ReserveTestCase(APITestCase):
         Facility.objects.create(**self.facility1)
         Facility.objects.create(**self.facility2)
 
-
         self.hotel_data1 = {
             "name": "parsian",
             "city": "Esfehan",
@@ -474,7 +594,7 @@ class ReserveTestCase(APITestCase):
             "phone_numbers": "09123456700",
 
             "facilities": [{"name": "free_wifi"}],
-            "address" : "Esfahan,Iran"
+            "address": "Esfahan,Iran"
         }
         self.hotel_data2 = {
             "name": "Ferdosi",
@@ -484,15 +604,15 @@ class ReserveTestCase(APITestCase):
             "phone_numbers": "09123456709",
             'rate': 4.4,
             "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
-            "address" : "Khorasan,Iran"
+            "address": "Khorasan,Iran"
         }
 
         self.room_data1 = {
-            "type":"Standard Double Room",
+            "type": "Standard Double Room",
             "view": "no view",
-            "sleeps":"2",
-            "price":"10000",
-            "option":"free wifi",
+            "sleeps": "2",
+            "price": "10000",
+            "option": "free wifi",
         }
 
         self.user1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
@@ -522,64 +642,62 @@ class ReserveTestCase(APITestCase):
             unset existing headers
         """
         self.client.credentials()
-    
+
     def test_reserve_success(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
-    
     def test_reserve_not_enough_credit(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
-
     def test_reserve_invalid_date_pastdate(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-        "start_day": "2020-05-19",
-        "end_day": "2020-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2020-05-19",
+            "end_day": "2020-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -587,18 +705,18 @@ class ReserveTestCase(APITestCase):
     def test_reserve_invalid_date_end_before_start(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-14",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-14",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -606,88 +724,84 @@ class ReserveTestCase(APITestCase):
     def test_reserve_invalid_room(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-14",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 2,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-14",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 2,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_reserve_unauthorized(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.unset_credential()
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-
     def test_reserve_invalid_national_code(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "00000000000000000000000000000000000000000000000000000000000000000000000000000000",
-        "phone_number" : "09199999999"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "00000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_reserve_invalid_phone_number(self):
         self.hotel_data1.pop("facilities")
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        room1 = Room.objects.create(**self.room_data1, hotel = hotel1)
-        roomspace = RoomSpace.objects.create(name="roomspace1", room = room1)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-        "start_day": "2022-05-19",
-        "end_day": "2022-05-19",
-        "firstname" : "fn",
-        "lastname" : "ln",
-        "room": 1,
-        "price_per_day": 5,
-        "national_code" : "0000000001",
-        "phone_number" : "00000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            "start_day": "2022-05-19",
+            "end_day": "2022-05-19",
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": 1,
+            "price_per_day": 5,
+            "national_code": "0000000001",
+            "phone_number": "00000000000000000000000000000000000000000000000000000000000000000000000000000000"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-   
 
-    
+

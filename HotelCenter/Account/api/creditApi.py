@@ -19,7 +19,7 @@ class CreditViewSet(viewsets.GenericViewSet, viewsets.mixins.CreateModelMixin):
         try:
             data.is_valid(raise_exception=True)
 
-            print(data.data)
+            # print(data.data)
             credit = data.data['credit']
             request.user.balance += credit
             request.user.save()

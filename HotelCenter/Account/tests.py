@@ -1,14 +1,14 @@
 import json
 from rest_framework import status
 from django.test import TestCase
-from Account import models
+from . import models
 import json
 from urllib import response
 import http
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import status, reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
@@ -19,6 +19,9 @@ import random
 from PIL import Image
 from Account.serializers import user_serializers
 from django.http import HttpResponseBadRequest
+from .models import User
+from .serializers import user_serializers
+
 
 class UserRegisterAPITests(TestCase):
     def setUp(self):
@@ -146,7 +149,7 @@ class UserProfileApiTest(APITestCase):
         data = {"firstName": "myfirstname"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-    
+
     def test_edit_firstName_invalid_length(self):
         self.set_credential(token=self.token1)
         data = {"firstName": "myfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstnamemyfirstname"}
@@ -158,7 +161,7 @@ class UserProfileApiTest(APITestCase):
         data = {"firstName": "myfirstname"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
-    
+
     def test_edit_lastname(self):
         self.set_credential(token=self.token1)
         data = {"lastName": "mylastname"}
@@ -188,7 +191,7 @@ class UserProfileApiTest(APITestCase):
         data = {"birthday": "2022-04-01"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, status.HTTP_200_OK)
-    
+
     def test_edit_birthday_UNAUTHORIZED(self):
         self.unset_credential()
         data = {"birthday": "2022-04-01"}
@@ -200,12 +203,12 @@ class UserProfileApiTest(APITestCase):
         data = {"phone_number": "0000000000000000000000000000000000000000000000000000000000000000000000"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_edit_phone_number(self):
         self.set_credential(token=self.token1)
         data = {"phone_number": "09199999999"}
         response = self.client.put(self.test_urls["edit-profile"], data)
-        self.assertEquals(response.status_code, status.HTTP_200_OK) 
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_edit_phone_number_UNAUTHORIZED(self):
         self.unset_credential()
@@ -218,12 +221,12 @@ class UserProfileApiTest(APITestCase):
         data = {"national_code": "0000000000000000000000000000000000000000000000000000000000000000000000"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_edit_national_code(self):
         self.set_credential(token=self.token1)
         data = {"national_code": "000000111"}
         response = self.client.put(self.test_urls["edit-profile"], data)
-        self.assertEquals(response.status_code, status.HTTP_200_OK) 
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_edit_national_code_UNAUTHORIZED(self):
         self.unset_credential()
@@ -236,7 +239,7 @@ class UserProfileApiTest(APITestCase):
         data = {"description": "this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description this is a test description"}
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_edit_description(self):
         self.set_credential(token=self.token1)
         data = {"description": "this is a test description"}
@@ -249,7 +252,7 @@ class UserProfileApiTest(APITestCase):
         response = self.client.put(self.test_urls["edit-profile"], data)
         self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
 
-    def test_edit_avatar(self):  
+    def test_edit_avatar(self):
 
         self.set_credential(self.token1)
 
@@ -264,7 +267,7 @@ class UserProfileApiTest(APITestCase):
                 format='multipart')
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_edit_avatar_UNAUTHORIZED(self):  
+    def test_edit_avatar_UNAUTHORIZED(self):
 
         self.unset_credential()
 
@@ -288,3 +291,59 @@ class UserProfileApiTest(APITestCase):
         self.unset_credential()
         response = self.client.get(self.test_urls["my-profile"])
         self.assertEquals(response.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+
+class UserPaymentAPITest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+
+        self.user2 = get_user_model().objects.create(is_active=True, email="mohammad@gmail.com")
+        self.user2.set_password("some-strong2pass")
+        self.user2.save()
+
+        self.user3 = get_user_model().objects.create(is_active=True, email="reza@gmail.com")
+        self.user3.set_password("some-strong2pass")
+        self.user3.save()
+
+        self.token1 = Token.objects.create(user=self.user1)
+        self.token2 = Token.objects.create(user=self.user2)
+        self.token3 = Token.objects.create(user=self.user3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def test_pay_unauth(self):
+        data = {"credit": 10}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_pay_not_valid(self):
+        self.set_credential(self.token1)
+        data = {"credit": -10}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"credit": 'NaN'}
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+    def test_pay_success(self):
+        self.set_credential(self.token1)
+        data = {"credit": 10}
+        old_cred = get_user_model().objects.get(pk=1).balance
+        resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        new_cred = get_user_model().objects.get(pk=1).balance
+        self.assertEqual(old_cred + data['credit'], new_cred)

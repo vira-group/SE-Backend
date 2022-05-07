@@ -247,7 +247,7 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
 
     def get_queryset(self):
         min_size = int(self.request.query_params.get('size', 0))
-        print("\n min size: ", min_size)
+        # print("\n min size: ", min_size)
 
         if min_size < 0:
             min_size = 0
