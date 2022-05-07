@@ -1,0 +1,57 @@
+name: Django CD
+
+on:
+  push:
+    branches:
+      - main
+      - Develop
+      - sprint3-cd
+      - deploy
+#      - origin/sprint2
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Make migrations
+      run: |
+        cd HotelCenter
+        python manage.py makemigrations
+    - name: Run Tests
+      run: |
+        cd HotelCenter
+        python manage.py test
+    - name: Copy Files
+      run: |
+        sudo cp -r ./ /home/ubuntu/vira/backend/
+        ls /home/ubuntu/vira/backend/ -l
+
+    - name: Set server
+      run: |
+        cd /home/ubuntu/vira/
+        sudo systemctl start docker
+        sudo service docker start
+        sudo docker-compose ps
+
+        sudo docker-compose down
+        sudo docker-compose build
+        sudo docker-compose up -d
+
+
