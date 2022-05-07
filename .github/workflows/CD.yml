@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CD
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main
       - Develop
       - sprint3-cd
+      - deploy
 #      - origin/sprint2
   pull_request:
     branches: [ main ]
@@ -39,5 +40,15 @@ jobs:
         python manage.py test
     - name: Copy Files
       run: |
-        sudo cp -r ./ /home/ubuntu/vira/backendtest/
-        ls /home/ubuntu/vira/backendtest/ -l
+        sudo cp -r ./ /home/ubuntu/vira/backend/
+        ls /home/ubuntu/vira/backend/ -l
+
+    - name: Set server
+      run: |
+        cd /home/ubuntu/vira/
+        docker-compose down
+        docker-compose build
+        docker-compose up -d
+        docker-compose ps
+
+
