@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer
 from rest_framework import status
 from django.utils.timezone import datetime
+from rest_framework.permissions import IsAuthenticated
 
 class RoomspaceReserveList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, roomspace_id, format=None):
         roomspace = get_object_or_404(RoomSpace, id=roomspace_id)
         hotel = roomspace.room.hotel
@@ -20,6 +22,7 @@ class RoomspaceReserveList(APIView):
 
 
 class ReserveList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         reserveList = Reserve.objects.filter(user =  request.user)
         serializer = ReserveSerializer(reserveList, many=True)
