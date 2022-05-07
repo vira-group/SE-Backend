@@ -48,10 +48,12 @@ jobs:
         cd /home/ubuntu/vira/
         sudo systemctl start docker
         sudo service docker start
+        sudo docker-compose ps
+        docker-compose ps
+
 
         docker-compose down
         docker-compose build
         docker-compose up -d
-        docker-compose ps
 
 
