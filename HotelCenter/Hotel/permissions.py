@@ -48,13 +48,19 @@ class IsRoomSpaceOwnerOrEditor(permissions.BasePermission):
 
     def has_permission(self, request, view):
         # print(view.room_id, "preere\n")
-        try:
+        # if request.method in permissions.SAFE_METHODS:
+        #     # print('in obj prem ', request.method)
+        #     return True
 
-            room: Room = Room.objects.get(view.room_id)
+        # room: Room = Room.objects.get(pk=view.room_id)
+        try:
+            # print('in permission has ', view.room_id)
+            room: Room = Room.objects.get(pk=view.room_id)
+            # print('room', room)
             if room.hotel.creator == request.user or request.user in room.hotel.editors:
                 return True
         except:
             # print('not found per')
             return False
 
-        return False
+        return True

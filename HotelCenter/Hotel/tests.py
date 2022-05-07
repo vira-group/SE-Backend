@@ -566,4 +566,4 @@ class RoomTestCase(APITestCase):
         # print('hotel', room.hotel.creator)
         resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data)
         # print(resp.data)
-        # self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
