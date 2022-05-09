@@ -32,9 +32,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost'
+    'http://localhost'
 ]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -94,6 +93,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'Hotel_center',
+    #     'USER': 'root',
+    #     'PASSWORD': 'my-secret-pw',
+    #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+    #     'PORT': '3306',
+    # },
     'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'testdb.sqlite3',
