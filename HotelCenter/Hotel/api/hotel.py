@@ -9,8 +9,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.dateparse import parse_date
 
 from ..permissions import *
-from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve
-from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer
+from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
+from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
+    , FavoriteHotelSerializer
 from ..serializers.room_serializers import PublicRoomSerializer
 from ..filter_backends import HotelMinRateFilters
 
@@ -77,9 +78,6 @@ class HotelViewSet(viewsets.ModelViewSet):
             valid_hotels.add(s.room.hotel)
 
         return list(valid_hotels)
-
-
-
 
     def list(self, request, *args, **kwargs):
 
@@ -303,3 +301,37 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
                 return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
 
         return super(HotelSearchViewSet, self).list(request, *args, **kwargs)
+
+
+class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, viewsets.mixins.CreateModelMixin):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FavoriteHotelSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = FavoriteHotel.objects.filter(user=user)
+        return queryset
+
+    def create(self, request: rest_framework.request.Request, *args, **kwargs):
+        try:
+            hotel_id = int(request.data['hotel_id'])
+        except:
+            return Response("Field hotel_id required", status=http.HTTPStatus.BAD_REQUEST)
+
+        try:
+            hotel = Hotel.objects.get(pk=hotel_id)
+        except:
+            return Response('Hotel Not found', status=http.HTTPStatus.NOT_FOUND)
+
+        favs: FavoriteHotel = FavoriteHotel.objects.filter(hotel=hotel, user=request.user).first()
+
+        if favs is None:
+            new_fav = FavoriteHotel(user=request.user, hotel=hotel)
+            new_fav.save()
+            nf = FavoriteHotelSerializer(instance=new_fav)
+
+            return Response(nf.data, status=http.HTTPStatus.OK)
+
+        else:
+            favs.delete()
+            return Response('hotel deleted from favorites', status=http.HTTPStatus.OK)

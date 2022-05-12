@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Hotel, Facility, HotelImage
+from ..models import Hotel, Facility, HotelImage, FavoriteHotel
 
 
 class FacilitiesSerializer(serializers.ModelSerializer):
@@ -35,7 +35,6 @@ class HotelSerializer(serializers.ModelSerializer):
 
         cr.save()
         # print('in hotel serializer\nNew hotel with facility: ', cr)
-
         return cr
 
 
@@ -46,3 +45,9 @@ class HotelImgSerializer(serializers.ModelSerializer):
         model = HotelImage
         fields = ['image', 'id', 'hotel']
         # read_only_fields = ['hotel']
+
+
+class FavoriteHotelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteHotel
+        fields = ['hotel', 'user_id']

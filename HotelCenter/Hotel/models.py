@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from Account.models import User
+from rest_framework.authentication import get_user_model
 
 
 class Facility(models.Model):
@@ -106,7 +107,7 @@ class Reserve(models.Model):
     @property
     def total_price(self):
         total_days = (self.end_day - self.start_day)
-        total_price = (total_days.days+1) * self.price_per_day
+        total_price = (total_days.days + 1) * self.price_per_day
         return total_price
 
     @property
@@ -114,3 +115,8 @@ class Reserve(models.Model):
         room = self.roomspace.room
         hotel = room.hotel
         return (hotel.id)
+
+
+class FavoriteHotel(models.Model):
+    user = models.ForeignKey(get_user_model(), related_name='favorites', on_delete=models.CASCADE)
+    hotel = models.ForeignKey(Hotel, related_name='likes', on_delete=models.CASCADE)
