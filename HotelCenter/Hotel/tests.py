@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Hotel, Facility, HotelImage, Room, roomFacility, Reserve, RoomSpace
+from .models import Hotel, Facility, HotelImage, Room, roomFacility, Reserve, RoomSpace, FavoriteHotel
 
 
 def my_reverse(viewname, kwargs=None, query_kwargs=None):
@@ -324,6 +324,108 @@ class HotelTestCase(APITestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
         self.assertTrue((len(resp.data['owners']) == 1) and (len(resp.data['editors']) == 2))
+
+    def test_favorite_hotel_unauthorized(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+
+        # self.set_credential(self.token1)
+        resp = self.client.get(my_reverse('favorite_hotels-list'))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        resp = self.client.post(my_reverse('favorite_hotels-list'))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_favorite_hotel_add_invalid_hotel(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+
+        self.set_credential(self.token1)
+        data = {
+            "hotel": 1
+        }
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {
+            "hotel_id": 1000
+        }
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+
+    def test_favorite_hotel_add_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+
+        self.set_credential(self.token1)
+        data = {
+            "hotel_id": 2
+        }
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        data = {
+        "hotel_id": 3
+        }
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        resp = self.client.get(my_reverse('favorite_hotels-list'))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 2)
+
+        data = {
+            "hotel_id": 2
+        }
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        resp = self.client.get(my_reverse('favorite_hotels-list'))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 1)
+
+
+
+    def test_favorite_hotel_list_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+
+        self.set_credential(self.token1)
+        FavoriteHotel.objects.create(user=self.user1, hotel=hotel1)
+        FavoriteHotel.objects.create(user=self.user1, hotel=hotel2)
+        FavoriteHotel.objects.create(user=self.user1, hotel=hotel3)
+
+        resp = self.client.get(my_reverse('favorite_hotels-list'))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.data), 3)
 
 
 class RoomTestCase(APITestCase):
@@ -802,6 +904,3 @@ class ReserveTestCase(APITestCase):
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-
-
