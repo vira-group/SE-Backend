@@ -356,17 +356,16 @@ class HotelTestCase(APITestCase):
         data = {
             "hotel": 1
         }
-        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)  # hotel_id not send
 
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
         data = {
             "hotel_id": 1000
         }
-        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
+        resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)  # hotel_id Not exist
 
-        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
-
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
 
     def test_favorite_hotel_add_success(self):
         self.hotel_data1.pop("facilities")
@@ -385,7 +384,7 @@ class HotelTestCase(APITestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
         data = {
-        "hotel_id": 3
+            "hotel_id": 3
         }
         resp = self.client.post(my_reverse('favorite_hotels-list'), data=data)
 
@@ -405,8 +404,6 @@ class HotelTestCase(APITestCase):
         resp = self.client.get(my_reverse('favorite_hotels-list'))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.data), 1)
-
-
 
     def test_favorite_hotel_list_success(self):
         self.hotel_data1.pop("facilities")
