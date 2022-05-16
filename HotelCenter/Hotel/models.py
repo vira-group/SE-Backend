@@ -62,9 +62,9 @@ class roomFacility(models.Model):
 class Room(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')  # The hotel that this room is for
     type = models.CharField(max_length=100, null=False, blank=False, default=None)
-    size = models.IntegerField(default=0, null=False, blank=False)
+    size = models.IntegerField(default=0, null=False, blank=False)  # room size(meter)
     view = models.CharField(max_length=100, null=False, blank=False, default=None)
-    sleeps = models.IntegerField(default=1, blank=False, null=False)
+    sleeps = models.IntegerField(default=1, blank=False, null=False)  # number of people in the room
     price = models.IntegerField(blank=False, null=False)
     option = models.CharField(max_length=100, blank=True, null=True)
     facilities = models.ManyToManyField(roomFacility, related_name='rooms')
@@ -75,7 +75,7 @@ class Room(models.Model):
 
 class RoomImage(models.Model):
     image = models.ImageField(upload_to='roomImages')
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)  # The room taht this image is for
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)  # The room that this image is for
 
 
 class RoomSpace(models.Model):

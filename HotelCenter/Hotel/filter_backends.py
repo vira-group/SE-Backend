@@ -8,4 +8,4 @@ class HotelMinRateFilters(filters.FilterSet):
 
     class Meta:
         model = Hotel
-        fields = ['min_rate', 'name', 'rate', 'facilities', 'name_contain']
+        fields = ['min_rate', 'name', 'rate', 'facilities', 'name_contain', 'rooms__facilities']

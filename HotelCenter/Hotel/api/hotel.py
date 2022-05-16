@@ -57,7 +57,7 @@ class HotelViewSet(viewsets.ModelViewSet):
             print('\n rooms : ', rooms)
 
             for r in rooms:
-                if r.size >= size:
+                if r.sleeps >= size:
                     valid_h.append(h)
                     break
 
@@ -244,12 +244,12 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
     serializer_class = PublicRoomSerializer
 
     def get_queryset(self):
-        min_size = int(self.request.query_params.get('size', 0))
+        min_size = int(self.request.query_params.get('size', 1))
         # print("\n min size: ", min_size)
 
-        if min_size < 0:
-            min_size = 0
-        all_rooms = Room.objects.filter(hotel=self.hotel_id, size__gte=min_size).all()
+        if min_size < 1:
+            min_size = 1
+        all_rooms = Room.objects.filter(hotel=self.hotel_id, sleeps__gte=min_size).all()
 
         if self.request.query_params.get('check_in'):
             check_in = parse_date(self.request.query_params['check_in'])
