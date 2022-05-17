@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'Hotel_center',
         'USER': 'h_user',
         'PASSWORD': 'StrOng1-paSs2',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'HOST': 'db',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     },
     'TEST': {
