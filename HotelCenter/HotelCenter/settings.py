@@ -32,9 +32,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost'
+    'http://localhost'
 ]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -90,17 +89,25 @@ WSGI_APPLICATION = 'HotelCenter.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Hotel_center',
+        'USER': 'h_user',
+        'PASSWORD': 'StrOng1-paSs2',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3036',
     },
     'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'testdb.sqlite3',
     }
 }
-# if 'test' in sys.argv:
-#     DATABASES['default'] = DATABASES['TEST']
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['TEST']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -164,6 +171,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+
 }
 
 # EMAIL
@@ -173,7 +182,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "hotelcenter.noreply@gmail.com"
-EMAIL_HOST_PASSWORD = "Vira1400SE"
+EMAIL_HOST_PASSWORD = "Vira1400SE1"
 # DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
