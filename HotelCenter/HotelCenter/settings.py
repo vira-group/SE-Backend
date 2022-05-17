@@ -89,25 +89,25 @@ WSGI_APPLICATION = 'HotelCenter.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'Hotel_center',
-    #     'USER': 'root',
-    #     'PASSWORD': 'my-secret-pw',
-    #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-    #     'PORT': '3306',
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Hotel_center',
+        'USER': 'h_user',
+        'PASSWORD': 'StrOng1-paSs2',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3036',
+    },
     'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'testdb.sqlite3',
     }
 }
-# if 'test' in sys.argv:
-#     DATABASES['default'] = DATABASES['TEST']
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['TEST']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
