@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet, \
-    MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet
+    MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet
 from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet
 from .api.reserve import ReserveList, RoomspaceReserveList
 
@@ -29,6 +29,9 @@ router.register('best', BestHotelViewSet, basename='best-hotel')
 router.register('roomfacilities', roomFacilityViewSet, basename='roomfacility-list')
 router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
 router.register('favorites', FavoriteViewSet, basename="favorite_hotels")
+
+hotel_admin_router = routers.DefaultRouter()
+hotel_admin_router.register('panel', HotelInfoViewSet, basename='hotel-admin-panel')
 
 hotel_router = routers.DefaultRouter()
 hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
@@ -44,6 +47,7 @@ urlpatterns = [
     path('reserve/', ReserveList.as_view()),
     path('', include(router.urls)),
     path('<int:hid>/', include(hotel_router.urls)),
+    path('admin/', include(hotel_admin_router.urls)),
 
     path('room/<int:room_id>/', include(room_router.urls)),
 

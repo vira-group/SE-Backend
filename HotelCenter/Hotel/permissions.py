@@ -18,7 +18,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.creator == request.user
 
 
-class IsEditor(permissions.IsAuthenticated):
+class IsEditor(permissions.BasePermission):
     """
     Custom permission to only allow editors or creator of an hotel to edit it.
     """
@@ -34,7 +34,6 @@ class IsEditorOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request: rest_framework.request.Request, view, obj):
         if request.method in permissions.SAFE_METHODS:
-            # print('in obj prem ', request.method)
             return True
         # if not bool(request.user.is_authenticated):
         #     return False

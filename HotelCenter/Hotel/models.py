@@ -46,6 +46,15 @@ class Hotel(models.Model):
             img = ''
         return img
 
+    @property
+    def capacity(self):
+        rooms = self.rooms.all()
+        cap = 0
+        for r in rooms:
+            count = r.spaces.count()
+            cap += count * r.sleeps
+        return cap
+
 
 class HotelImage(models.Model):
     image = models.ImageField(null=False, blank=False, upload_to='hotel')
@@ -102,7 +111,7 @@ class Reserve(models.Model):
     lastname = models.CharField(max_length=64, blank=False, null=False)
     national_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=64, blank=True, null=True)
-    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
+    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, related_name='reserves')
 
     @property
     def total_price(self):
