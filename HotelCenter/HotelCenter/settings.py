@@ -94,12 +94,12 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Hotel_center',
         'USER': 'h_user',
         'PASSWORD': 'StrOng1-paSs2',
         'HOST': 'db',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'PORT': '5432',
     },
     'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
