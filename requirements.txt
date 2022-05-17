@@ -21,8 +21,7 @@ idna==3.3
 itypes==1.2.0
 Jinja2==3.0.3
 MarkupSafe==2.1.0
-mysql-client==0.0.1
-mysqlclient==2.1.0
+pymysql
 nose==1.3.7
 oauthlib==3.2.0
 Pillow==9.0.1
