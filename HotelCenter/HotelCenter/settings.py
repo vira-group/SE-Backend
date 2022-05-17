@@ -99,7 +99,7 @@ DATABASES = {
         'USER': 'h_user',
         'PASSWORD': 'StrOng1-paSs2',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3036',
+        'PORT': '3306',
     },
     'TEST': {
         'ENGINE': 'django.db.backends.sqlite3',
