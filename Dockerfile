@@ -17,9 +17,9 @@ RUN mkdir static
 # !NOTE: make migrations and migrate in the docker-compose file and before running server
 #RUN cd HotelCenter
 #RUN echo | ls
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-RUN yes yes | python3 manage.py collectstatic
+# RUN python3 manage.py makemigrations
+# RUN python3 manage.py migrate
+# RUN yes yes | python3 manage.py collectstatic
 
 #running tests
 RUN python3 manage.py test
