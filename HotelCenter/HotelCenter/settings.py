@@ -32,7 +32,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost'
+    'http://localhost',
+    'http://172.17.3.165'
 ]
 
 INSTALLED_APPS = [
