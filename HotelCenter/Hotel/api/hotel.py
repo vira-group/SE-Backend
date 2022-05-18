@@ -13,7 +13,7 @@ from ..permissions import *
 from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
     , FavoriteHotelSerializer
-from ..serializers.room_serializers import PublicRoomSerializer
+from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
 from ..filter_backends import HotelMinRateFilters
 
 
@@ -346,30 +346,64 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         """
         number of check_in in the specified date
         """
-        return Reserve.objects.filter(roomspace__room__hotel=hotel, start_day=date).count()
+        return Reserve.objects.filter(room__hotel=hotel, start_day=date).count()
 
     def check_out_count(self, hotel: Hotel, date):
         """
         number of check_out in the specified date
         """
-        return Reserve.objects.filter(roomspace__room__hotel=hotel, end_day=date).count()
+        return Reserve.objects.filter(room__hotel=hotel, end_day=date).count()
 
     def people_count(self, hotel: Hotel, date):
         """
         number of people(based on reserved rooms) in the specified date
         """
-        reserves = Reserve.objects.filter(roomspace__room__hotel=hotel, start_day__lte=date,
-                                          end_day__gt=date).select_related('roomspace').values('roomspace').all()
+        reserves = Reserve.objects.filter(room__hotel=hotel, start_day__lte=date,
+                                          end_day__gt=date).select_related('room').all()
+        # print('people count: ', reserves)
+        count = 0
 
-    def full_rooms(self, hotel: Hotel, date):
-        """
-        number of reserved room(check_in date until the day before check_out) in the specified date
-        """
+        for r in reserves:
+            count += r.room.sleeps
 
-    def empty_rooms(self, hotel: Hotel, date):
+        return count
+
+    def full_empty_rooms_spaces(self, hotel: Hotel, date):
         """
-        number of Not Reserved room in the specified date
+        number of reserved and no completely reserved room(check_in date until the day before check_out)
+        in the specified date
         """
+        rooms = hotel.rooms.prefetch_related('spaces').all()
+        reserved_spaces = (Reserve.objects.filter(room__in=rooms, start_day__lte=date, end_day__gt=date)
+                           .values_list('roomspace').all())
+        reserved_spaces = [r for tup in reserved_spaces for r in tup]
+
+        # print("full_rooms  ,rs: ", reserved_spaces)
+        full_spaces = []
+        empty_spaces = []
+        full_rooms = []
+        not_full_rooms = []
+        for r in rooms:
+            full = True
+            for s in r.spaces.all():
+                # print('space_id: ', s.id)
+                if not (s.id in reserved_spaces):
+                    full = False
+                    empty_spaces.append(s)
+                else:
+                    full_spaces.append(s)
+
+            if full:
+                full_rooms.append(r)
+            else:
+                not_full_rooms.append(r)
+
+        fr = PublicRoomSerializer(full_rooms, many=True)
+        nfr = PublicRoomSerializer(not_full_rooms, many=True)
+
+        fs = RoomSpaceSerializer(full_spaces, many=True)
+        es = RoomSpaceSerializer(empty_spaces, many=True)
+        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs.data, 'empty': es.data}}
 
     def room_count(self, hotel: Hotel):
         rooms = hotel.rooms.all()
@@ -403,11 +437,13 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
 
         # hotel: Hotel = get_object_or_404(Hotel, pk=int(kwargs.get('pk')))
 
+        stat = self.full_empty_rooms_spaces(hotel, date)
+
         data = {
             'date': date,
             'people_in_hotel': self.people_count(hotel, date),
-            'empty_rooms': self.empty_rooms(hotel, date),
-            "full_rooms": self.full_rooms(hotel, date),
+            'spaces_status': stat['spaces'],
+            "rooms_status": stat['rooms'],
             'room_count': self.room_count(hotel),
             'check_in_count': self.check_in_count(hotel, date),
             'check_out_count': self.check_out_count(hotel, date),
