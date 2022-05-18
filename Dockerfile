@@ -24,7 +24,7 @@ RUN mkdir static
 #running tests
 RUN python3 manage.py test
 
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('viraadmin@test.com', 'ViraSE1234')" | python manage.py shell
+#RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('viraadmin@test.com', 'ViraSE1234')" | python manage.py shell
 
 #CMD ["python3","manage.py", "test"]
 # wsgi webserver on linux
