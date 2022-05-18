@@ -53,5 +53,6 @@ jobs:
         sudo docker-compose down
         sudo docker-compose build
         sudo docker-compose up -d
-
+        sudo docker exec vira_backend_1 python manage.py makemigrations
+        sudo docker exec vira_backend_1 python manage.py migrate
 
