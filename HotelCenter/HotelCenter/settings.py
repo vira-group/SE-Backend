@@ -30,6 +30,9 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
+CSRF_TRUSTED_ORIGINS = [
+    'http://172.17.3.165'
+]
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost',
