@@ -145,7 +145,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/api/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -153,7 +153,7 @@ STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
 STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
 
 # URL used to access the media
-MEDIA_URL = '/media/'
+MEDIA_URL = '/api/media/'
 MEDIA_ROOT = os.path.join(STATIC_ROOT, "media")
 
 #
@@ -163,8 +163,6 @@ MEDIA_ROOT = os.path.join(STATIC_ROOT, "media")
 # STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
 
 # URL used to access the media
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(STATIC_ROOT, "media")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
