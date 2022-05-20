@@ -652,8 +652,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": "2022-07-19",
+            "end_day": "2022-07-19",
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -671,8 +671,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": "2022-07-19",
+            "end_day": "2022-07-19",
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -728,8 +728,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-14",
+            "start_day": "2022-07-19",
+            "end_day": "2022-07-14",
             "firstname": "fn",
             "lastname": "ln",
             "room": 2,
@@ -770,8 +770,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": "2022-07-19",
+            "end_day": "2022-07-19",
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -791,8 +791,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": "2022-07-19",
+            "end_day": "2022-07-19",
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
