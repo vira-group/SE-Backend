@@ -65,7 +65,7 @@ class IsRoomSpaceOwnerOrEditor(permissions.BasePermission):
         return True
 
 
-class IsReserveHotelEditor(permissions.BasePermission):
+class IsUrlHotelEditor(permissions.BasePermission):
 
     def has_permission(self, request, view):
         # print('in permission')

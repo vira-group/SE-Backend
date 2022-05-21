@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from ..filter_backends import *
 from ..permissions import *
 from ..models import Reserve, Room, RoomSpace
-from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer
+from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer, AdminReserverSerializer
 
 
 class RoomspaceReserveList(APIView):
@@ -73,9 +73,9 @@ def checkCondition(roomspace, start, end):
 
 class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
-    permission_classes = (IsAuthenticated, IsReserveHotelEditor)
+    permission_classes = (IsAuthenticated, IsUrlHotelEditor)
     filterset_class = AdminReserveFilter
-    serializer_class = ReserveSerializer
+    serializer_class = AdminReserverSerializer
 
     def get_queryset(self):
         query_set = Reserve.objects.filter(room__hotel=self.kwargs.get('hid')).all()

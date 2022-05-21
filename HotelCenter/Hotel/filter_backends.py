@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Hotel, Reserve
+from .models import Hotel, Reserve, RoomSpace, Room
 
 
 class HotelMinRateFilters(filters.FilterSet):
@@ -20,3 +20,11 @@ class AdminReserveFilter(filters.FilterSet):
     class Meta:
         model = Reserve
         fields = ['room', 'roomspace', 'start_day', 'end_day', 'start_before', 'start_after', 'end_before', 'end_after']
+
+
+class AdminRoomSpaceFilter(filters.FilterSet):
+    name_start = filters.CharFilter(field_name='name', lookup_expr='startswith')
+
+    class Meta:
+        model = RoomSpace
+        fields = ['room', 'id', 'name', 'name_start']

@@ -1,17 +1,22 @@
 from email import message
 from django.shortcuts import get_object_or_404
-from ..models import Room, roomFacility, RoomImage, RoomSpace
-from ..permissions import IsRoomSpaceOwnerOrEditor
-from ..serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer \
-    , RoomSpaceSerializer
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework import viewsets
-from ..models import Hotel
 from rest_framework.exceptions import NotFound, PermissionDenied
 import http
+
+from ..filter_backends import AdminRoomSpaceFilter
+from ..models import Room, roomFacility, RoomImage, RoomSpace
+from ..permissions import IsRoomSpaceOwnerOrEditor, IsUrlHotelEditor
+from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer,
+                                            RoomSpaceSerializer)
+from ..models import Hotel
+
 
 class RoomList(APIView):
 
@@ -68,7 +73,6 @@ class ImageList(APIView):
 class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                        viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin,
                        viewsets.mixins.UpdateModelMixin):
-
     permission_classes = [permissions.IsAuthenticated, IsRoomSpaceOwnerOrEditor]
     serializer_class = RoomSpaceSerializer
 
@@ -97,3 +101,14 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             return Response(data=space.data, status=http.HTTPStatus.CREATED)
         else:
             return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
+
+
+class AdminRoomSpaceViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated, IsUrlHotelEditor]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = RoomSpaceSerializer
+    filterset_class = AdminRoomSpaceFilter
+
+    def get_queryset(self):
+        query_set = RoomSpace.objects.filter(room__hotel_id=self.kwargs['hid'])
+        return query_set

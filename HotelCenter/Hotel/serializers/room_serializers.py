@@ -14,7 +14,7 @@ class PublicRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['hotel', 'type', 'size', 'view', 'sleeps', 'price', 'option', 'hotel_info', 'room_facilities','id']
+        fields = ['hotel', 'type', 'size', 'view', 'sleeps', 'price', 'option', 'hotel_info', 'room_facilities', 'id']
         read_only_fields = ['hotel']
 
     def get_hotel_info(self, obj):
@@ -27,7 +27,7 @@ class PublicRoomSerializer(serializers.ModelSerializer):
         facility_list = obj.facilities
         serializer = roomFacilitiesSerializer(facility_list, many=True)
         data = serializer.data
-        return (data)
+        return data
 
 
 class roomFacilitiesSerializer(serializers.ModelSerializer):
