@@ -20,7 +20,7 @@ from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet, \
     MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet
 from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet
-from .api.reserve import ReserveList, RoomspaceReserveList
+from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet
 
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
@@ -36,6 +36,7 @@ hotel_admin_router.register('panel', HotelInfoViewSet, basename='hotel-admin-pan
 hotel_router = routers.DefaultRouter()
 hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 hotel_router.register('search', HotelSearchViewSet, basename='hotel-room-search')
+hotel_router.register('reserves', AdminReserveViewSet, basename='hotel-admin-reserve')
 
 room_router = routers.DefaultRouter()
 room_router.register('spaces', RoomSpaceViewSet, basename='room-space')

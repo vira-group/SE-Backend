@@ -1,6 +1,6 @@
 import rest_framework.request
 from rest_framework import permissions
-from .models import Room
+from .models import Room, Hotel
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -63,3 +63,11 @@ class IsRoomSpaceOwnerOrEditor(permissions.BasePermission):
             return False
 
         return True
+
+
+class IsReserveHotelEditor(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        # print('in permission')
+        hotel = Hotel.objects.filter(pk=view.kwargs['hid']).first()
+        return (hotel.creator == request.user) or (request.user in hotel.editors.all())

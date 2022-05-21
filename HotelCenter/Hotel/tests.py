@@ -2,6 +2,7 @@ import http
 import os
 import io
 import random
+from datetime import timedelta, date
 
 from django.utils.datetime_safe import datetime
 from rest_framework import status, reverse
@@ -751,8 +752,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -770,8 +771,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -780,6 +781,7 @@ class ReserveTestCase(APITestCase):
             "phone_number": "09199999999"
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
+        # print('not credit data: ', response.data)
         self.assertEquals(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
     def test_reserve_invalid_date_pastdate(self):
@@ -789,8 +791,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2020-05-19",
-            "end_day": "2020-05-19",
+            "start_day": datetime.today().date() - timedelta(days=4),
+            "end_day": datetime.today().date() + timedelta(days=2),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -808,8 +810,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-14",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() - timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -827,8 +829,8 @@ class ReserveTestCase(APITestCase):
         roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
         self.set_credential(token=self.token1)
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-14",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 2,
@@ -848,8 +850,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -869,8 +871,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,
@@ -890,8 +892,8 @@ class ReserveTestCase(APITestCase):
         self.user1.balance = 1000000
         self.user1.save()
         data = {
-            "start_day": "2022-05-19",
-            "end_day": "2022-05-19",
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
             "firstname": "fn",
             "lastname": "ln",
             "room": 1,

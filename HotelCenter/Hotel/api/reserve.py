@@ -1,13 +1,17 @@
 import http
 
 from django.shortcuts import get_object_or_404
-from ..models import Reserve, Room, RoomSpace
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer
-from rest_framework import status
+from rest_framework import status, viewsets
 from django.utils.timezone import datetime
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+
+from ..filter_backends import *
+from ..permissions import *
+from ..models import Reserve, Room, RoomSpace
+from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer
 
 
 class RoomspaceReserveList(APIView):
@@ -65,3 +69,15 @@ def checkCondition(roomspace, start, end):
                 roomspace_reserve.start_day <= end <= roomspace_reserve.end_day)):
             return False
     return True
+
+
+class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = [DjangoFilterBackend]
+    permission_classes = (IsAuthenticated, IsReserveHotelEditor)
+    filterset_class = AdminReserveFilter
+    serializer_class = ReserveSerializer
+
+    def get_queryset(self):
+        query_set = Reserve.objects.filter(room__hotel=self.kwargs.get('hid')).all()
+        return query_set
+
