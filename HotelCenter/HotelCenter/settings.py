@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
     'Hotel',
     'corsheaders',
+    'Chat',
 ]
 
 MIDDLEWARE = [
