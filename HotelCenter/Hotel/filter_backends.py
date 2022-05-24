@@ -24,7 +24,15 @@ class AdminReserveFilter(filters.FilterSet):
 
 class AdminRoomSpaceFilter(filters.FilterSet):
     name_start = filters.CharFilter(field_name='name', lookup_expr='startswith')
+    name_icontain = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
     class Meta:
         model = RoomSpace
-        fields = ['room', 'id', 'name', 'name_start']
+        fields = ['room', 'name', 'name_start', 'name_icontain']
+
+
+class AdminRoomFilter(filters.FilterSet):
+    size = filters.RangeFilter(field_name='size')
+    class Meta:
+        model = Room
+        fields = ['type', 'sleeps', 'option', 'size', 'view']

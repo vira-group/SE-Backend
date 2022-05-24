@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied
 import http
 
-from ..filter_backends import AdminRoomSpaceFilter
+from ..filter_backends import AdminRoomSpaceFilter,AdminRoomFilter
 from ..models import Room, roomFacility, RoomImage, RoomSpace
 from ..permissions import IsRoomSpaceOwnerOrEditor, IsUrlHotelEditor
 from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer,
@@ -111,4 +111,15 @@ class AdminRoomSpaceViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         query_set = RoomSpace.objects.filter(room__hotel_id=self.kwargs['hid'])
+        return query_set
+
+
+class AdminRoomViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated, IsUrlHotelEditor]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = PublicRoomSerializer
+    filterset_class = AdminRoomFilter
+
+    def get_queryset(self):
+        query_set = Room.objects.filter(hotel_id=self.kwargs['hid'])
         return query_set

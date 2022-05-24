@@ -903,3 +903,108 @@ class ReserveTestCase(APITestCase):
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class AdminTestCase(APITestCase):
+
+    def setUp(self) -> None:
+        """
+            RUNS BEFORE EACH TEST
+        """
+        self.facility1 = {"name": "free_wifi"}
+        self.facility2 = {"name": "parking"}
+
+        Facility.objects.create(**self.facility1)
+        Facility.objects.create(**self.facility2)
+
+        self.hotel_data1 = {
+            "name": "parsian",
+            "city": "Esfehan",
+            "state": "Esfehan",
+            "description": "good quality including breakfast",
+            "phone_numbers": "09123456700",
+
+            "facilities": [{"name": "free_wifi"}],
+            "address": "Esfahan,Iran"
+        }
+        self.hotel_data2 = {
+            "name": "Ferdosi",
+            "city": "Khorasan",
+            "state": "mashhad",
+            "description": "with best view of the city and places",
+            "phone_numbers": "09123456709",
+            'rate': 4.4,
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address": "Khorasan,Iran"
+        }
+
+        self.room_data1 = {
+            "type": "Standard Double Room",
+            "view": "no view",
+            "sleeps": "2",
+            "price": "10000",
+            "option": "free wifi",
+        }
+        self.room_data2 = {
+            "type": "King size Double bed Room",
+            "view": "city",
+            "sleeps": 3,
+            "price": "10000",
+            "option": "free wifi",
+        }
+
+        self.user1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+
+        self.user2 = get_user_model().objects.create(is_active=True, email="hediyeh1@gmail.com")
+        self.user2.set_password("some-strong2pass")
+        self.user2.save()
+
+        self.user3 = get_user_model().objects.create(is_active=True, email="hediyeh3@gmail.com")
+        self.user3.set_password("some-strong2pass")
+        self.user3.save()
+
+        self.token1 = Token.objects.create(user=self.user1)
+        self.token2 = Token.objects.create(user=self.user2)
+        self.token3 = Token.objects.create(user=self.user3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def test_admin_panel_no_auth(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.unset_credential()
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # No auth admin room
+        resp = self.client.post(my_reverse("hotel-admin-room-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        # No auth admin room space
+        resp = self.client.post(my_reverse("hotel-admin-roomspace-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        # No auth admin panel
+        resp = self.client.post(my_reverse("hotel-admin-panel-detail", {"pk": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+

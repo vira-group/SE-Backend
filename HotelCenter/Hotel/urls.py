@@ -19,7 +19,8 @@ from django.urls import path, include
 from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet, \
     MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet
-from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet
+from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
+    AdminRoomViewSet
 from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet
 
 router = routers.DefaultRouter()
@@ -37,6 +38,8 @@ hotel_router = routers.DefaultRouter()
 hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 hotel_router.register('search', HotelSearchViewSet, basename='hotel-room-search')
 hotel_router.register('reserves', AdminReserveViewSet, basename='hotel-admin-reserve')
+hotel_router.register('roomspaces', AdminRoomSpaceViewSet, basename='hotel-admin-roomspace')
+hotel_router.register('rooms', AdminRoomViewSet, basename='hotel-admin-room')
 
 room_router = routers.DefaultRouter()
 room_router.register('spaces', RoomSpaceViewSet, basename='room-space')
