@@ -49,6 +49,7 @@ class User(AbstractBaseUser):
     firstName = models.CharField(max_length=30, null=True, blank=True, default=None)
     lastName = models.CharField(max_length=30, null=True, blank=True, default=None)
 
+    username = models.CharField(max_length=30, null=True, blank=True, default=None)
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
