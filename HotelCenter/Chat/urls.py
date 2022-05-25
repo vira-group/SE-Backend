@@ -1,6 +1,8 @@
-import imp
 from django.urls import path
-from .api.chat import MessageAPI
+
+from . import views
+
 urlpatterns = [
-    path('messages', MessageAPI.as_view())
+    path('', views.index, name='index'),
+    path('<str:room_name>/', views.room, name='room'),
 ]
