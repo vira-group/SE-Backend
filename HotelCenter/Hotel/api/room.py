@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied
 import http
 
-from ..filter_backends import AdminRoomSpaceFilter,AdminRoomFilter
+from ..filter_backends import AdminRoomSpaceFilter, AdminRoomFilter
 from ..models import Room, roomFacility, RoomImage, RoomSpace
 from ..permissions import IsRoomSpaceOwnerOrEditor, IsUrlHotelEditor
 from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer,
@@ -81,9 +81,9 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         return queryset
 
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
+        # self.request = request
         self.room_id = kwargs['room_id']
-        print('\nroom_id ', self.room_id)
+        # print('\nroom_id ', self.room_id)
 
         return super(RoomSpaceViewSet, self).dispatch(request, *args, **kwargs)
 
@@ -94,13 +94,20 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
 
         except:
             return Response('Room not found', status=http.HTTPStatus.NOT_FOUND)
-
-        space = RoomSpaceSerializer(data=request.data)
-        if space.is_valid():
-            space.save(room=room)
-            return Response(data=space.data, status=http.HTTPStatus.CREATED)
-        else:
-            return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
+        # print(request.data.get('names', []))
+        ss = []
+        for d in request.data.get('names', []):
+            # print('d', d)
+            space = RoomSpaceSerializer(data=d)
+            if space.is_valid():
+                space.save(room=room)
+                ss.append(space.data)
+            else:
+                # print('space.errors ', space.errors)
+                return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
+        if len(request.data.get('names', [])) == 0:
+            return Response('No Name Found', status=http.HTTPStatus.BAD_REQUEST)
+        return Response(data=ss, status=http.HTTPStatus.CREATED)
 
 
 class AdminRoomSpaceViewSet(viewsets.ReadOnlyModelViewSet):

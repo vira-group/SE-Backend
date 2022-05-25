@@ -416,13 +416,7 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         # self.get_permissions()
 
         self.check_permissions(request)
-        print()
-        try:
-            date = parse_date(request.query_params.get('date', None))
-            if date is None:
-                date = datetime.today().date()
-        except:
-            return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+        # print()
 
         try:
             hotel: Hotel = get_object_or_404(Hotel.objects.prefetch_related('rooms').filter(pk=kwargs.get('pk')))
@@ -436,6 +430,12 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             return Response("Do Not Have Permission", status=http.HTTPStatus.FORBIDDEN)
 
         # hotel: Hotel = get_object_or_404(Hotel, pk=int(kwargs.get('pk')))
+        try:
+            date = parse_date(request.query_params.get('date', None))
+            if date is None:
+                date = datetime.today().date()
+        except:
+            return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
 
         stat = self.full_empty_rooms_spaces(hotel, date)
 
