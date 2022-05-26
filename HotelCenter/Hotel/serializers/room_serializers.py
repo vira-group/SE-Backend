@@ -43,7 +43,13 @@ class RoomImageSerializer(serializers.ModelSerializer):
 
 
 class RoomSpaceSerializer(serializers.ModelSerializer):
+    room_type = serializers.SerializerMethodField()
+
     class Meta:
         model = RoomSpace
-        fields = ['room', 'name', 'id']
+        fields = ['room', 'name', 'id', 'room_type']
         read_only_fields = ['room', 'id']
+
+    def get_room_type(self, obj):
+        if obj.room:
+            return obj.room.type

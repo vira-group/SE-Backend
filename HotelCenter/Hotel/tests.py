@@ -1081,7 +1081,7 @@ class AdminTestCase(APITestCase):
 
         self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
 
-    def test_admin_panel_wrong_data(self):
+    def test_admin_panel_success(self):
         self.hotel_data1.pop("facilities")
         self.hotel_data2.pop('facilities')
         hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
@@ -1098,15 +1098,23 @@ class AdminTestCase(APITestCase):
         resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}))  # , data)
         # print('wrong auth test resp: ', resp.data)
 
-        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
         data = {'date': "r"}
 
         # Wrong data admin panel
         resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}), data)
-        print('wrong auth test resp: ', resp.data)
+        # print('wrong auth test resp: ', resp.data)
 
-        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        data = {'date': date.today()}
+
+        # Wrong data admin panel
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}), data)
+        # print('wrong auth test resp: ', resp.data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.data['date'], data['date'])
 
     def test_admin_panel_room_success(self):
         self.hotel_data1.pop("facilities")
@@ -1124,7 +1132,6 @@ class AdminTestCase(APITestCase):
         resp = self.client.get(my_reverse("hotel-admin-room-list", {"hid": 1}))
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-
 
     def test_admin_panel_room_space_success(self):
         self.hotel_data1.pop("facilities")

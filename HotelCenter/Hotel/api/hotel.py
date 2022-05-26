@@ -145,7 +145,7 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         }
 
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
+        # self.request = request
 
         try:
             self.h_id = int(kwargs.get('hid'))
@@ -434,8 +434,10 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             date = parse_date(request.query_params.get('date', None))
             if date is None:
                 date = datetime.today().date()
+                
         except:
-            return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+            # return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+            date = datetime.today().date()
 
         stat = self.full_empty_rooms_spaces(hotel, date)
 
