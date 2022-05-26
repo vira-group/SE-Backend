@@ -61,6 +61,8 @@ class HotelTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "check_in_range": "9:00-12:00",
+            "check_out_range": "15:00-23:00",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
@@ -71,6 +73,8 @@ class HotelTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "check_in_range": "9:00-12:00",
+            "check_out_range": "15:00-23:00",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,

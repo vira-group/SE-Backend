@@ -46,7 +46,7 @@ class HotelSerializer(serializers.ModelSerializer):
                     instance.facilities.add(Facility.objects.get(pk=f['name']))
 
             instance.save()
-        print("in hotel update: ", request.data.get('facilities', []))
+        # print("in hotel update: ", request.data.get('facilities', []))
         return super(HotelSerializer, self).update(instance, validated_data)
 
 
