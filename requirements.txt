@@ -35,14 +35,11 @@ incremental==21.3.0
 itypes==1.2.0
 Jinja2==3.0.3
 MarkupSafe==2.1.0
-<<<<<<< HEAD
 pymysql
-=======
 msgpack==1.0.3
 mysql-client==0.0.1
 mysqlclient==2.1.0
 ndg-httpsclient==0.5.1
->>>>>>> sprint4-chat
 nose==1.3.7
 numpy==1.22.3
 oauthlib==3.2.0
