@@ -7,11 +7,13 @@ from rest_framework import viewsets, permissions, \
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.dateparse import parse_date
+from django.shortcuts import get_object_or_404
 
 from ..permissions import *
-from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve
-from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer
-from ..serializers.room_serializers import PublicRoomSerializer
+from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
+from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
+    , FavoriteHotelSerializer
+from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
 from ..filter_backends import HotelMinRateFilters
 
 
@@ -49,14 +51,14 @@ class HotelViewSet(viewsets.ModelViewSet):
     def filter_size(self, hotels, size: int):
 
         valid_h = []
-        print('\nhotels ', hotels)
+        # print('\nhotels ', hotels)
         for h in hotels:
-            print('\nh in hotels ', h)
+            # print('\nh in hotels ', h)
             rooms = h.rooms.all()
-            print('\n rooms : ', rooms)
+            # print('\n rooms : ', rooms)
 
             for r in rooms:
-                if r.size >= size:
+                if r.sleeps >= size:
                     valid_h.append(h)
                     break
 
@@ -77,9 +79,6 @@ class HotelViewSet(viewsets.ModelViewSet):
             valid_hotels.add(s.room.hotel)
 
         return list(valid_hotels)
-
-
-
 
     def list(self, request, *args, **kwargs):
 
@@ -103,8 +102,8 @@ class HotelViewSet(viewsets.ModelViewSet):
                 check_in = parse_date(request.query_params['check_in'])
                 check_out = parse_date(request.query_params['check_out'])
 
-                print("check_in", check_in)
-                print("check_out", check_out)
+                # print("check_in", check_in)
+                # print("check_out", check_out)
 
                 if (check_in is None) or (check_out is None):
                     raise ValueError(message='Not valid date')
@@ -177,7 +176,7 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                 # print('change header')
                 return Response(HotelSerializer(self.req_hotel).data, 200)
             except:
-                print(' in is header error')
+                # print(' in is header error')
                 return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
         files = request.data.copy()
@@ -246,12 +245,12 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
     serializer_class = PublicRoomSerializer
 
     def get_queryset(self):
-        min_size = int(self.request.query_params.get('size', 0))
+        min_size = int(self.request.query_params.get('size', 1))
         # print("\n min size: ", min_size)
 
-        if min_size < 0:
-            min_size = 0
-        all_rooms = Room.objects.filter(hotel=self.hotel_id, size__gte=min_size).all()
+        if min_size < 1:
+            min_size = 1
+        all_rooms = Room.objects.filter(hotel=self.hotel_id, sleeps__gte=min_size).all()
 
         if self.request.query_params.get('check_in'):
             check_in = parse_date(self.request.query_params['check_in'])
@@ -268,7 +267,7 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
         for room in rooms:
             spaces = room.spaces.all()
 
-            print('\n\nspaces: ', spaces)
+            # print('\n\nspaces: ', spaces)
             resv = Reserve.objects.filter(roomspace__in=spaces, start_day__gte=check_out, end_day__lte=check_in).all()
             spa_id = [r.roomspace for r in resv]
             for s in spaces:
@@ -303,3 +302,152 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
                 return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
 
         return super(HotelSearchViewSet, self).list(request, *args, **kwargs)
+
+
+class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, viewsets.mixins.CreateModelMixin):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FavoriteHotelSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = FavoriteHotel.objects.filter(user=user)
+        return queryset
+
+    def create(self, request: rest_framework.request.Request, *args, **kwargs):
+        try:
+            hotel_id = int(request.data['hotel_id'])
+        except:
+            return Response("Field hotel_id required", status=http.HTTPStatus.BAD_REQUEST)
+
+        try:
+            hotel = Hotel.objects.get(pk=hotel_id)
+        except:
+            return Response('Hotel Not found', status=http.HTTPStatus.NOT_FOUND)
+
+        favs: FavoriteHotel = FavoriteHotel.objects.filter(hotel=hotel, user=request.user).first()
+
+        if favs is None:
+            new_fav = FavoriteHotel(user=request.user, hotel=hotel)
+            new_fav.save()
+            nf = FavoriteHotelSerializer(instance=new_fav)
+
+            return Response(nf.data, status=http.HTTPStatus.OK)
+
+        else:
+            favs.delete()
+            return Response('hotel deleted from favorites', status=http.HTTPStatus.OK)
+
+
+class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMixin):
+    permission_classes = (IsEditor, permissions.IsAuthenticated)
+    queryset = Hotel.objects.all()
+
+    def check_in_count(self, hotel: Hotel, date):
+        """
+        number of check_in in the specified date
+        """
+        return Reserve.objects.filter(room__hotel=hotel, start_day=date).count()
+
+    def check_out_count(self, hotel: Hotel, date):
+        """
+        number of check_out in the specified date
+        """
+        return Reserve.objects.filter(room__hotel=hotel, end_day=date).count()
+
+    def people_count(self, hotel: Hotel, date):
+        """
+        number of people(based on reserved rooms) in the specified date
+        """
+        reserves = Reserve.objects.filter(room__hotel=hotel, start_day__lte=date,
+                                          end_day__gt=date).select_related('room').all()
+        # print('people count: ', reserves)
+        count = 0
+
+        for r in reserves:
+            count += r.room.sleeps
+
+        return count
+
+    def full_empty_rooms_spaces(self, hotel: Hotel, date):
+        """
+        number of reserved and no completely reserved room(check_in date until the day before check_out)
+        in the specified date
+        """
+        rooms = hotel.rooms.prefetch_related('spaces').all()
+        reserved_spaces = (Reserve.objects.filter(room__in=rooms, start_day__lte=date, end_day__gt=date)
+                           .values_list('roomspace').all())
+        reserved_spaces = [r for tup in reserved_spaces for r in tup]
+
+        # print("full_rooms  ,rs: ", reserved_spaces)
+        full_spaces = []
+        empty_spaces = []
+        full_rooms = []
+        not_full_rooms = []
+        for r in rooms:
+            full = True
+            for s in r.spaces.all():
+                # print('space_id: ', s.id)
+                if not (s.id in reserved_spaces):
+                    full = False
+                    empty_spaces.append(s)
+                else:
+                    full_spaces.append(s)
+
+            if full:
+                full_rooms.append(r)
+            else:
+                not_full_rooms.append(r)
+
+        fr = PublicRoomSerializer(full_rooms, many=True)
+        nfr = PublicRoomSerializer(not_full_rooms, many=True)
+
+        fs = RoomSpaceSerializer(full_spaces, many=True)
+        es = RoomSpaceSerializer(empty_spaces, many=True)
+        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs.data, 'empty': es.data}}
+
+    def room_count(self, hotel: Hotel):
+        rooms = hotel.rooms.all()
+        count = 0
+        for r in rooms:
+            count += r.spaces.count()
+        return count
+
+    def retrieve(self, request, *args, **kwargs):
+        # self.get_permissions()
+
+        self.check_permissions(request)
+        print()
+        try:
+            date = parse_date(request.query_params.get('date', None))
+            if date is None:
+                date = datetime.today().date()
+        except:
+            return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+
+        try:
+            hotel: Hotel = get_object_or_404(Hotel.objects.prefetch_related('rooms').filter(pk=kwargs.get('pk')))
+        except:
+            return Response("URL Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+
+        try:
+            self.check_permissions(request)
+            self.check_object_permissions(request, hotel)
+        except:
+            return Response("Do Not Have Permission", status=http.HTTPStatus.FORBIDDEN)
+
+        # hotel: Hotel = get_object_or_404(Hotel, pk=int(kwargs.get('pk')))
+
+        stat = self.full_empty_rooms_spaces(hotel, date)
+
+        data = {
+            'date': date,
+            'people_in_hotel': self.people_count(hotel, date),
+            'spaces_status': stat['spaces'],
+            "rooms_status": stat['rooms'],
+            'room_count': self.room_count(hotel),
+            'check_in_count': self.check_in_count(hotel, date),
+            'check_out_count': self.check_out_count(hotel, date),
+
+        }
+
+        return Response(data, status=http.HTTPStatus.OK)

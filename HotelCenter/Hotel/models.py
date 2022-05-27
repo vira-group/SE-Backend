@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from Account.models import User
+from rest_framework.authentication import get_user_model
 
 
 class Facility(models.Model):
@@ -12,7 +13,7 @@ class Facility(models.Model):
 
 
 class Hotel(models.Model):
-    creator = models.OneToOneField(
+    creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='hotel', on_delete=models.CASCADE, null=False)
     editors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="editable_hotels")
     name = models.CharField(max_length=64, blank=False, null=False)  # hotel name showed on profile
@@ -45,6 +46,15 @@ class Hotel(models.Model):
             img = ''
         return img
 
+    @property
+    def capacity(self):
+        rooms = self.rooms.all()
+        cap = 0
+        for r in rooms:
+            count = r.spaces.count()
+            cap += count * r.sleeps
+        return cap
+
 
 class HotelImage(models.Model):
     image = models.ImageField(null=False, blank=False, upload_to='hotel')
@@ -61,9 +71,9 @@ class roomFacility(models.Model):
 class Room(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')  # The hotel that this room is for
     type = models.CharField(max_length=100, null=False, blank=False, default=None)
-    size = models.IntegerField(default=0, null=False, blank=False)
+    size = models.IntegerField(default=0, null=False, blank=False)  # room size(meter)
     view = models.CharField(max_length=100, null=False, blank=False, default=None)
-    sleeps = models.IntegerField(default=1, blank=False, null=False)
+    sleeps = models.IntegerField(default=1, blank=False, null=False)  # number of people in the room
     price = models.IntegerField(blank=False, null=False)
     option = models.CharField(max_length=100, blank=True, null=True)
     facilities = models.ManyToManyField(roomFacility, related_name='rooms')
@@ -74,7 +84,7 @@ class Room(models.Model):
 
 class RoomImage(models.Model):
     image = models.ImageField(upload_to='roomImages')
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)  # The room taht this image is for
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)  # The room that this image is for
 
 
 class RoomSpace(models.Model):
@@ -101,12 +111,12 @@ class Reserve(models.Model):
     lastname = models.CharField(max_length=64, blank=False, null=False)
     national_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=64, blank=True, null=True)
-    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
+    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, related_name='reserves')
 
     @property
     def total_price(self):
         total_days = (self.end_day - self.start_day)
-        total_price = (total_days.days+1) * self.price_per_day
+        total_price = (total_days.days + 1) * self.price_per_day
         return total_price
 
     @property
@@ -114,3 +124,8 @@ class Reserve(models.Model):
         room = self.roomspace.room
         hotel = room.hotel
         return (hotel.id)
+
+
+class FavoriteHotel(models.Model):
+    user = models.ForeignKey(get_user_model(), related_name='favorites', on_delete=models.CASCADE)
+    hotel = models.ForeignKey(Hotel, related_name='likes', on_delete=models.CASCADE)

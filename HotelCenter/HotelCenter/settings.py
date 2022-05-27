@@ -56,6 +56,8 @@ INSTALLED_APPS = [
 
     'Hotel',
     'corsheaders',
+    'Chat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -204,3 +206,20 @@ DJOSER = {
 
         }
 }
+
+ASGI_APPLICATION = 'HotelCenter.asgi.application'
+
+# Channels
+ASGI_APPLICATION = 'HotelCenter.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
