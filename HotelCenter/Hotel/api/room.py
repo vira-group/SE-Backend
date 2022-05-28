@@ -34,10 +34,12 @@ class RoomList(APIView):
         else:
             if serializer.is_valid():
                 room = serializer.save(hotel=hotel)
+                print(request.data.get('room_facilities', []))
                 for f in request.data.get('room_facilities', []):
                     if roomFacility.objects.filter(name=f['name']).count() > 0:
                         room.facilities.add(roomFacility.objects.get(pk=f['name']))
-                        room.save()
+
+                room.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
