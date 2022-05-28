@@ -445,7 +445,7 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         rooms = hotel.rooms.all()
         reserves = Reserve.objects.filter(start_day__gte=date - relativedelta(months=6)
                                           , start_day__lt=date, room__in=rooms).all()
-        print("reserve income, reserves past 6m: ", reserves, "\n date: ", date - relativedelta(months=0))
+        # print("reserve income, reserves past 6m: ", reserves, "\n date: ", date - relativedelta(months=0))
         for r in reserves:
             i = self.reserve_month_past(r, date)
             day_count = self.reserve_days_count(r)

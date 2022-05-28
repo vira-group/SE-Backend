@@ -14,7 +14,7 @@ from ..filter_backends import AdminRoomSpaceFilter, AdminRoomFilter
 from ..models import Room, roomFacility, RoomImage, RoomSpace
 from ..permissions import IsRoomSpaceOwnerOrEditor, IsUrlHotelEditor
 from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer,
-                                            RoomSpaceSerializer)
+                                            RoomSpaceSerializer, AdminRoomSpaceSerializer)
 from ..models import Hotel
 
 
@@ -113,7 +113,7 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
 class AdminRoomSpaceViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsUrlHotelEditor]
     filter_backends = [DjangoFilterBackend]
-    serializer_class = RoomSpaceSerializer
+    serializer_class = AdminRoomSpaceSerializer
     filterset_class = AdminRoomSpaceFilter
 
     def get_queryset(self):
