@@ -1,17 +1,22 @@
 from email import message
 from django.shortcuts import get_object_or_404
-from ..models import Room, roomFacility, RoomImage, RoomSpace
-from ..permissions import IsRoomSpaceOwnerOrEditor
-from ..serializers.room_serializers import PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer \
-    , RoomSpaceSerializer
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework import viewsets
-from ..models import Hotel
 from rest_framework.exceptions import NotFound, PermissionDenied
 import http
+
+from ..filter_backends import AdminRoomSpaceFilter, AdminRoomFilter
+from ..models import Room, roomFacility, RoomImage, RoomSpace
+from ..permissions import IsRoomSpaceOwnerOrEditor, IsUrlHotelEditor
+from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer,
+                                            RoomSpaceSerializer, AdminRoomSpaceSerializer)
+from ..models import Hotel
+
 
 class RoomList(APIView):
 
@@ -29,10 +34,12 @@ class RoomList(APIView):
         else:
             if serializer.is_valid():
                 room = serializer.save(hotel=hotel)
+                print(request.data.get('room_facilities', []))
                 for f in request.data.get('room_facilities', []):
                     if roomFacility.objects.filter(name=f['name']).count() > 0:
                         room.facilities.add(roomFacility.objects.get(pk=f['name']))
-                        room.save()
+
+                room.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -68,7 +75,6 @@ class ImageList(APIView):
 class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
                        viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin,
                        viewsets.mixins.UpdateModelMixin):
-
     permission_classes = [permissions.IsAuthenticated, IsRoomSpaceOwnerOrEditor]
     serializer_class = RoomSpaceSerializer
 
@@ -77,9 +83,9 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         return queryset
 
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
+        # self.request = request
         self.room_id = kwargs['room_id']
-        print('\nroom_id ', self.room_id)
+        # print('\nroom_id ', self.room_id)
 
         return super(RoomSpaceViewSet, self).dispatch(request, *args, **kwargs)
 
@@ -90,10 +96,39 @@ class RoomSpaceViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
 
         except:
             return Response('Room not found', status=http.HTTPStatus.NOT_FOUND)
+        # print(request.data.get('names', []))
+        ss = []
+        for d in request.data.get('names', []):
+            # print('d', d)
+            space = RoomSpaceSerializer(data=d)
+            if space.is_valid():
+                space.save(room=room)
+                ss.append(space.data)
+            else:
+                # print('space.errors ', space.errors)
+                return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
+        if len(request.data.get('names', [])) == 0:
+            return Response('No Name Found', status=http.HTTPStatus.BAD_REQUEST)
+        return Response(data=ss, status=http.HTTPStatus.CREATED)
 
-        space = RoomSpaceSerializer(data=request.data)
-        if space.is_valid():
-            space.save(room=room)
-            return Response(data=space.data, status=http.HTTPStatus.CREATED)
-        else:
-            return Response('content not valid', status=http.HTTPStatus.BAD_REQUEST)
+
+class AdminRoomSpaceViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated, IsUrlHotelEditor]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = AdminRoomSpaceSerializer
+    filterset_class = AdminRoomSpaceFilter
+
+    def get_queryset(self):
+        query_set = RoomSpace.objects.filter(room__hotel_id=self.kwargs['hid'])
+        return query_set
+
+
+class AdminRoomViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated, IsUrlHotelEditor]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = PublicRoomSerializer
+    filterset_class = AdminRoomFilter
+
+    def get_queryset(self):
+        query_set = Room.objects.filter(hotel_id=self.kwargs['hid'])
+        return query_set

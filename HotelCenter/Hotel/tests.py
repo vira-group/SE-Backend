@@ -61,6 +61,8 @@ class HotelTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "check_in_range": "9:00-12:00",
+            "check_out_range": "15:00-23:00",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
@@ -71,6 +73,8 @@ class HotelTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "check_in_range": "9:00-12:00",
+            "check_out_range": "15:00-23:00",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,
@@ -662,11 +666,55 @@ class RoomTestCase(APITestCase):
 
         self.set_credential(self.token1)
 
-        data = {'name': 'R100'}
+        data = {'names': [{'name': 'R100'}, {'name': 'R200'}]}
         # print('hotel', room.hotel.creator)
-        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data)
+        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
         # print(resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+
+    def test_room_space_create_wrong_data(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop("facilities")
+        hotel_data3 = self.hotel_data2.copy()
+        hotel_data3['rate'] = 3.9
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
+        # hotel2.editors.add(self.user1)
+        # hotel2.save()
+        # hotel3.editors.add(self.user1)
+        # hotel3.save()
+        self.room_data1.pop("room_facilities")
+        self.room_data2.pop("room_facilities")
+        room3 = self.room_data1.copy()
+        room3['sleeps'] = 3
+        room3['size'] = 3
+
+        room = Room.objects.create(hotel=hotel1, **self.room_data2)
+        Room.objects.create(hotel=hotel1, **self.room_data1, size=2)
+        Room.objects.create(hotel=hotel1, **room3)
+
+        self.set_credential(self.token1)
+
+        data = {'names': []}
+        # print('hotel', room.hotel.creator)
+        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
+        # print(resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {'name': '200'}
+        # print('hotel', room.hotel.creator)
+        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
+        # print(resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        self.set_credential(self.token3)
+        data = {'names': [{'name': 'R100'}, {'name': 'R200'}]}
+
+        # print('hotel', room.hotel.creator)
+        resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
+        # print(resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
 
 
 class ReserveTestCase(APITestCase):
@@ -903,3 +951,205 @@ class ReserveTestCase(APITestCase):
         }
         response = self.client.post(self.test_urls["reserve_roomspace"], data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class AdminTestCase(APITestCase):
+
+    def setUp(self) -> None:
+        """
+            RUNS BEFORE EACH TEST
+        """
+        self.facility1 = {"name": "free_wifi"}
+        self.facility2 = {"name": "parking"}
+
+        Facility.objects.create(**self.facility1)
+        Facility.objects.create(**self.facility2)
+
+        self.hotel_data1 = {
+            "name": "parsian",
+            "city": "Esfehan",
+            "state": "Esfehan",
+            "description": "good quality including breakfast",
+            "phone_numbers": "09123456700",
+
+            "facilities": [{"name": "free_wifi"}],
+            "address": "Esfahan,Iran"
+        }
+        self.hotel_data2 = {
+            "name": "Ferdosi",
+            "city": "Khorasan",
+            "state": "mashhad",
+            "description": "with best view of the city and places",
+            "phone_numbers": "09123456709",
+            'rate': 4.4,
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address": "Khorasan,Iran"
+        }
+
+        self.room_data1 = {
+            "type": "Standard Double Room",
+            "view": "no view",
+            "sleeps": "2",
+            "price": "10000",
+            "option": "free wifi",
+        }
+        self.room_data2 = {
+            "type": "King size Double bed Room",
+            "view": "city",
+            "sleeps": 3,
+            "price": "10000",
+            "option": "free wifi",
+        }
+
+        self.user1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
+        self.user1.set_password("some-strong1pass")
+        self.user1.save()
+
+        self.user2 = get_user_model().objects.create(is_active=True, email="hediyeh1@gmail.com")
+        self.user2.set_password("some-strong2pass")
+        self.user2.save()
+
+        self.user3 = get_user_model().objects.create(is_active=True, email="hediyeh3@gmail.com")
+        self.user3.set_password("some-strong2pass")
+        self.user3.save()
+
+        self.token1 = Token.objects.create(user=self.user1)
+        self.token2 = Token.objects.create(user=self.user2)
+        self.token3 = Token.objects.create(user=self.user3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def test_admin_panel_no_auth(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.unset_credential()
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # No auth admin room
+        resp = self.client.get(my_reverse("hotel-admin-room-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        # No auth admin room space
+        resp = self.client.get(my_reverse("hotel-admin-roomspace-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        # No auth admin panel
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_admin_panel_wrong_auth(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.set_credential(self.token3)
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # Wrong auth admin room
+        resp = self.client.get(my_reverse("hotel-admin-room-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
+
+        # Wrong auth admin room space
+        resp = self.client.get(my_reverse("hotel-admin-roomspace-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
+
+        # Wrong auth admin panel
+        data = {'date': datetime.today().date() - timedelta(days=1)}
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}), data)
+        # print('wrong auth test resp: ', resp.data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
+
+    def test_admin_panel_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.set_credential(self.token1)
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # No data admin panel
+        # data = {'date': datetime.today().date() - timedelta(days=1)}
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}))  # , data)
+        # print('wrong auth test resp: ', resp.data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        data = {'date': "r"}
+
+        # Wrong data admin panel
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}), data)
+        # print('wrong auth test resp: ', resp.data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        data = {'date': date.today()}
+
+        # Wrong data admin panel
+        resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}), data)
+        # print('wrong auth test resp: ', resp.data)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.data['date'], data['date'])
+
+    def test_admin_panel_room_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.set_credential(self.token1)
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # No data admin room
+        resp = self.client.get(my_reverse("hotel-admin-room-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+    def test_admin_panel_room_space_success(self):
+        self.hotel_data1.pop("facilities")
+        self.hotel_data2.pop('facilities')
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
+        room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
+        roomspace1 = RoomSpace.objects.create(name="1", room=room1)
+        self.set_credential(self.token1)
+        self.user1.balance = 1000000
+        self.user1.save()
+
+        # No data admin room space
+        resp = self.client.get(my_reverse("hotel-admin-roomspace-list", {"hid": 1}))
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)

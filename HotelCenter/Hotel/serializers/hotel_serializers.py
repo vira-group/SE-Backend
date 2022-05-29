@@ -14,7 +14,8 @@ class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotel
         fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate',
-                  'reply_count', 'phone_numbers', 'start_date', 'address', 'capacity']
+                  'reply_count', 'phone_numbers', 'country', 'check_in_range', "check_out_range", 'start_date',
+                  'address', 'capacity']
         read_only_fields = ['id', "rate", 'reply_count', 'start_date', 'capacity']
         # lookup_field = 'id'
 
@@ -36,18 +37,34 @@ class HotelSerializer(serializers.ModelSerializer):
         cr.save()
         return cr
 
+    def update(self, instance: Hotel, validated_data):
+        request = self.context.get("request")
+        if not request.data.get('facilities', None) is None:
+            instance.facilities.clear()
+            for f in request.data.get('facilities', []):
+                if (Facility.objects.filter(name=f['name']).count() > 0):  # and (f not in instance.facilities.all()):
+                    instance.facilities.add(Facility.objects.get(pk=f['name']))
+
+            instance.save()
+        # print("in hotel update: ", request.data.get('facilities', []))
+        return super(HotelSerializer, self).update(instance, validated_data)
+
 
 class HotelImgSerializer(serializers.ModelSerializer):
     # hotel_name = serializers.RelatedField(source='Hotel.name', read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = HotelImage
-        fields = ['image', 'id', 'hotel']
+        fields = ['image', 'id', 'hotel', 'image_url']
         # read_only_fields = ['hotel']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
 
 
 class FavoriteHotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteHotel
         fields = ['hotel', 'user_id']
-

@@ -4,6 +4,8 @@ import http
 from django.utils.datetime_safe import datetime
 from rest_framework import viewsets, permissions, \
     filters, status
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.dateparse import parse_date
@@ -145,7 +147,7 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         }
 
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
+        # self.request = request
 
         try:
             self.h_id = int(kwargs.get('hid'))
@@ -379,8 +381,8 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         reserved_spaces = [r for tup in reserved_spaces for r in tup]
 
         # print("full_rooms  ,rs: ", reserved_spaces)
-        full_spaces = []
-        empty_spaces = []
+        full_spaces = {r.type: [] for r in rooms}
+        empty_spaces = {r.type: [] for r in rooms}
         full_rooms = []
         not_full_rooms = []
         for r in rooms:
@@ -389,9 +391,9 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
                 # print('space_id: ', s.id)
                 if not (s.id in reserved_spaces):
                     full = False
-                    empty_spaces.append(s)
+                    empty_spaces[r.type].append(s)
                 else:
-                    full_spaces.append(s)
+                    full_spaces[r.type].append(s)
 
             if full:
                 full_rooms.append(r)
@@ -401,9 +403,17 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         fr = PublicRoomSerializer(full_rooms, many=True)
         nfr = PublicRoomSerializer(not_full_rooms, many=True)
 
-        fs = RoomSpaceSerializer(full_spaces, many=True)
-        es = RoomSpaceSerializer(empty_spaces, many=True)
-        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs.data, 'empty': es.data}}
+        fs = {r.type: RoomSpaceSerializer(full_spaces[r.type], many=True).data for r in rooms}
+        es = {r.type: RoomSpaceSerializer(empty_spaces[r.type], many=True).data for r in rooms}
+
+        # s_count = (len(empty_spaces[r.type]) + len(full_spaces[r.type]))
+        # if s_count < 1:
+        #     s_count = 1
+        percent = {
+            ro.type: (len(full_spaces[ro.type]) / (len(empty_spaces[ro.type]) + len(full_spaces[ro.type]) + 1) * 100)
+            for ro in rooms}
+        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
+                'percent': percent}
 
     def room_count(self, hotel: Hotel):
         rooms = hotel.rooms.all()
@@ -412,17 +422,52 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             count += r.spaces.count()
         return count
 
+    def reserve_days_count(self, reserve: Reserve):
+        return (reserve.end_day - reserve.start_day).days
+
+    def reserve_month_past(self, reserve: Reserve, date):
+        diff = reserve.start_day
+        if date - relativedelta(month=6) <= diff < date - relativedelta(month=5):
+            return 0
+        elif date - relativedelta(month=5) <= diff < date - relativedelta(month=4):
+            return 1
+        elif date - relativedelta(month=4) <= diff < date - relativedelta(month=3):
+            return 2
+        elif date - relativedelta(month=3) <= diff < date - relativedelta(month=2):
+            return 3
+        elif date - relativedelta(month=2) <= diff < date - relativedelta(month=1):
+            return 4
+        elif date - relativedelta(month=1) <= diff < date - relativedelta(month=0):
+            return 5
+        else:
+            return -1
+
+    def reserves_income_status(self, hotel: Hotel, date):
+        """
+        return past 6 month income and #reserves
+        """
+
+        income = [0] * 6
+        reserve = [0] * 6
+
+        rooms = hotel.rooms.all()
+        reserves = Reserve.objects.filter(start_day__gte=date - relativedelta(months=6)
+                                          , start_day__lt=date, room__in=rooms).all()
+        # print("reserve income, reserves past 6m: ", reserves, "\n date: ", date - relativedelta(months=0))
+        for r in reserves:
+            i = self.reserve_month_past(r, date)
+            day_count = self.reserve_days_count(r)
+            p = day_count * r.price_per_day
+            reserve[i] += 1
+            income[i] += p
+
+        return {'incomes': income, 'reserves': reserve}
+
     def retrieve(self, request, *args, **kwargs):
         # self.get_permissions()
 
         self.check_permissions(request)
-        print()
-        try:
-            date = parse_date(request.query_params.get('date', None))
-            if date is None:
-                date = datetime.today().date()
-        except:
-            return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+        # print()
 
         try:
             hotel: Hotel = get_object_or_404(Hotel.objects.prefetch_related('rooms').filter(pk=kwargs.get('pk')))
@@ -436,17 +481,31 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             return Response("Do Not Have Permission", status=http.HTTPStatus.FORBIDDEN)
 
         # hotel: Hotel = get_object_or_404(Hotel, pk=int(kwargs.get('pk')))
+        try:
+            date = parse_date(request.query_params.get('date', None))
+            if date is None:
+                date = datetime.today().date()
+
+        except:
+            # return Response("Date Not Valid", status=http.HTTPStatus.BAD_REQUEST)
+            date = datetime.today().date()
 
         stat = self.full_empty_rooms_spaces(hotel, date)
+
+        res_stat = self.reserves_income_status(hotel, date)
 
         data = {
             'date': date,
             'people_in_hotel': self.people_count(hotel, date),
             'spaces_status': stat['spaces'],
+            'spaces_percentage': stat['percent'],
             "rooms_status": stat['rooms'],
+
             'room_count': self.room_count(hotel),
             'check_in_count': self.check_in_count(hotel, date),
             'check_out_count': self.check_out_count(hotel, date),
+            'reserves': res_stat['reserves'],
+            'incomes': res_stat['incomes'],
 
         }
 

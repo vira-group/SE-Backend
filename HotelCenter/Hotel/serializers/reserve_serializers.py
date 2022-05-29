@@ -14,3 +14,7 @@ class ReserveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reserve
         fields = ['id', 'start_day', 'end_day', 'room', 'price_per_day', 'firstname', 'lastname', 'national_code', 'phone_number']
+
+class AdminReserverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = '__all__'
