@@ -381,8 +381,8 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         reserved_spaces = [r for tup in reserved_spaces for r in tup]
 
         # print("full_rooms  ,rs: ", reserved_spaces)
-        full_spaces = []
-        empty_spaces = []
+        full_spaces = {r.type: [] for r in rooms}
+        empty_spaces = {r.type: [] for r in rooms}
         full_rooms = []
         not_full_rooms = []
         for r in rooms:
@@ -391,9 +391,9 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
                 # print('space_id: ', s.id)
                 if not (s.id in reserved_spaces):
                     full = False
-                    empty_spaces.append(s)
+                    empty_spaces[r.type].append(s)
                 else:
-                    full_spaces.append(s)
+                    full_spaces[r.type].append(s)
 
             if full:
                 full_rooms.append(r)
@@ -403,9 +403,17 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         fr = PublicRoomSerializer(full_rooms, many=True)
         nfr = PublicRoomSerializer(not_full_rooms, many=True)
 
-        fs = RoomSpaceSerializer(full_spaces, many=True)
-        es = RoomSpaceSerializer(empty_spaces, many=True)
-        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs.data, 'empty': es.data}}
+        fs = {r.type: RoomSpaceSerializer(full_spaces[r.type], many=True).data for r in rooms}
+        es = {r.type: RoomSpaceSerializer(empty_spaces[r.type], many=True).data for r in rooms}
+
+        # s_count = (len(empty_spaces[r.type]) + len(full_spaces[r.type]))
+        # if s_count < 1:
+        #     s_count = 1
+        percent = {
+            ro.type: (len(full_spaces[ro.type]) / (len(empty_spaces[ro.type]) + len(full_spaces[ro.type]) + 1) * 100)
+            for ro in rooms}
+        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
+                'percent': percent}
 
     def room_count(self, hotel: Hotel):
         rooms = hotel.rooms.all()
@@ -490,7 +498,9 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             'date': date,
             'people_in_hotel': self.people_count(hotel, date),
             'spaces_status': stat['spaces'],
+            'spaces_percentage': stat['percent'],
             "rooms_status": stat['rooms'],
+
             'room_count': self.room_count(hotel),
             'check_in_count': self.check_in_count(hotel, date),
             'check_out_count': self.check_out_count(hotel, date),
