@@ -78,6 +78,8 @@ class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AdminReserverSerializer
 
     def get_queryset(self):
-        query_set = Reserve.objects.filter(room__hotel=self.kwargs.get('hid')).all()
-        return query_set
+        # print('in admin reserve before')
+        query_set = Reserve.objects.filter(room__hotel_id=self.kwargs['hid']).all()
+        # print('in admin reserve after ', query_set)
 
+        return query_set

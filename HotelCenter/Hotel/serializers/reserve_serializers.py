@@ -17,4 +17,5 @@ class ReserveSerializer(serializers.ModelSerializer):
 
 class AdminReserverSerializer(serializers.ModelSerializer):
     class Meta:
-        model = '__all__'
+        model = Reserve
+        fields = '__all__'
