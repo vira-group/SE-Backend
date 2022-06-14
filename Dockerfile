@@ -11,7 +11,7 @@ RUN pip install -r requirements.txt
 # copy project files to the container
 COPY ./HotelCenter /app
 WORKDIR /app
-RUN mkdir static
+RUN mkdir -p static
 
 #WORKDIR /HotelCenter
 # !NOTE: make migrations and migrate in the docker-compose file and before running server
@@ -21,6 +21,7 @@ RUN mkdir static
 # RUN python3 manage.py migrate
 # RUN yes yes | python3 manage.py collectstatic
 
+RUN sleep 10
 #running tests
 RUN python3 manage.py test
 

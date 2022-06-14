@@ -699,13 +699,13 @@ class RoomTestCase(APITestCase):
         data = {'names': []}
         # print('hotel', room.hotel.creator)
         resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
-        # print(resp.data)
+        # print("test_room_space_create_wrong_data :",resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
         data = {'name': '200'}
         # print('hotel', room.hotel.creator)
         resp = self.client.post(my_reverse('room-space-list', kwargs={'room_id': 1}), data, format='json')
-        # print(resp.data)
+        # print("test_room_space_create_wrong_data :",resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
         self.set_credential(self.token3)
@@ -1100,7 +1100,7 @@ class AdminTestCase(APITestCase):
         # No data admin panel
         # data = {'date': datetime.today().date() - timedelta(days=1)}
         resp = self.client.get(my_reverse("hotel-admin-panel-detail", {"pk": 1}))  # , data)
-        # print('wrong auth test resp: ', resp.data)
+        # print(' auth test resp: ', resp.data)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
@@ -1123,8 +1123,8 @@ class AdminTestCase(APITestCase):
     def test_admin_panel_room_success(self):
         self.hotel_data1.pop("facilities")
         self.hotel_data2.pop('facilities')
-        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        hotel2 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator=self.user1)
+        hotel2 = Hotel.objects.create(**self.hotel_data2, creator=self.user2)
         room1 = Room.objects.create(**self.room_data1, hotel=hotel1)
         room2 = Room.objects.create(**self.room_data2, hotel=hotel2)
         roomspace1 = RoomSpace.objects.create(name="1", room=room1)
