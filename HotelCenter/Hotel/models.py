@@ -104,7 +104,7 @@ class RoomSpace(models.Model):
 class Reserve(models.Model):
     start_day = models.DateField()
     end_day = models.DateField()
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING, related_name='reserves')
     price_per_day = models.IntegerField(default=None)
     firstname = models.CharField(max_length=64, blank=False, null=False)
@@ -112,6 +112,7 @@ class Reserve(models.Model):
     national_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=64, blank=True, null=True)
     room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, related_name='reserves')
+    create_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def total_price(self):
