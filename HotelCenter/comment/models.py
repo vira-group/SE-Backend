@@ -17,3 +17,4 @@ class Comment(models.Model):
 
     class Meta:
         unique_together = [['hotel', 'writer'], ]
+        ordering = ['-modified_date']
