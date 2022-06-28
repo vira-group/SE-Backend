@@ -1,4 +1,6 @@
 import http
+from http.client import FORBIDDEN
+from django.http import HttpResponseForbidden
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -95,16 +97,18 @@ class UserCancelReserveList(APIView):
         reserve = get_object_or_404(Reserve, id=reserve_id)
         serializer = CancelReserveSerializer(data=request.data)
         if serializer.is_valid():
-            today = datetime.today()
-            if (today.date() > reserve.start_day):
-                return Response('invalid', status=status.HTTP_403_FORBIDDEN)
-            serializer.save(reserve=reserve_id,start_day=reserve.start_day, end_day=reserve.end_day,
-            user=user, roomspace=reserve.roomspace, price_per_day=reserve.price_per_day, firstname=reserve.firstname,
-            lastname=reserve.lastname, national_code=reserve.national_code, phone_number=reserve.phone_number,
-            room=reserve.room, )
-            user.balance += ((reserve.end_day - reserve.start_day).days + 1) * reserve.price_per_day
-            user.save()
-            reserve.delete()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if user == reserve.user : 
+                today = datetime.today()
+                if (today.date() > reserve.start_day):
+                    return Response('invalid', status=status.HTTP_403_FORBIDDEN)
+                serializer.save(reserve=reserve_id,start_day=reserve.start_day, end_day=reserve.end_day,
+                user=user, roomspace=reserve.roomspace, price_per_day=reserve.price_per_day, firstname=reserve.firstname,
+                lastname=reserve.lastname, national_code=reserve.national_code, phone_number=reserve.phone_number,
+                room=reserve.room, )
+                user.balance += ((reserve.end_day - reserve.start_day).days + 1) * reserve.price_per_day
+                user.save()
+                reserve.delete()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status= status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
