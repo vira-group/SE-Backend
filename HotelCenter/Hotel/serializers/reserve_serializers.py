@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Reserve
+from ..models import CancelReserve, Reserve
 
 
 class RoomReserveSerializer(serializers.ModelSerializer):
@@ -19,3 +19,9 @@ class AdminReserverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reserve
         fields = '__all__'
+
+
+class CancelReserveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CancelReserve
+        fields = ['reserve', 'canceld_at']
