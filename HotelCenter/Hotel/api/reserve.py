@@ -10,8 +10,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from ..filter_backends import *
 from ..permissions import *
-from ..models import Reserve, Room, RoomSpace
-from ..serializers.reserve_serializers import RoomReserveSerializer, ReserveSerializer, AdminReserverSerializer
+from ..models import CancelReserve, Reserve, Room, RoomSpace
+from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, ReserveSerializer, AdminReserverSerializer
 
 
 class RoomspaceReserveList(APIView):
@@ -83,3 +83,28 @@ class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
         # print('in admin reserve after ', query_set)
 
         return query_set
+
+
+class UserCancelReserveList(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user = request.user
+        reserve_id = request.data['reserve']
+        reserve = get_object_or_404(Reserve, id=reserve_id)
+        serializer = CancelReserveSerializer(data=request.data)
+        if serializer.is_valid():
+            today = datetime.today()
+            if (today.date() > reserve.start_day):
+                return Response('invalid', status=status.HTTP_403_FORBIDDEN)
+            serializer.save(reserve=reserve_id,start_day=reserve.start_day, end_day=reserve.end_day,
+            user=user, roomspace=reserve.roomspace, price_per_day=reserve.price_per_day, firstname=reserve.firstname,
+            lastname=reserve.lastname, national_code=reserve.national_code, phone_number=reserve.phone_number,
+            room=reserve.room, )
+            user.balance += ((reserve.end_day - reserve.start_day).days + 1) * reserve.price_per_day
+            user.save()
+            reserve.delete()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

@@ -21,7 +21,7 @@ from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotel
     MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet
 from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
     AdminRoomViewSet
-from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet
+from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
 
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
@@ -52,7 +52,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('<int:hid>/', include(hotel_router.urls)),
     path('admin/', include(hotel_admin_router.urls)),
-
+    path('cancelreserve/', UserCancelReserveList.as_view()),
     path('room/<int:room_id>/', include(room_router.urls)),
 
 ]
