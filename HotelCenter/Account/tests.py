@@ -324,6 +324,18 @@ class UserPaymentAPITest(APITestCase):
         """
         self.client.credentials()
 
+    def test_get_balance_unauth(self):
+        resp = self.client.get(reverse.reverse("add_credit-list"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+    def test_get_balance_success(self):
+        self.user1.balance = 2000
+        self.user1.save()
+        self.set_credential(self.token1)
+        resp = self.client.get(reverse.reverse("add_credit-list"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.data.get('balance'), 2000)
+
     def test_pay_unauth(self):
         data = {"credit": 10}
         resp = self.client.post(reverse.reverse("add_credit-list"), data=data)
