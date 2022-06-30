@@ -410,10 +410,26 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         # if s_count < 1:
         #     s_count = 1
         percent = {
-            ro.type: (len(full_spaces[ro.type]) / (len(empty_spaces[ro.type]) + len(full_spaces[ro.type]) + 1) * 100)
+            ro.type: (len(full_spaces[ro.type]) / max((len(empty_spaces[ro.type]) + len(full_spaces[ro.type])),
+                                                      1) * 100)
             for ro in rooms}
         return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
                 'percent': percent}
+
+    def room_type_count(self, dic):
+        """
+        count number of all spaces and full spaces from 'full_empty_rooms_spaces()' output
+        dic: this the output of function 'full_empty_rooms_spaces()'
+        """
+        spaces = dic['spaces']
+        type_count = {}
+        for r_type in spaces['full'].keys():
+            # print("in room type count, spaces", spaces['full'])
+            full_nums = len(spaces['full'][r_type])
+            empty_nums = len(spaces['empty'][r_type])
+            type_count[r_type] = {"fullRooms": full_nums, "allRooms": empty_nums + full_nums}
+
+        return type_count
 
     def room_count(self, hotel: Hotel):
         rooms = hotel.rooms.all()
@@ -492,6 +508,8 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
 
         stat = self.full_empty_rooms_spaces(hotel, date)
 
+        rooms_count = self.room_type_count(stat)
+
         res_stat = self.reserves_income_status(hotel, date)
 
         data = {
@@ -500,7 +518,7 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             'spaces_status': stat['spaces'],
             'spaces_percentage': stat['percent'],
             "rooms_status": stat['rooms'],
-
+            "room_types_count": rooms_count,
             'room_count': self.room_count(hotel),
             'check_in_count': self.check_in_count(hotel, date),
             'check_out_count': self.check_out_count(hotel, date),
