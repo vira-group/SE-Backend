@@ -9,7 +9,7 @@ from Hotel.models import Hotel
 
 from ..models import Comment
 from ..serializers.comment_serializers import Comment_serializer
-from ..permissions import IsWriterOrReadOnly
+from ..permissions import IsWriterOrReadOnly, IsWriter
 
 
 class HotelCommentViewSet(viewsets.ModelViewSet):
@@ -128,7 +128,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
 
 class UserHotelCommentViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     serializer_class = Comment_serializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+    permission_classes = [permissions.IsAuthenticated,
                           IsWriterOrReadOnly]
 
     def get_queryset(self):
