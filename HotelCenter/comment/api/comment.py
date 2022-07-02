@@ -46,6 +46,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
             new_rate = 4
         hotel.rate = new_rate
         hotel.reply_count = new_count
+        hotel.save()
 
     def update_reply(self, hotel: Hotel, comment: Comment, old_rate: float):
         rep_count = hotel.reply_count
@@ -56,6 +57,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         new_count = rep_count
         new_rate = sum_rate / max(new_count, 1)
         hotel.rate = new_rate
+        hotel.save()
 
     def create(self, request, *args, **kwargs):
         """
