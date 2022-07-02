@@ -1153,3 +1153,182 @@ class AdminTestCase(APITestCase):
         resp = self.client.get(my_reverse("hotel-admin-roomspace-list", {"hid": 1}))
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+
+class CancelReserveTestCase(APITestCase):
+    test_urls = {
+        "cancel_reserve": '/api/hotel/cancelreserve/',
+    }
+
+    def setUp(self) -> None:
+        """
+            RUNS BEFORE EACH TEST
+        """
+        self.f1 = {"name": "free_wifi"}
+        self.f2 = {"name": "parking"}
+
+        Facility.objects.create(**self.f1)
+        Facility.objects.create(**self.f2)
+
+        self.hotel1 = {
+            "name": "parsian",
+            "city": "Esfehan",
+            "state": "Esfehan",
+            "description": "good quality including breakfast",
+            "phone_numbers": "09123456700",
+
+            "facilities": [{"name": "free_wifi"}],
+            "address": "Esfahan,Iran"
+        }
+        self.hotel2 = {
+            "name": "Ferdosi",
+            "city": "Khorasan",
+            "state": "mashhad",
+            "description": "with best view of the city and places",
+            "phone_numbers": "09123456709",
+            'rate': 4.4,
+            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address": "Khorasan,Iran"
+        }
+
+        self.room1 = {
+            "type": "Standard Double Room",
+            "view": "no view",
+            "sleeps": "2",
+            "price": "10000",
+            "option": "free wifi",
+        }
+
+        self.u1 = get_user_model().objects.create(is_active=True, email="hediyeh@gmail.com")
+        self.u1.set_password("some-strong1pass")
+        self.u1.save()
+
+        self.u2 = get_user_model().objects.create(is_active=True, email="hediyeh1@gmail.com")
+        self.u2.set_password("some-strong2pass")
+        self.u2.save()
+
+        self.u3 = get_user_model().objects.create(is_active=True, email="hediyeh3@gmail.com")
+        self.u3.set_password("some-strong2pass")
+        self.u3.save()
+
+        self.t1 = Token.objects.create(user=self.u1)
+        self.t2 = Token.objects.create(user=self.u2)
+        self.t3 = Token.objects.create(user=self.u3)
+
+    def set_credential(self, token):
+        """
+            set token for authorization
+        """
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def unset_credential(self):
+        """
+            unset existing headers
+        """
+        self.client.credentials()
+
+    def test_cancel_reserve_success(self):
+        self.hotel1.pop("facilities")
+        h1 = Hotel.objects.create(**self.hotel1, creator_id=self.u1.id)
+        room1 = Room.objects.create(**self.room1, hotel=h1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
+        self.set_credential(token=self.t1)
+        self.u1.balance = 1000000
+        self.u1.save()
+        data = {
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": room1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999",
+            "roomspace_id":roomspace.id
+        }
+        reserve = Reserve.objects.create(**data , user=self.u1)
+        data ={
+            "reserve": reserve.id
+        }
+        response = self.client.post(self.test_urls["cancel_reserve"], data)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_cancel_reserve_unauthorized(self):
+        self.hotel1.pop("facilities")
+        h1 = Hotel.objects.create(**self.hotel1, creator_id=self.u1.id)
+        room1 = Room.objects.create(**self.room1, hotel=h1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
+        self.unset_credential()
+        self.u1.balance = 1000000
+        self.u1.save()
+        data = {
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": room1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999",
+            "roomspace_id":roomspace.id
+        }
+        reserve = Reserve.objects.create(**data , user=self.u1)
+        data ={
+            "reserve": reserve.id
+        }
+        response = self.client.post(self.test_urls["cancel_reserve"], data)
+        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_cancel_reserve_not_in_user_reserves(self):
+        self.hotel1.pop("facilities")
+        h1 = Hotel.objects.create(**self.hotel1, creator_id=self.u1.id)
+        room1 = Room.objects.create(**self.room1, hotel=h1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
+        self.set_credential(self.t1)
+        self.u1.balance = 1000000
+        self.u1.save()
+        data = {
+            "start_day": datetime.today().date() + timedelta(days=1),
+            "end_day": datetime.today().date() + timedelta(days=3),
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": room1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999",
+            "roomspace_id":roomspace.id
+        }
+        reserve = Reserve.objects.create(**data , user=self.u2)
+        data ={
+            "reserve": reserve.id
+        }
+        response = self.client.post(self.test_urls["cancel_reserve"], data)
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+        
+    def test_cancel_reserve_for_past_time(self):
+        self.hotel1.pop("facilities")
+        h1 = Hotel.objects.create(**self.hotel1, creator_id=self.u1.id)
+        room1 = Room.objects.create(**self.room1, hotel=h1)
+        roomspace = RoomSpace.objects.create(name="roomspace1", room=room1)
+        self.set_credential(token=self.t1)
+        self.u1.balance = 1000000
+        self.u1.save()
+        data = {
+            "start_day": datetime.today().date() - timedelta(days=3),
+            "end_day": datetime.today().date() - timedelta(days=1),
+            "firstname": "fn",
+            "lastname": "ln",
+            "room": room1,
+            "price_per_day": 5,
+            "national_code": "00",
+            "phone_number": "09199999999",
+            "roomspace_id":roomspace.id
+        }
+        reserve = Reserve.objects.create(**data , user=self.u1)
+        data ={
+            "reserve": reserve.id
+        }
+        response = self.client.post(self.test_urls["cancel_reserve"], data)
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
