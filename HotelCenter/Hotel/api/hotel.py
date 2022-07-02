@@ -531,12 +531,3 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
 
         return Response(data, status=http.HTTPStatus.OK)
 
-
-class BestHotelViewset(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
-    serializer_class = BestHotelSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        queryset = Hotel.objects.order_by('-rate')[0:4]
-
-        return queryset

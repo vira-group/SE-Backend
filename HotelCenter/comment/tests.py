@@ -118,7 +118,7 @@ class CommentTestCases(APITestCase):
         comment3 = Comment.objects.create(**self.comment1, hotel=self.hotel2, writer=self.user1)
 
         resp = self.client.get(url)
-        print('1 comment list test resp: ', resp.data)
+        # print('1 comment list test resp: ', resp.data)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertTrue(len(resp.data) == 0)
 
@@ -131,6 +131,7 @@ class CommentTestCases(APITestCase):
 
     def test_comment_unauth(self):
         url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
+
 
     def test_comment__create_success(self):
         url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
