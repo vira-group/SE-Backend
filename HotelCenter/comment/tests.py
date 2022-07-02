@@ -90,7 +90,7 @@ class CommentTestCases(APITestCase):
 
         self.comment1 = {
             "text": "The hotel was good and our room was clean.",
-            "rate": 4
+            "rate": 5
         }
         self.comment2 = {
             "text": "our room was dirty and there was no room services.",
@@ -109,13 +109,26 @@ class CommentTestCases(APITestCase):
         """
         self.client.credentials()
 
+    def create_comment(self):
+        url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
+        self.set_credential(self.token2)
+        resp = self.client.post(url, data=self.comment1)
+
+        self.set_credential(self.token1)
+        resp = self.client.post(url, data=self.comment2)
+        # comment2 = Comment.objects.create(**self.comment2, hotel=self.hotel1, writer=self.user1)
+
+        url = my_reverse("hotel-comment-list", kwargs={"hid": 2})
+
+        resp = self.client.post(url, data=self.comment1)
+        # comment3 = Comment.objects.create(**self.comment1, hotel=self.hotel2, writer=self.user1)
+        self.unset_credential()
+
     def test_comment_get_list(self):
         # not valid hotel
         url = my_reverse("hotel-comment-list", kwargs={"hid": 100})
 
-        comment1 = Comment.objects.create(**self.comment1, hotel=self.hotel1, writer=self.user2)
-        comment2 = Comment.objects.create(**self.comment2, hotel=self.hotel1, writer=self.user1)
-        comment3 = Comment.objects.create(**self.comment1, hotel=self.hotel2, writer=self.user1)
+        self.create_comment()
 
         resp = self.client.get(url)
         # print('1 comment list test resp: ', resp.data)
@@ -132,21 +145,124 @@ class CommentTestCases(APITestCase):
     def test_comment_unauth(self):
         url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
 
+        resp = self.client.post(url, data=self.comment1)
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
     def test_comment__create_success(self):
         url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
+        self.set_credential(self.token1)
+        # hotel1 = Hotel.objects.get(pk=1)
+        resp = self.client.post(url, data=self.comment1)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+
+        resp = self.client.post(url, data=self.comment2)
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+
+        resp = self.client.post(url, data=self.comment1)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+
+        hotel1 = Hotel.objects.get(pk=1)
+        self.assertTrue(hotel1.reply_count == 3)
+
+    def test_comment__create_wrong_data(self):
+        url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
+        self.set_credential(self.token1)
+
+        data = {"text": "hi", "rate": "nine"}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"text": "hi", "rate": 9}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"text": "hi", "rate": -9}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"text": "hi"}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"rate": 5, "text": ""}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        url = my_reverse("hotel-comment-list", kwargs={"hid": 10})
+
+        data = {"rate": 1, "text": "hotel did not exists"}
+        resp = self.client.post(url, data=data)
+        # print("test comment resp", resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
 
     def test_comment__update_delete_wrong_auth(self):
-        pass
+        self.create_comment()
+        url = my_reverse("hotel-comment-detail", kwargs={"pk": 1, "hid": 1})
 
-    def test_comment__update_delete_create_hotel_not_valid(self):
-        pass
+        data = {"rate": 3}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
+
+        self.set_credential(self.token3)
+        data = {"rate": 4, "text": "hotel is updated"}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
+
+        url = my_reverse("hotel-comment-detail", kwargs={"pk": 1, "hid": 20})
+
+        self.set_credential(self.token1)
+        data = {"rate": 4, "text": "hotel is updated"}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
+        resp = self.client.delete(url)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
+
+        url = my_reverse("hotel-comment-detail", kwargs={"pk": 1, "hid": 2})
+
+        self.set_credential(self.token1)
+        data = {"rate": 4, "text": "hotel is updated"}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
+        resp = self.client.delete(url)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NOT_FOUND)
+
+
+    def test_comment__update_delete_hotel_not_valid(self):
+        self.create_comment()
+        self.set_credential(self.token2)
+        url = my_reverse("hotel-comment-detail", kwargs={"pk": 1, "hid": 1})
+
+        data = {"rate": 6}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+        data = {"rate": -4}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+
+
 
     def test_comment__update_delete_success(self):
-        pass
+        self.create_comment()
+        url = my_reverse("hotel-comment-detail", kwargs={"pk": 3, "hid": 2})
+
+        self.set_credential(self.token1)
+        data = {"rate": 4, "text": "hotel is updated"}
+        resp = self.client.put(url, data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
 
     def test_my_comment__unauth(self):
         url = my_reverse("hotel-mycomment-list", kwargs={"hid": 1})
+
+
 
     def test_my_comment__success(self):
         url = my_reverse("hotel-mycomment-list", kwargs={"hid": 1})

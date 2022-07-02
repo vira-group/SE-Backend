@@ -9,7 +9,7 @@ from Hotel.models import Hotel
 
 from ..models import Comment
 from ..serializers.comment_serializers import Comment_serializer
-from ..permissions import IsWriterOrReadOnly, IsWriter
+from ..permissions import IsWriterOrReadOnly
 
 
 class HotelCommentViewSet(viewsets.ModelViewSet):
@@ -25,8 +25,8 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
     def add_reply(self, hotel: Hotel, comment: Comment):
         rep_count = hotel.reply_count
         av_rate = hotel.rate
-        com_rate = comment.rate
-        sum_rate = (av_rate * rep_count) + com_rate
+        com_rate = float(comment.rate)
+        sum_rate = float(av_rate * rep_count) + com_rate
         new_count = rep_count + 1
         new_rate = sum_rate / new_count
         hotel.rate = new_rate
@@ -36,9 +36,9 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
     def delete_reply(self, hotel: Hotel, comment: Comment):
         rep_count = hotel.reply_count
         av_rate = hotel.rate
-        com_rate = comment.rate
+        com_rate = float(comment.rate)
 
-        sum_rate = (av_rate * rep_count) - com_rate
+        sum_rate = float(av_rate * rep_count) - com_rate
         new_count = max(rep_count - 1, 0)
         if new_count > 0:
             new_rate = sum_rate / new_count
@@ -47,14 +47,14 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         hotel.rate = new_rate
         hotel.reply_count = new_count
 
-    def update_reply(self, hotel: Hotel, comment: Comment, old_rate):
+    def update_reply(self, hotel: Hotel, comment: Comment, old_rate: float):
         rep_count = hotel.reply_count
         av_rate = hotel.rate
-        com_rate = comment.rate
+        com_rate = float(comment.rate)
 
-        sum_rate = (av_rate * rep_count) + com_rate - old_rate
+        sum_rate = float(av_rate * rep_count) + com_rate - float(old_rate)
         new_count = rep_count
-        new_rate = sum_rate / new_count
+        new_rate = sum_rate / max(new_count, 1)
         hotel.rate = new_rate
 
     def create(self, request, *args, **kwargs):
@@ -65,14 +65,14 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
             hotel = Hotel.objects.get(pk=kwargs.get("hid"))
         except:
             return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
-
-        request.data['hotel'] = hotel
-        request.data['writer'] = request.user
-        com = self.serializer_class(request.data)
+        data = request.data.copy()
+        data['hotel'] = hotel.id
+        data['writer'] = request.user.id
+        com = self.serializer_class(data=data)
         if com.is_valid():
             comm = com.save()
             self.add_reply(hotel, comm)
-            return Response(comm.data, http.HTTPStatus.CREATED)
+            return Response(com.data, http.HTTPStatus.CREATED)
 
         else:
             return Response(com.errors, http.HTTPStatus.BAD_REQUEST)
@@ -115,11 +115,12 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
 
         except:
             return Response("Comment Not Found", http.HTTPStatus.NOT_FOUND)
-
+        old_rate = comment.rate
         self.check_object_permissions(request, comment)
         serializer = self.serializer_class(instance=comment, data=request.data, partial=True)
         if serializer.is_valid():
             self.perform_update(serializer)
+            self.update_reply(hotel=hotel, comment=serializer.instance, old_rate=old_rate)
         else:
             return Response(serializer.errors, http.HTTPStatus.BAD_REQUEST)
 
