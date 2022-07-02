@@ -21,7 +21,7 @@
     <div class="content">
       <div class="contact-profile">
         <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-        <p>{{ username }}</p>
+        <p>{{ id }}</p>
         <div class="social-media">
           <i class="fa fa-facebook" aria-hidden="true"></i>
           <i class="fa fa-twitter" aria-hidden="true"></i>
@@ -56,7 +56,7 @@
 <script src="{% static 'reconnecting-websocket.js' %}"></script>
 <script>
     var roomName = {{ room_name }};
-    var username = {{ username }};
+    var id = {{ id }};
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
@@ -93,7 +93,7 @@
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': message,
-            'from': username,
+            'from': id,
             'chat': roomName,
         }));
 
@@ -112,7 +112,7 @@
       pTag.textContent = data.content;
       imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
       
-      if (author === username) {
+      if (author === id) {
         msgListTag.className = 'sent';
       } else {
         msgListTag.className = 'replies';
