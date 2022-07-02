@@ -10,14 +10,30 @@ class FacilitiesSerializer(serializers.ModelSerializer):
 
 class HotelSerializer(serializers.ModelSerializer):
     facilities = FacilitiesSerializer(required=False, many=True, read_only=True)
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Hotel
-        fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate',
+        fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate','is_favorite',
                   'reply_count', 'phone_numbers', 'country', 'check_in_range', "check_out_range", 'start_date',
                   'address', 'capacity']
         read_only_fields = ['id', "rate", 'reply_count', 'start_date', 'capacity']
         # lookup_field = 'id'
+
+    def get_is_favorite(self, obj):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        else:
+            return False
+
+        if user is None:
+            return False
+
+        is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
+
+        return is_fav
 
     def create(self, validated_data):
         request = self.context.get("request")
@@ -68,3 +84,26 @@ class FavoriteHotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteHotel
         fields = ['hotel', 'user_id']
+
+
+class BestHotelSerializer(serializers.ModelSerializer):
+    is_favorite = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Hotel
+        fields = ['id', 'city', "country", 'header', 'rate', 'reply_count', 'is_favorite', 'name']
+
+    def get_is_favorite(self, obj):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        else:
+            return False
+
+        if user is None:
+            return False
+
+        is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
+
+        return is_fav

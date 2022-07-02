@@ -9,7 +9,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from rest_framework import status, reverse
 
-from HotelCenter.Hotel.models import Hotel
+from Hotel.models import Hotel, Facility
+from .models import Comment
 
 
 def my_reverse(viewname, kwargs=None, query_kwargs=None):
@@ -37,29 +38,35 @@ class CommentTestCases(APITestCase):
         self.facility1 = {"name": "free_wifi"}
         self.facility2 = {"name": "parking"}
 
+        self.facility1 = Facility.objects.create(**self.facility1)
+        self.facility2 = Facility.objects.create(**self.facility2)
+
         self.hotel_data1 = {
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "country": "Iran",
             "check_in_range": "9:00-12:00",
             "check_out_range": "15:00-23:00",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
-            "facilities": [{"name": "free_wifi"}],
+            # "facilities": [{"name": "free_wifi"}],
             "address": "Esfahan,Iran"
         }
         self.hotel_data2 = {
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "country": "Iran",
             "check_in_range": "9:00-12:00",
             "check_out_range": "15:00-23:00",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,
-            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
-            "address": "Khorasan,Iran"
+            # "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
+            "address": "Khorasan,Iran",
+
         }
 
         self.user1 = get_user_model().objects.create(is_active=True, email="nima.kam@gmail.com")
@@ -78,6 +85,18 @@ class CommentTestCases(APITestCase):
         self.token2 = Token.objects.create(user=self.user2)
         self.token3 = Token.objects.create(user=self.user3)
 
+        self.hotel1 = Hotel.objects.create(creator=self.user2, **self.hotel_data1)
+        self.hotel2 = Hotel.objects.create(creator=self.user2, **self.hotel_data2)
+
+        self.comment1 = {
+            "text": "The hotel was good and our room was clean.",
+            "rate": 4
+        }
+        self.comment2 = {
+            "text": "our room was dirty and there was no room services.",
+            "rate": 2
+        }
+
     def set_credential(self, token):
         """
                 set token for authorization
@@ -91,7 +110,24 @@ class CommentTestCases(APITestCase):
         self.client.credentials()
 
     def test_comment_get_list(self):
-        url = my_reverse("hotel-comment-list", kwargs={"hid": 1})
+        # not valid hotel
+        url = my_reverse("hotel-comment-list", kwargs={"hid": 100})
+
+        comment1 = Comment.objects.create(**self.comment1, hotel=self.hotel1, writer=self.user2)
+        comment2 = Comment.objects.create(**self.comment2, hotel=self.hotel1, writer=self.user1)
+        comment3 = Comment.objects.create(**self.comment1, hotel=self.hotel2, writer=self.user1)
+
+        resp = self.client.get(url)
+        print('1 comment list test resp: ', resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertTrue(len(resp.data) == 0)
+
+        url = my_reverse("hotel-comment-list", kwargs={"hid": self.hotel1.id})
+
+        resp = self.client.get(url)
+        # print('1 comment list test resp: ', resp.data)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertTrue(len(resp.data) == 2)
 
     def test_comment_unauth(self):
         url = my_reverse("hotel-comment-list", kwargs={"hid": 1})

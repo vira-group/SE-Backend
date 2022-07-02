@@ -61,6 +61,8 @@ class HotelTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "country": "Iran",
+            "type": "Hotel",
             "check_in_range": "9:00-12:00",
             "check_out_range": "15:00-23:00",
             "description": "good quality including breakfast",
@@ -73,6 +75,7 @@ class HotelTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "country": "Iran",
             "check_in_range": "9:00-12:00",
             "check_out_range": "15:00-23:00",
             "description": "with best view of the city and places",
@@ -133,9 +136,10 @@ class HotelTestCase(APITestCase):
         self.assertEqual(content["name"], data["name"])
         self.assertTrue(Hotel.objects.count() == current_count + 1)
 
-        # each person can have only one hotel
+        current_count = Hotel.objects.count()
+        # each person can have more than one hotel
         resp = self.client.post(self.test_urls["hotel-list"], data=data, format="json")
-        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
         self.assertTrue(Hotel.objects.count() == current_count + 1)
 
         data["name"] = "old parsian"
@@ -457,6 +461,8 @@ class RoomTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+
+            "country": "Iran",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
@@ -467,6 +473,7 @@ class RoomTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "country": "Iran",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,
@@ -738,6 +745,7 @@ class ReserveTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "country": "Iran",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
@@ -748,6 +756,7 @@ class ReserveTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "country": "Iran",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,
@@ -969,6 +978,7 @@ class AdminTestCase(APITestCase):
             "name": "parsian",
             "city": "Esfehan",
             "state": "Esfehan",
+            "country": "Iran",
             "description": "good quality including breakfast",
             "phone_numbers": "09123456700",
 
@@ -979,6 +989,7 @@ class AdminTestCase(APITestCase):
             "name": "Ferdosi",
             "city": "Khorasan",
             "state": "mashhad",
+            "country": "Iran",
             "description": "with best view of the city and places",
             "phone_numbers": "09123456709",
             'rate': 4.4,

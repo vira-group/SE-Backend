@@ -130,3 +130,6 @@ class Reserve(models.Model):
 class FavoriteHotel(models.Model):
     user = models.ForeignKey(get_user_model(), related_name='favorites', on_delete=models.CASCADE)
     hotel = models.ForeignKey(Hotel, related_name='likes', on_delete=models.CASCADE)
+
+    class Mata:
+        unique_together = ('hotel', 'user',)

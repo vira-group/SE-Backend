@@ -18,8 +18,8 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
                           IsWriterOrReadOnly]
 
     def get_queryset(self):
-        queryset = Comment.objects.filter(hotel=self.kwargs["hid"]).all()[0:50]
-
+        queryset = Comment.objects.filter(hotel=int(self.kwargs["hid"])).all()[0:50]
+        # print("hotel comment queryset:", queryset)
         return queryset
 
     def add_reply(self, hotel: Hotel, comment: Comment):

@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from ..permissions import *
 from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
-    , FavoriteHotelSerializer
+    , FavoriteHotelSerializer, BestHotelSerializer
 from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
 from ..filter_backends import HotelMinRateFilters
 
@@ -39,16 +39,15 @@ class HotelViewSet(viewsets.ModelViewSet):
             'view': self
         }
 
-    def create(self, request, *args, **kwargs):
-        """
-            if current user does not have a hotel already create a hotel
-        """
-        if Hotel.objects.filter(creator=request.user).count() > 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
-                            , content_type='json')
-        else:
-            request.data
-            return super().create(request, *args, **kwargs)
+    # def create(self, request, *args, **kwargs):
+    #     """
+    #         if current user does not have a hotel already create a hotel
+    #     """
+    #     if Hotel.objects.filter(creator=request.user).count() > 0:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
+    #                         , content_type='json')
+    #     else:
+    #         return super().create(request, *args, **kwargs)
 
     def filter_size(self, hotels, size: int):
 
@@ -196,12 +195,15 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
 class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # queryset = Hotel.objects.order(rate).all()
-    serializer_class = HotelSerializer
+    serializer_class = BestHotelSerializer
 
     def dispatch(self, request: rest_framework.request.Request, *args, **kwargs):
         self.request = request
         self.in_kwargs = kwargs
-        self.count = int(request.GET.get('count', 5))
+        try:
+            self.count = int(request.GET.get('count', 4))
+        except:
+            self.count = 4
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -528,3 +530,13 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         }
 
         return Response(data, status=http.HTTPStatus.OK)
+
+
+class BestHotelViewset(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
+    serializer_class = BestHotelSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        queryset = Hotel.objects.order_by('-rate')[0:4]
+
+        return queryset
