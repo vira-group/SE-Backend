@@ -10,10 +10,10 @@ Command Reference
 # Run Celery
     celery -A NAMEOFINSTANCE worker --loglevel=info
 
-    celery -A core worker --loglevel=info
+    celery -A HotelCenter worker --loglevel=info
 
     [Windows OS]
-    celery -A core worker -l info --pool=solo
+    celery -A HotelCenter worker -l info --pool=solo
 
 # Run RabbitMQ (On Windows)
 
