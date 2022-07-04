@@ -12,11 +12,14 @@ from django.conf import settings
 logger = get_task_logger(__name__)
 
 
-@shared_task(name="add_notification")
-def add_notification(send_email=False, **kwargs):
+@shared_task(name="pre_reserve")
+def pre_reserve(Reserve, **kwargs):
     """
-        add a notification for the specified user
-        in case of send_email == True, notification will be forwarded as an email to the user
+    """
+
+@shared_task(name="after_reserve")
+def after_reserve(Reserve, **kwargs):
+    """
     """
 
 
