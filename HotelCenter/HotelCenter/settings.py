@@ -206,6 +206,8 @@ DJOSER = {
 
         }
 }
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
+
 
 ASGI_APPLICATION = 'HotelCenter.asgi.application'
 
