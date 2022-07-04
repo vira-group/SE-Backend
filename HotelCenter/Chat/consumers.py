@@ -18,7 +18,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def new_message(self, data):
         author = data['from']
-        author_user = User.objects.filter(username=author)[0]
+        author_user = User.objects.filter(id=author)[0]
         message = Message.objects.create(
             author=author_user, 
             content=data['message'],
@@ -37,7 +37,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         return {
-            'author': message.author.username,
+            'author': message.author.id,
             'content': message.content,
             'timestamp': str(message.timestamp)
         }

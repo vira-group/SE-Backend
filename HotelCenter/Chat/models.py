@@ -7,7 +7,7 @@ class Message(models.Model):
     chat = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.author.username
+        return self.author.id
 
     def last_10_messages(chat):
         return Message.objects.filter(chat=chat).order_by('timestamp').all()
