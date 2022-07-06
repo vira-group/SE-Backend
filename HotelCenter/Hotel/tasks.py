@@ -48,6 +48,9 @@ def pre_reserve(Reserve, **kwargs):
         }
     )
 
+@shared_task
+def set_reserve_tasks(Reserve,**kwargs):
+
 
 @shared_task(name="after_reserve")
 def after_reserve(Reserve, **kwargs):
