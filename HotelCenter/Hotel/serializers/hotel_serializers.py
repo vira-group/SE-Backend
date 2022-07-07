@@ -14,7 +14,7 @@ class HotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate','is_favorite',
+        fields = ['id', 'name', 'header', 'city', 'state', 'description', 'facilities', 'rate', 'is_favorite',
                   'reply_count', 'phone_numbers', 'country', 'check_in_range', "check_out_range", 'start_date',
                   'address', 'capacity']
         read_only_fields = ['id', "rate", 'reply_count', 'start_date', 'capacity']
@@ -22,6 +22,7 @@ class HotelSerializer(serializers.ModelSerializer):
 
     def get_is_favorite(self, obj):
         user = None
+
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             user = request.user
@@ -32,6 +33,7 @@ class HotelSerializer(serializers.ModelSerializer):
             return False
 
         is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
+        # print("hotel serializer\nuser_id", user.id, "\nhotel_id", obj.id, "\nis_fav", is_fav)
 
         return is_fav
 
@@ -81,9 +83,16 @@ class HotelImgSerializer(serializers.ModelSerializer):
 
 
 class FavoriteHotelSerializer(serializers.ModelSerializer):
+    hotel_info = serializers.SerializerMethodField()
+
     class Meta:
         model = FavoriteHotel
-        fields = ['hotel', 'user_id']
+        fields = ['hotel', "hotel_info", 'user_id']
+
+    def get_hotel_info(self, obj):
+        hotel = obj.hotel
+        ser = HotelSerializer(instance=hotel)
+        return ser.data
 
 
 class BestHotelSerializer(serializers.ModelSerializer):
@@ -91,7 +100,7 @@ class BestHotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = ['id', 'city', "country", 'header', 'rate', 'reply_count', 'is_favorite', 'name']
+        fields = ['id', 'city', 'state', "country", 'header', 'rate', 'reply_count', 'is_favorite', 'name']
 
     def get_is_favorite(self, obj):
         user = None
@@ -105,5 +114,6 @@ class BestHotelSerializer(serializers.ModelSerializer):
             return False
 
         is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
+        # print("besthotel serializer\nuser_id", user.id, "\nhotel_id", obj.id, "\nis_fav", is_fav)
 
         return is_fav

@@ -29,15 +29,15 @@ class HotelViewSet(viewsets.ModelViewSet):
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
 
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self
-        }
+    # def get_serializer_context(self):
+    #     """
+    #     Extra context provided to the serializer class.
+    #     """
+    #     return {
+    #         'request': self.request,
+    #         'format': self.format_kwarg,
+    #         'view': self
+    #     }
 
     # def create(self, request, *args, **kwargs):
     #     """
@@ -115,7 +115,8 @@ class HotelViewSet(viewsets.ModelViewSet):
         # valid_hotel=[]
         # for hotel in query_set
 
-        return Response(self.serializer_class(query_set, many=True).data, status=http.HTTPStatus.OK)
+        return Response(self.serializer_class(query_set, many=True, context=self.get_serializer_context()).data,
+                        status=http.HTTPStatus.OK)
 
     # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
@@ -530,4 +531,3 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         }
 
         return Response(data, status=http.HTTPStatus.OK)
-

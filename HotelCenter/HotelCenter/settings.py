@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'Hotel_center',
         'USER': 'h_user',
         'PASSWORD': 'StrOng1-paSs2',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
         'PORT': '5432',
     },
     'TEST': {
@@ -182,7 +182,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "hotelcenter.noreply@gmail.com"
-EMAIL_HOST_PASSWORD = "Vira1400SE1"
+EMAIL_HOST_PASSWORD = "abqcjyvowvjmkwjv"  # "Vira1400SE1"
 # DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
@@ -203,7 +203,6 @@ DJOSER = {
         }
 }
 TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
-
 
 ASGI_APPLICATION = 'HotelCenter.asgi.application'
 
