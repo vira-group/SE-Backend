@@ -253,7 +253,7 @@ class HotelTestCase(APITestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
         # self.client.post(self.test_urls['hotel-images'].format(1))
 
-    def test_Best_hotel_list(self):  # ***
+    def test_Best_New_hotel_list(self):  # ***
         self.hotel_data1.pop("facilities")
         self.hotel_data2.pop("facilities")
         hotel_data3 = self.hotel_data2.copy()
@@ -268,10 +268,15 @@ class HotelTestCase(APITestCase):
         for i in range(1, len(resp.data)):
             self.assertTrue(resp.data[i - 1]['rate'] >= resp.data[i]['rate'])
 
-        resp = self.client.get(path=self.test_urls['best-hotel'] + "?count=2")
-        self.assertEqual(resp.status_code, 200)
+        resp = self.client.get(path=my_reverse("best-hotel-list", query_kwargs={"count": 2}))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(len(resp.data) <= 2)
+
+        resp = self.client.get(my_reverse("new-hotel-list"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        self.assertTrue(len(resp.data) == 3)
 
     def test_Delete_hotel_img(self):  # ***
         self.hotel_data1.pop("facilities")
@@ -1255,10 +1260,10 @@ class CancelReserveTestCase(APITestCase):
             "price_per_day": 5,
             "national_code": "00",
             "phone_number": "09199999999",
-            "roomspace_id":roomspace.id
+            "roomspace_id": roomspace.id
         }
-        reserve = Reserve.objects.create(**data , user=self.u1)
-        data ={
+        reserve = Reserve.objects.create(**data, user=self.u1)
+        data = {
             "reserve": reserve.id
         }
         response = self.client.post(self.test_urls["cancel_reserve"], data)
@@ -1281,10 +1286,10 @@ class CancelReserveTestCase(APITestCase):
             "price_per_day": 5,
             "national_code": "00",
             "phone_number": "09199999999",
-            "roomspace_id":roomspace.id
+            "roomspace_id": roomspace.id
         }
-        reserve = Reserve.objects.create(**data , user=self.u1)
-        data ={
+        reserve = Reserve.objects.create(**data, user=self.u1)
+        data = {
             "reserve": reserve.id
         }
         response = self.client.post(self.test_urls["cancel_reserve"], data)
@@ -1307,17 +1312,15 @@ class CancelReserveTestCase(APITestCase):
             "price_per_day": 5,
             "national_code": "00",
             "phone_number": "09199999999",
-            "roomspace_id":roomspace.id
+            "roomspace_id": roomspace.id
         }
-        reserve = Reserve.objects.create(**data , user=self.u2)
-        data ={
+        reserve = Reserve.objects.create(**data, user=self.u2)
+        data = {
             "reserve": reserve.id
         }
         response = self.client.post(self.test_urls["cancel_reserve"], data)
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
 
-
-        
     def test_cancel_reserve_for_past_time(self):
         self.hotel1.pop("facilities")
         h1 = Hotel.objects.create(**self.hotel1, creator_id=self.u1.id)
@@ -1335,10 +1338,10 @@ class CancelReserveTestCase(APITestCase):
             "price_per_day": 5,
             "national_code": "00",
             "phone_number": "09199999999",
-            "roomspace_id":roomspace.id
+            "roomspace_id": roomspace.id
         }
-        reserve = Reserve.objects.create(**data , user=self.u1)
-        data ={
+        reserve = Reserve.objects.create(**data, user=self.u1)
+        data = {
             "reserve": reserve.id
         }
         response = self.client.post(self.test_urls["cancel_reserve"], data)

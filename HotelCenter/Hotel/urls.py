@@ -30,7 +30,7 @@ router.register('best', BestHotelViewSet, basename='best-hotel')
 router.register('roomfacilities', roomFacilityViewSet, basename='roomfacility-list')
 router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
 router.register('favorites', FavoriteViewSet, basename="favorite_hotels")
-router.register("newhotels", NewHotelViewSet, basename="new-hotels")
+router.register("newhotels", NewHotelViewSet, basename="new-hotel")
 
 hotel_admin_router = routers.DefaultRouter()
 hotel_admin_router.register('panel', HotelInfoViewSet, basename='hotel-admin-panel')
