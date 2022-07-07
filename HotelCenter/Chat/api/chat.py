@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from Hotel.models import Hotel
@@ -46,3 +47,14 @@ class HotelChatAPI(APIView):
             hotel_chat = HotelChat.objects.create(roomname = np.random.randint(0,99999), hotel = hotel, user=request.user)
             serializer = HotelChatSerializer(hotel_chat) 
             return Response(serializer.data)
+
+
+class HotelChatList(APIView):
+    def get(self, request, hotel_id, format=None):
+        hotel = get_object_or_404(Hotel, id = hotel_id )
+        if(request.user == hotel.creator or request.user in hotel.editors.all()):
+            chatlist = HotelChat.objects.filter(hotel = hotel).all()
+            serializer = HotelChatSerializer(chatlist, many=True) 
+            return Response(serializer.data)
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
