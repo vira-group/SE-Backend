@@ -1,8 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from ..models import Message
-from ..serializers.chat_serializer import MessageSerializer
+
+from Hotel.models import Hotel
+from ..models import Message, HotelChat
+from ..serializers.chat_serializer import MessageSerializer, HotelChatSerializer
+import numpy as np
+from django.shortcuts import get_object_or_404
 
 class MessageAPI(APIView):
     def post(self, request):
@@ -29,3 +33,16 @@ class UserChatList(APIView):
             return False
         except:
             return False
+
+class HotelChatAPI(APIView):
+    def get(self, request, hotel_id, format=None):
+        try:
+            hotel = get_object_or_404(Hotel, id = hotel_id )
+            hotel_chat = get_object_or_404(HotelChat, hotel=hotel , user=request.user)
+            serializer = HotelChatSerializer(hotel_chat) 
+            return Response(serializer.data)
+        except:
+            hotel = get_object_or_404(Hotel, id = hotel_id )
+            hotel_chat = HotelChat.objects.create(roomname = np.random.randint(0,99999), hotel = hotel, user=request.user)
+            serializer = HotelChatSerializer(hotel_chat) 
+            return Response(serializer.data)
