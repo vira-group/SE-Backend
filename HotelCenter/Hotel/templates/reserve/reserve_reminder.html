@@ -1,18 +1,18 @@
 {% load i18n %}
 
 {% block subject %}
-{% blocktrans %}Reminder for your Reservation{% endblocktrans %}
+{% blocktrans %}Reminder for your Reservation {{username}}{% endblocktrans %}
 {% endblock subject %}
 
-<!--variable names: {
-start_date              start date of the reservation
-end_date
-username
-hotel                   Name of the hotel
-room
-hotel_url
-}
--->
+<!--&lt;!&ndash;variable names: {-->
+<!--start_date              start date of the reservation-->
+<!--end_date-->
+<!--username-->
+<!--hotel                   Name of the hotel-->
+<!--room-->
+<!--hotel_url-->
+<!--}-->
+<!--&ndash;&gt;-->
 {% block html_body %}
 <!DOCTYPE html>
 <html>
@@ -136,8 +136,8 @@ h1{
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; color: black; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <h3 style="margin: 0;">Hi username</h3>
-                            <h4>You have booked a room with the following specifications at Hotel X for the next two days : </h4>
+                            <h3 style="margin: 0;">Hi {{username}}</h3>
+                            <h4>You have booked a room with the following specifications at Hotel {{hotel}} for the next two days : </h4>
                         </td>
                     </tr>
                     <tr>
@@ -145,10 +145,10 @@ h1{
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: black; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
                             <hr>
-                            <p>Room type : something</p>
-                            <p>Room size : something</p>
-                            <p>checkin data : something</p>
-                            <p>checkout data : something</p>
+                            <p>Room type : {{room}}</p>
+                            <p>Room size : {{size}}</p>
+                            <p>checkin data : {{start_date}}</p>
+                            <p>checkout data : {{end_date}}</p>
                             <hr>
                         </td>
                         <td>
@@ -157,7 +157,7 @@ h1{
                     </tr> <!-- COPY -->
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 30px 30px 20px 30px; color: black; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;"> awaiting for your presence in <a style="color: blue;" href=""> hotel x</a> </p>
+                            <p style="margin: 0;"> awaiting for your presence in <a style="color: blue;" href={{hotel_url}}> hotel {{hotel}}</a> </p>
                         </td>
                     </tr>
                     <tr>
@@ -175,7 +175,15 @@ h1{
 </body>
 
 </html>
-
-
+<!--<html>-->
+<!--<h1>-->
+<!--start_date :    {{start_date}}-->
+<!--end_date: {{end_date}}-->
+<!--username:  {{username}}-->
+<!--hotel     :-->
+<!--room:-->
+<!--hotel_url:</h1>-->
+<!--</body>-->
+<!--</html>-->
 {% endblock html_body %}
 
