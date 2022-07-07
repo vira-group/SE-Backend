@@ -87,7 +87,7 @@ def set_reserve_tasks(Reserve, **kwargs):
 
     feedback_date = max(Reserve.end_day + datetime.timedelta(days=1), now)
 
-    pre_reserve.apply_async((Reserve, kwargs), eta=rem_date)
+    pre_reserve.apply_async(args=Reserve, kwargs=kwargs, eta=rem_date)
     after_reserve.apply_async((Reserve, kwargs), eta=feedback_date)
 
     logger.info("schedule review email")

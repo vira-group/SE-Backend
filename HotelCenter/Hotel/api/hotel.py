@@ -531,3 +531,12 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         }
 
         return Response(data, status=http.HTTPStatus.OK)
+
+class NewHotelViewSet(viewsets.ReadOnlyModelViewSet):
+
+    serializer_class = BestHotelSerializer
+
+    def get_queryset(self):
+        queryset = Hotel.objects.order_by('-start_date')[0:10]
+        return queryset
+

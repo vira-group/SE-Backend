@@ -100,7 +100,8 @@ class BestHotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hotel
-        fields = ['id', 'city', 'state', "country", 'header', 'rate', 'reply_count', 'is_favorite', 'name']
+        fields = ['id', 'city', 'state', "start_date", "country", 'header', 'rate', 'reply_count', 'is_favorite',
+                  'name']
 
     def get_is_favorite(self, obj):
         user = None
