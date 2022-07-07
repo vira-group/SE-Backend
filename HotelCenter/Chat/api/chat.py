@@ -48,6 +48,7 @@ class UserChatList(APIView):
 
 
 class HotelChatAPI(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, hotel_id, format=None):
         try:
             hotel = get_object_or_404(Hotel, id = hotel_id )
@@ -62,6 +63,7 @@ class HotelChatAPI(APIView):
 
 
 class HotelChatList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, hotel_id, format=None):
         hotel = get_object_or_404(Hotel, id = hotel_id )
         if(request.user == hotel.creator or request.user in hotel.editors.all()):
