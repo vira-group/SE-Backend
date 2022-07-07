@@ -315,7 +315,7 @@ class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, v
 
     def get_queryset(self):
         user = self.request.user
-        queryset = FavoriteHotel.objects.filter(user=user)
+        queryset = FavoriteHotel.objects.filter(user=user).all()
         return queryset
 
     def create(self, request: rest_framework.request.Request, *args, **kwargs):
@@ -334,7 +334,7 @@ class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, v
         if favs is None:
             new_fav = FavoriteHotel(user=request.user, hotel=hotel)
             new_fav.save()
-            nf = FavoriteHotelSerializer(instance=new_fav)
+            nf = FavoriteHotelSerializer(instance=new_fav, context=self.get_serializer_context())
 
             return Response(nf.data, status=http.HTTPStatus.OK)
 
@@ -532,11 +532,10 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
 
         return Response(data, status=http.HTTPStatus.OK)
 
-class NewHotelViewSet(viewsets.ReadOnlyModelViewSet):
 
+class NewHotelViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BestHotelSerializer
 
     def get_queryset(self):
         queryset = Hotel.objects.order_by('-start_date')[0:10]
         return queryset
-

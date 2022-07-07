@@ -91,7 +91,7 @@ class FavoriteHotelSerializer(serializers.ModelSerializer):
 
     def get_hotel_info(self, obj):
         hotel = obj.hotel
-        ser = HotelSerializer(instance=hotel)
+        ser = HotelSerializer(instance=hotel, context=self.context)
         return ser.data
 
 
