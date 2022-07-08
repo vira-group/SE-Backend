@@ -8,11 +8,11 @@ from Hotel.models import Hotel
 class PublicUserSerializer(serializers.HyperlinkedModelSerializer):
     avatar = serializers.ImageField(read_only=True)
     firstName = serializers.CharField(read_only=True)
-    avatar = serializers.CharField(read_only=True)
+    lastName = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['avatar', 'firstName', 'lastName']
+        fields = ['avatar', 'firstName', 'lastName', 'id']
 
 
 class MyProfileSerializer(serializers.HyperlinkedModelSerializer):
