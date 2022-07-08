@@ -12,7 +12,7 @@ class PublicUserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['avatar', 'firstName', 'lastName']
+        fields = ['avatar', 'firstName', 'lastName', 'id']
 
 
 class MyProfileSerializer(serializers.HyperlinkedModelSerializer):
