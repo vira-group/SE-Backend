@@ -178,11 +178,11 @@ REST_FRAMEWORK = {
 # EMAIL
 DOMAIN = 'localhost:3000'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.mail.yahoo.com'  # 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "hotelcenter.noreply@gmail.com"
-EMAIL_HOST_PASSWORD = "abqcjyvowvjmkwjv"  # "Vira1400SE1"
+EMAIL_HOST_USER = "hotelcenter.noreply@yahoo.com"
+EMAIL_HOST_PASSWORD = "Vira1400SE1"
 # DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
 DJOSER = {
