@@ -13,7 +13,8 @@ from Hotel.models import Hotel , Facility
 class chatTestCase(APITestCase):
     test_urls = {
         "user-chatlist": '/api/chat/mychatlist/',
-        "hotel_chatlist": '/api/chat/hotelcahtlist/{}/'
+        "hotel_chatlist": '/api/chat/hotelcahtlist/{}/',
+        "hotel_roomname": '/api/chat/hotelcaht/{}/'
     }
 
     def setUp(self) -> None:
@@ -96,3 +97,40 @@ class chatTestCase(APITestCase):
         self.set_credential(token=self.token2)
         response = self.client.get(self.test_urls["hotel_chatlist"].format(hotel1.id))
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_hotel_chatlist_not_found(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(token=self.token1)
+        response = self.client.get(self.test_urls["hotel_chatlist"].format(hotel1.id+1))
+        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_hotel_roomname_make_success(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(token=self.token2)
+        response = self.client.get(self.test_urls["hotel_roomname"].format(hotel1.id))
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_hotel_roomname_get_success(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(token=self.token2)
+        response = self.client.get(self.test_urls["hotel_roomname"].format(hotel1.id))
+        response1 = self.client.get(self.test_urls["hotel_roomname"].format(hotel1.id))
+        if(response == response1):
+            self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_hotel_roomname_unauthorized(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.unset_credential()
+        response = self.client.get(self.test_urls["hotel_roomname"].format(hotel1.id))
+        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    
+    def test_hotel_roomname_not_found_hotel(self):
+        self.hotel_data1.pop("facilities")
+        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        self.set_credential(self.token1)
+        response = self.client.get(self.test_urls["hotel_roomname"].format(hotel1.id+1))
+        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
