@@ -13,7 +13,7 @@ Command Reference
     celery -A HotelCenter worker --loglevel=info
 
     [Windows OS]
-    celery -A HotelCenter worker -l info --pool=solo
+    celery -A HotelCenter worker -l info -E --pool=solo
 
 # Run RabbitMQ (On Windows)
 
@@ -52,7 +52,9 @@ if sys.platform == 'win32':
 
 Start Flower
 #####
-flower -A core --port=5555
+##flower -A HotelCenter --port=5555
+
+celery -A HotelCenter flower --port=5566
 
 
 ###############################

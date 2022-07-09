@@ -37,9 +37,11 @@ django-templated-mail==1.1.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
+flower==1.1.0
 gunicorn==20.1.0
 h11==0.13.0
 hiredis==2.0.0
+humanize==4.2.3
 hyperlink==21.0.0
 idna==3.3
 incremental==21.3.0
@@ -58,6 +60,7 @@ outcome==1.1.0
 packaging==21.3
 Pillow==9.0.1
 postgres==4.0
+prometheus-client==0.14.1
 prompt-toolkit==3.0.29
 psycopg2-binary==2.9.3
 psycopg2-pool==1.1
@@ -84,6 +87,7 @@ social-auth-app-django==4.0.0
 social-auth-core==4.2.0
 sortedcontainers==2.4.0
 sqlparse==0.4.2
+tornado==6.2
 trio==0.20.0
 trio-websocket==0.9.2
 Twisted==22.4.0

@@ -134,4 +134,4 @@ def after_reserve(Reserve, **kwargs):
 @shared_task(name="add_for_test")
 def add(a, b):
     logger.info("Sent review email")
-    return a, b
+    return a, b, a + b
