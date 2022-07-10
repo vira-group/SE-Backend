@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -104,7 +105,7 @@ class RoomSpace(models.Model):
 class Reserve(models.Model):
     start_day = models.DateField()
     end_day = models.DateField()
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING, related_name='reserves')
     price_per_day = models.IntegerField(default=None)
     firstname = models.CharField(max_length=64, blank=False, null=False)
@@ -112,6 +113,7 @@ class Reserve(models.Model):
     national_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=64, blank=True, null=True)
     room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, related_name='reserves')
+    create_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def total_price(self):
@@ -129,3 +131,20 @@ class Reserve(models.Model):
 class FavoriteHotel(models.Model):
     user = models.ForeignKey(get_user_model(), related_name='favorites', on_delete=models.CASCADE)
     hotel = models.ForeignKey(Hotel, related_name='likes', on_delete=models.CASCADE)
+
+    class Mata:
+        unique_together = ('hotel', 'user',)
+
+class CancelReserve(models.Model):
+    start_day = models.DateField()
+    end_day = models.DateField()
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING)
+    price_per_day = models.IntegerField(default=None)
+    firstname = models.CharField(max_length=64, blank=False, null=False)
+    lastname = models.CharField(max_length=64, blank=False, null=False)
+    national_code = models.CharField(max_length=64, blank=True, null=True)
+    phone_number = models.CharField(max_length=64, blank=True, null=True)
+    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
+    reserve = models.IntegerField()
+    canceld_at = models.DateTimeField(auto_now= True)

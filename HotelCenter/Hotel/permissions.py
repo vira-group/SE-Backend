@@ -70,4 +70,6 @@ class IsUrlHotelEditor(permissions.BasePermission):
     def has_permission(self, request, view):
         # print('in permission')
         hotel = Hotel.objects.filter(pk=view.kwargs['hid']).first()
+        if hotel is None:
+            return False
         return (hotel.creator == request.user) or (request.user in hotel.editors.all())

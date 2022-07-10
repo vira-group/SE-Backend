@@ -18,10 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from .api.hotel import HotelViewSet, FacilityViewSet, HotelImgViewSet, BestHotelViewSet, \
-    MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet
+    MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet, NewHotelViewSet
 from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
     AdminRoomViewSet
-from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet
+from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
 
 router = routers.DefaultRouter()
 router.register('hotels', HotelViewSet, basename='user-hotel')
@@ -30,6 +30,7 @@ router.register('best', BestHotelViewSet, basename='best-hotel')
 router.register('roomfacilities', roomFacilityViewSet, basename='roomfacility-list')
 router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
 router.register('favorites', FavoriteViewSet, basename="favorite_hotels")
+router.register("newhotels", NewHotelViewSet, basename="new-hotel")
 
 hotel_admin_router = routers.DefaultRouter()
 hotel_admin_router.register('panel', HotelInfoViewSet, basename='hotel-admin-panel')
@@ -52,7 +53,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('<int:hid>/', include(hotel_router.urls)),
     path('admin/', include(hotel_admin_router.urls)),
-
+    path('cancelreserve/', UserCancelReserveList.as_view()),
     path('room/<int:room_id>/', include(room_router.urls)),
 
 ]

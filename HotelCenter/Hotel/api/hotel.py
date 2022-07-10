@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from ..permissions import *
 from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
 from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
-    , FavoriteHotelSerializer
+    , FavoriteHotelSerializer, BestHotelSerializer
 from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
 from ..filter_backends import HotelMinRateFilters
 
@@ -29,26 +29,25 @@ class HotelViewSet(viewsets.ModelViewSet):
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
 
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self
-        }
+    # def get_serializer_context(self):
+    #     """
+    #     Extra context provided to the serializer class.
+    #     """
+    #     return {
+    #         'request': self.request,
+    #         'format': self.format_kwarg,
+    #         'view': self
+    #     }
 
-    def create(self, request, *args, **kwargs):
-        """
-            if current user does not have a hotel already create a hotel
-        """
-        if Hotel.objects.filter(creator=request.user).count() > 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
-                            , content_type='json')
-        else:
-            request.data
-            return super().create(request, *args, **kwargs)
+    # def create(self, request, *args, **kwargs):
+    #     """
+    #         if current user does not have a hotel already create a hotel
+    #     """
+    #     if Hotel.objects.filter(creator=request.user).count() > 0:
+    #         return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
+    #                         , content_type='json')
+    #     else:
+    #         return super().create(request, *args, **kwargs)
 
     def filter_size(self, hotels, size: int):
 
@@ -116,7 +115,8 @@ class HotelViewSet(viewsets.ModelViewSet):
         # valid_hotel=[]
         # for hotel in query_set
 
-        return Response(self.serializer_class(query_set, many=True).data, status=http.HTTPStatus.OK)
+        return Response(self.serializer_class(query_set, many=True, context=self.get_serializer_context()).data,
+                        status=http.HTTPStatus.OK)
 
     # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
@@ -196,12 +196,15 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
 class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # queryset = Hotel.objects.order(rate).all()
-    serializer_class = HotelSerializer
+    serializer_class = BestHotelSerializer
 
     def dispatch(self, request: rest_framework.request.Request, *args, **kwargs):
         self.request = request
         self.in_kwargs = kwargs
-        self.count = int(request.GET.get('count', 5))
+        try:
+            self.count = int(request.GET.get('count', 4))
+        except:
+            self.count = 4
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -312,7 +315,7 @@ class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, v
 
     def get_queryset(self):
         user = self.request.user
-        queryset = FavoriteHotel.objects.filter(user=user)
+        queryset = FavoriteHotel.objects.filter(user=user).all()
         return queryset
 
     def create(self, request: rest_framework.request.Request, *args, **kwargs):
@@ -331,7 +334,7 @@ class FavoriteViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin, v
         if favs is None:
             new_fav = FavoriteHotel(user=request.user, hotel=hotel)
             new_fav.save()
-            nf = FavoriteHotelSerializer(instance=new_fav)
+            nf = FavoriteHotelSerializer(instance=new_fav, context=self.get_serializer_context())
 
             return Response(nf.data, status=http.HTTPStatus.OK)
 
@@ -410,10 +413,26 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         # if s_count < 1:
         #     s_count = 1
         percent = {
-            ro.type: (len(full_spaces[ro.type]) / (len(empty_spaces[ro.type]) + len(full_spaces[ro.type]) + 1) * 100)
+            ro.type: (len(full_spaces[ro.type]) / max((len(empty_spaces[ro.type]) + len(full_spaces[ro.type])),
+                                                      1) * 100)
             for ro in rooms}
         return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
                 'percent': percent}
+
+    def room_type_count(self, dic):
+        """
+        count number of all spaces and full spaces from 'full_empty_rooms_spaces()' output
+        dic: this the output of function 'full_empty_rooms_spaces()'
+        """
+        spaces = dic['spaces']
+        type_count = {}
+        for r_type in spaces['full'].keys():
+            # print("in room type count, spaces", spaces['full'])
+            full_nums = len(spaces['full'][r_type])
+            empty_nums = len(spaces['empty'][r_type])
+            type_count[r_type] = {"fullRooms": full_nums, "allRooms": empty_nums + full_nums}
+
+        return type_count
 
     def room_count(self, hotel: Hotel):
         rooms = hotel.rooms.all()
@@ -492,6 +511,8 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
 
         stat = self.full_empty_rooms_spaces(hotel, date)
 
+        rooms_count = self.room_type_count(stat)
+
         res_stat = self.reserves_income_status(hotel, date)
 
         data = {
@@ -500,7 +521,7 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
             'spaces_status': stat['spaces'],
             'spaces_percentage': stat['percent'],
             "rooms_status": stat['rooms'],
-
+            "room_types_count": rooms_count,
             'room_count': self.room_count(hotel),
             'check_in_count': self.check_in_count(hotel, date),
             'check_out_count': self.check_out_count(hotel, date),
@@ -510,3 +531,11 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         }
 
         return Response(data, status=http.HTTPStatus.OK)
+
+
+class NewHotelViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = BestHotelSerializer
+
+    def get_queryset(self):
+        queryset = Hotel.objects.order_by('-start_date')[0:10]
+        return queryset

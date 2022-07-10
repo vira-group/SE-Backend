@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/hotel/', include("Hotel.urls")),
     path('api/accounts/', include("Account.urls")),
     path('api/chat/', include("Chat.urls")),
+    path('api/hotel/', include("comment.urls")),
 
 ]
 
