@@ -58,7 +58,7 @@ class ReserveList(APIView):
                 if (checkCondition(roomspace, serializer.validated_data["start_day"],
                                    serializer.validated_data["end_day"])):
                     res = serializer.save(user=user, roomspace=roomspace)
-                    set_reserve_tasks(res)
+                    
                     user.balance -= ((serializer.validated_data["end_day"] - serializer.validated_data[
                         "start_day"]).days + 1) * serializer.validated_data["price_per_day"]
                     user.save()

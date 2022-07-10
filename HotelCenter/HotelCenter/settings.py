@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'Hotel_center',
         'USER': 'h_user',
         'PASSWORD': 'StrOng1-paSs2',
-        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
+        'HOST': 'db',   # Or an IP Address that your DB is hosted on
         'PORT': '5432',
     },
     'TEST': {
@@ -212,7 +212,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('0.0.0.0', 6379)],
         },
     },
 }
