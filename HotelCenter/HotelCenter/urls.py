@@ -16,16 +16,36 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.urls import re_path as url
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from Account.email import ActivationEmail
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api/hotel/', include("Hotel.urls")),
     path('api/accounts/', include("Account.urls")),
     path('api/chat/', include("Chat.urls")),
     path('api/hotel/', include("comment.urls")),
+    path('accounts/activate/<uid>/<token>', ActivationEmail.as_view({'get': 'activation'}), name='activation'),
 
 ]
 
