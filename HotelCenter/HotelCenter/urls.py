@@ -45,7 +45,7 @@ urlpatterns = [
     path('api/accounts/', include("Account.urls")),
     path('api/chat/', include("Chat.urls")),
     path('api/hotel/', include("comment.urls")),
-    path('accounts/activate/<uid>/<token>', ActivationEmail.as_view({'get': 'activation'}), name='activation'),
+    path('users/activate/<uid>/<token>', ActivationEmail.as_view({'get': 'activation'}), name='activation'),
 
 ]
 

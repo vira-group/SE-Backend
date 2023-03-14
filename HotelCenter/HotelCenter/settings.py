@@ -136,17 +136,37 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ),
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_HOST_USER = 'hotelcenter.noreply@yahoo.com'
+EMAIL_HOST_PASSWORD = 'psdjbiuhopnfdeer'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "hotelcenter.noreply@yahoo.com"
+
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
+
+
 DJOSER = {
-    "USER_CREATE_PASSWORD_RETYPE": True,
-    "SET_PASSWORD_RETYPE": True,
-    "PASSWORD_RESET_CONFIRM_RETYPE": True,
-    "LOGOUT_ON_PASSWORD_CHANGE": True,
+    'DOMAIN': 'localhost:8000',
+    'SITE_NAME': 'net',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password/?uid={uid}&token={token}', 
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'account/activate/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'users/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
     'SERIALIZERS': {},
+    'EMAIL':
+        {
+            'activation': 'djoser.email.ActivationEmail',
+            'confirmation': 'djoser.email.ConfirmationEmail',
+            'password_reset': 'djoser.email.PasswordResetEmail',
+        },
 }
 
 # Internationalization
@@ -191,17 +211,7 @@ AUTH_USER_MODEL = 'Account.User'
 
 
 # EMAIL
-DOMAIN = 'localhost:3000'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mail.yahoo.com'  # 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "hotelcenter.noreply@yahoo.com"
-EMAIL_HOST_PASSWORD = "Vira1400SE1"
-# DEFAULT_FROM_EMAIL = 'HotelCenter <no_reply@domain.com>'
 
-
-TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
 
 ASGI_APPLICATION = 'HotelCenter.asgi.application'
 
