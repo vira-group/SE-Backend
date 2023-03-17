@@ -36,15 +36,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     
-    male_gender ="M"
-    female_gender ="F"
-    other_gender ="O"
     
-    sexuality_choises = [
-        ("M","Male",),
-        ("F","Female",),
-        ("O","Other",)
-    ]
     
     role_manager='M'
     role_customer='C'
@@ -57,7 +49,6 @@ class User(AbstractBaseUser):
     ]
     
     valid_number=[RegexValidator(regex='^(\+98|0)?9\d{9}$')]
-    valid_id=[RegexValidator(regex='^[0-9]{10}')]
     email = models.EmailField(
         verbose_name='email address',
         unique=True,
@@ -65,9 +56,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     objects = UserManager()
-    gender = models.CharField(max_length=1,choices=sexuality_choises,default=male_gender)
     phone_number = models.CharField(_('phone number'),max_length=11,validators=valid_number,blank=True)
-    national_code = models.CharField(max_length=10,validators=valid_id,blank=True)
     balance = models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
     role=models.CharField(max_length=1,choices=ROLE_CHOICES,default=role_unknown)
     USERNAME_FIELD = 'email'
@@ -83,10 +72,22 @@ class User(AbstractBaseUser):
     
 class Customer(models.Model):
 
-        
-        User=models.OneToOneField(User,on_delete=models.CASCADE)     
+        male_gender ="M"
+        female_gender ="F"
+        other_gender ="O"
+    
+        sexuality_choises = [
+            ("M","Male",),
+            ("F","Female",),
+            ("O","Other",)
+        ]
+        user=models.OneToOneField(User,on_delete=models.CASCADE)     
+        valid_id=[RegexValidator(regex='^[0-9]{10}')]
         first_name=models.CharField(max_length=55)
         last_name=models.CharField(max_length=55)
+        national_code = models.CharField(max_length=10,validators=valid_id,blank=True)
+        gender = models.CharField(max_length=1,choices=sexuality_choises,default=male_gender)
+        
         
         
         def __str__(self):
@@ -96,7 +97,7 @@ class Customer(models.Model):
 class Manager(models.Model):
     
     
-    User=models.OneToOneField(User,on_delete=models.CASCADE)     
+    user=models.OneToOneField(User,on_delete=models.CASCADE)     
     name=models.CharField(max_length=55)
     
     def __str__(self):
