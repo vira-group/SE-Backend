@@ -150,7 +150,7 @@ TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBacke
 DJOSER = {
     'DOMAIN': 'localhost:8000',
     'SITE_NAME': 'net',
-    'USER_CREATE_PASSWORD_RETYPE': True,
+    # 'USER_CREATE_PASSWORD_RETYPE': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'LOGOUT_ON_PASSWORD_CHANGE': True,
@@ -160,7 +160,12 @@ DJOSER = {
     'ACTIVATION_URL': 'users/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-    'SERIALIZERS': {},
+    'SERIALIZERS': {
+        
+        'user_create':'Account.serializers.UserCreateSerializer'
+        
+        
+        },
     'EMAIL':
         {
             'activation': 'djoser.email.ActivationEmail',
