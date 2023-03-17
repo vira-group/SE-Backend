@@ -25,6 +25,17 @@ class UserManager(BaseUserManager):
         user.role=kwargs.pop('role')
         user.phone_number=kwargs.pop('phone_number')
         user.save(using=self._db)
+        
+        if user.role == "M":
+                manager=Manager(user=user,name=f"Manager{user.pk}")
+                manager.save()
+        elif user.role=="C":
+                 customer=Customer(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
+                 customer.save()
+        else :
+                raise ValueError("Value is invalid!")
+        
+        
         return user
 
     def create_superuser(self, email, password=None):
