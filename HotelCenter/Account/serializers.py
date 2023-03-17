@@ -9,30 +9,19 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         model=User
         fields=['email','phone_number','role','password']
         
-        def create(self, validated_data):
-            user = User(
+        # def create(self, validated_data):
+        #     user = User(
             
                 
-                email=validated_data['email'],
-                phone_number=validated_data['phone_number'],
-                role=validated_data['role'],
+        #         email=validated_data['email'],
+        #         phone_number=validated_data['phone_number'],
+        #         role=validated_data['role'],
 
-            )
-            user.set_password(validated_data['password'])
-            user.save()
+        #     )
+        #     user.set_password(validated_data['password'])
+        #     user.save()
             
-            
-            if user.role == "M":
-                manager=Manager(user=user,name=f"Manager{user.pk}")
-                manager.save()
-            elif user.role=="C":
-                 customer=Customer(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
-                 customer.save()
-            else :
-                raise ValueError("Value is invalid!")
-        
-        
-            return user
+            # return user
         
  
             
