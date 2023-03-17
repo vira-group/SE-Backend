@@ -28,7 +28,8 @@ class UserCreateSerializer(BaseUserCreateSerializer):
             elif user.role=="C":
                  customer=Manager(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
                  customer.save()
-        
+            else :
+                raise ValueError("Value is invalid!")
         
         
             return user
