@@ -10,37 +10,52 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 class UserManager(BaseUserManager):
     
-    def create_user(self, *args, **kwargs):
-        email=kwargs.pop('email')
-        password=kwargs.pop('password')
+    def create_user(self,adminpannel=False ,*args, **kwargs):
         
-        if not email:
-            raise ValueError('Users must have an email address')
+            email=kwargs.get('email')
+            password=kwargs.get('password')
+            
+            if not email:
+                raise ValueError('Users must have an email address')
 
-        user = self.model(
-            email=self.normalize_email(email)
-        )
+            user = self.model(
+                email=self.normalize_email(email)
+            )
 
-        user.set_password(password)
-        user.role=kwargs.pop('role')
-        user.phone_number=kwargs.pop('phone_number')
-        user.save(using=self._db)
+            user.set_password(password)
+            user.role=kwargs.get('role','C')
+            user.phone_number=kwargs.get('phone_number',"")
+            user.save(using=self._db)
+            
+            if user.role == "M":
+                    manager=Manager(user=user,name=f"Manager{user.pk}")
+                    manager.save()
+            elif user.role=="C":
+                    customer=Customer(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
+                    customer.save()
+            else :
+                    raise ValueError("Value is invalid!")
+            
+            
+            return user
         
-        if user.role == "M":
-                manager=Manager(user=user,name=f"Manager{user.pk}")
-                manager.save()
-        elif user.role=="C":
-                 customer=Customer(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
-                 customer.save()
-        else :
-                raise ValueError("Value is invalid!")
-        
-        
-        return user
+    def super_user(self,eamil,password):
+            
+            email=eamil
+            if not email:
+                raise ValueError('Users must have an email address')
+
+            user = self.model(
+                email=self.normalize_email(email)
+            )
+            user.set_password(password)
+            user.save(using=self._db)
+            return user
+            
 
     def create_superuser(self, email, password=None):
     
-        user = self.create_user(
+        user = self.super_user(
             email,
             password=password
         )
