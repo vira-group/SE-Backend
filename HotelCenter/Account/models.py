@@ -10,7 +10,10 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 class UserManager(BaseUserManager):
     
-    def create_user(self, email, password=None):
+    def create_user(self, *args, **kwargs):
+        email=kwargs.pop('email')
+        password=kwargs.pop('password')
+        
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -19,6 +22,8 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
+        user.role=kwargs.pop('role')
+        user.phone_number=kwargs.pop('phone_number')
         user.save(using=self._db)
         return user
 
