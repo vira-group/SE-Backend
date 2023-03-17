@@ -1,7 +1,7 @@
 import http
 
 from ..models import User
-from ..serializers.user_serializers import PublicUserSerializer, MyProfileSerializer, CreditSerializer
+from ..serializers import PublicUserSerializer, MyProfileSerializer, CreditSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
