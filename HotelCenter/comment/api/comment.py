@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from Hotel.models import Hotel
 
 from ..models import Comment
-from ..serializers.comment_serializers import Comment_serializer
+from ..comment_serializers import Comment_serializer
 from ..permissions import IsWriterOrReadOnly
 
 

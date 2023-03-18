@@ -1,0 +1,70 @@
+2023-03-07 12:32:50.495 +0330 [1018] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on IPv6 address "::1", port 5432
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-03-07 12:32:50.502 +0330 [1019] LOG:  database system was shut down at 2023-03-06 16:36:27 +0330
+2023-03-07 12:32:50.507 +0330 [1018] LOG:  database system is ready to accept connections
+2023-03-07 12:33:16.661 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:16.661 +0330 [1040] STATEMENT:  drop database hotel_center
+2023-03-07 12:33:28.000 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:28.000 +0330 [1040] STATEMENT:  drop database if exists hotel_center
+2023-03-07 12:33:59.375 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:59.375 +0330 [1040] STATEMENT:  drop database hotel_center
+2023-03-07 12:36:01.473 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:36:01.473 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:39:08.804 +0330 [1114] ERROR:  syntax error at or near "StrOng1" at character 29
+2023-03-07 12:39:08.804 +0330 [1114] STATEMENT:  create user h_user password StrOng1-paSs2
+2023-03-07 12:40:03.003 +0330 [1114] ERROR:  syntax error at or near "StrOng1paSs2" at character 29
+2023-03-07 12:40:03.003 +0330 [1114] STATEMENT:  create user h_user password StrOng1paSs2
+2023-03-07 12:40:29.792 +0330 [1114] ERROR:  permission denied to create role
+2023-03-07 12:40:29.792 +0330 [1114] STATEMENT:  create user h_user
+2023-03-07 12:42:17.526 +0330 [1114] ERROR:  must be superuser to alter superuser roles or change superuser attribute
+2023-03-07 12:42:17.526 +0330 [1114] STATEMENT:  alter user h_user
+		superuser
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:42:50.513 +0330 [1114] ERROR:  must be superuser to alter superuser roles or change superuser attribute
+2023-03-07 12:42:50.513 +0330 [1114] STATEMENT:  alter user h_user
+		superuser
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:43:03.627 +0330 [1114] ERROR:  must be superuser to alter replication roles or change replication attribute
+2023-03-07 12:43:03.627 +0330 [1114] STATEMENT:  alter user h_user
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:43:17.312 +0330 [1114] ERROR:  permission denied to drop role
+2023-03-07 12:43:17.312 +0330 [1114] STATEMENT:  drop role if exists h_user
+2023-03-07 12:44:22.293 +0330 [1114] ERROR:  must be owner of schema public
+2023-03-07 12:44:22.293 +0330 [1114] STATEMENT:  alter schema public owner to h_user
+2023-03-07 12:45:59.850 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:45:59.850 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:47:43.976 +0330 [1284] ERROR:  syntax error at or near "ALTER" at character 34
+2023-03-07 12:47:43.976 +0330 [1284] STATEMENT:  ALTER ROLE h_user WITH SUPERUSER
+	ALTER ROLE h_user WITH SUPERUSER;
+2023-03-07 12:49:25.659 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:49:25.659 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:49:58.125 +0330 [1284] ERROR:  syntax error at or near "ALTER" at character 34
+2023-03-07 12:49:58.125 +0330 [1284] STATEMENT:  ALTER ROLE h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER;
+2023-03-07 19:02:35.345 +0330 [1018] LOG:  received smart shutdown request
+2023-03-07 19:02:35.346 +0330 [1018] LOG:  background worker "logical replication launcher" (PID 1025) exited with exit code 1
+2023-03-07 19:02:35.346 +0330 [1020] LOG:  shutting down
+2023-03-07 19:02:35.354 +0330 [1018] LOG:  database system is shut down
+2023-03-13 19:49:39.047 +0330 [6253] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on IPv6 address "::1", port 5432
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-03-13 19:49:39.063 +0330 [6254] LOG:  database system was shut down at 2023-03-11 16:17:50 +0330
+2023-03-13 19:49:39.069 +0330 [6253] LOG:  database system is ready to accept connections
+2023-03-13 20:24:31.140 +0330 [6253] LOG:  received smart shutdown request
+2023-03-13 20:24:31.141 +0330 [6253] LOG:  background worker "logical replication launcher" (PID 6260) exited with exit code 1
+2023-03-13 20:24:31.141 +0330 [6255] LOG:  shutting down
+2023-03-13 20:24:31.146 +0330 [6253] LOG:  database system is shut down
