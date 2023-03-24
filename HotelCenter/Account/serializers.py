@@ -9,7 +9,13 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         model=User
         fields=['email','phone_number','role','password']
         
+class PublicUserSerializer(serializers.ModelSerializer):
+    firstName = serializers.CharField(read_only=True)
+    lastName = serializers.CharField(read_only=True)
 
+    class Meta:
+        model = Customer
+        fields = ['firstName', 'lastName']
         
 
 
