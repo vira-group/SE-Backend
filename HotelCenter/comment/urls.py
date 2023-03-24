@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .api.comment import UserHotelCommentViewSet, HotelCommentViewSet
+from .comment import UserHotelCommentViewSet, HotelCommentViewSet
 
 router = routers.DefaultRouter()
 router.register('comments', HotelCommentViewSet, basename="hotel-comment")

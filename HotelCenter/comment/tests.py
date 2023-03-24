@@ -1,6 +1,5 @@
 import http
 import os
-import io
 import random
 from datetime import timedelta, date
 from django.utils.http import urlencode

@@ -7,13 +7,13 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from Hotel.models import Hotel
 
-from ..models import Comment
-from ..comment_serializers import Comment_serializer
-from ..permissions import IsWriterOrReadOnly
+from .models import Comment
+from .comment_serializers import CommentSerializer
+from .permissions import IsWriterOrReadOnly
 
 
 class HotelCommentViewSet(viewsets.ModelViewSet):
-    serializer_class = Comment_serializer
+    serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsWriterOrReadOnly]
 
@@ -130,7 +130,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
 
 
 class UserHotelCommentViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
-    serializer_class = Comment_serializer
+    serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated,
                           IsWriterOrReadOnly]
 
