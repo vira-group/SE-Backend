@@ -61,7 +61,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         create new comment
         """
         try:
-            hotel = Hotel.`objects`.get(pk=kwargs.get("hid"))
+            hotel = Hotel.objects.get(pk=kwargs.get("hid"))
         except:
             return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
         data = request.data.copy()
