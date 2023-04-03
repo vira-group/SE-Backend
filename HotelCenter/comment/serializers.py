@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Comment
-
+from Account.serializers import PublicUserSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ['user_info','text','created_at','modified_at','rate']
 
     def get_user_info(self, obj):
         user = obj.writer

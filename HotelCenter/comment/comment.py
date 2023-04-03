@@ -1,15 +1,12 @@
-import http
-
-from django.utils.datetime_safe import datetime
-from rest_framework import viewsets, permissions, \
-    filters, status
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
+import http
 from Hotel.models import Hotel
-
 from .models import Comment
-from .comment_serializers import CommentSerializer
 from .permissions import IsWriterOrReadOnly
+from .serializers import CommentSerializer
+ 
+
 
 
 class HotelCommentViewSet(viewsets.ModelViewSet):
@@ -64,7 +61,7 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         create new comment
         """
         try:
-            hotel = Hotel.objects.get(pk=kwargs.get("hid"))
+            hotel = Hotel.`objects`.get(pk=kwargs.get("hid"))
         except:
             return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
         data = request.data.copy()
