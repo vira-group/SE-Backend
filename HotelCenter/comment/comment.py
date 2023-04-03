@@ -1,12 +1,11 @@
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-import http
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from Hotel.models import Hotel
 from .models import Comment
 from .permissions import IsWriterOrReadOnly
 from .serializers import CommentSerializer
- 
-
 
 
 class HotelCommentViewSet(viewsets.ModelViewSet):
@@ -60,21 +59,16 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         """
         create new comment
         """
-        try:
-            hotel = Hotel.objects.get(pk=kwargs.get("hid"))
-        except:
-            return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
+        
+        hotel =get_object_or_404(Hotel,pk=kwargs.get("hid"))
         data = request.data.copy()
         data['hotel'] = hotel.id
         data['writer'] = request.user.id
         com = self.serializer_class(data=data)
-        if com.is_valid():
-            comm = com.save()
-            self.add_reply(hotel, comm)
-            return Response(com.data, http.HTTPStatus.CREATED)
-
-        else:
-            return Response(com.errors, http.HTTPStatus.BAD_REQUEST)
+        com.is_valid(raise_exception=True)
+        comm = com.save()
+        self.add_reply(hotel, comm)
+        return Response(com.data,status= status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -82,48 +76,27 @@ class HotelCommentViewSet(viewsets.ModelViewSet):
         """
 
         self.check_permissions(request)
-        try:
-            hotel = Hotel.objects.get(pk=kwargs.get("hid"))
-        except:
-            return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
-
-        try:
-            comment = Comment.objects.get(pk=kwargs.get("pk"), hotel=hotel)
-
-        except:
-            return Response("Comment Not Found", http.HTTPStatus.NOT_FOUND)
-
+        hotel = get_object_or_404(Hotel,pk=kwargs.get('hid'))
+        comment =get_object_or_404(Comment ,pk=kwargs.get("pk"), hotel=hotel)
         self.check_object_permissions(request, comment)
-
         self.delete_reply(hotel, comment)
         comment.delete()
-        return Response("Comment Deleted.", http.HTTPStatus.OK)
+        return Response("Comment Deleted.",status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         """
         update comment
         """
         self.check_permissions(request)
-        try:
-            hotel = Hotel.objects.get(pk=kwargs.get("hid"))
-        except:
-            return Response("Hotel Not Found", http.HTTPStatus.NOT_FOUND)
-
-        try:
-            comment = Comment.objects.get(pk=kwargs.get("pk"), hotel=hotel)
-
-        except:
-            return Response("Comment Not Found", http.HTTPStatus.NOT_FOUND)
+        hotel =get_object_or_404(Hotel,pk=kwargs.get("hid"))
+        comment = get_object_or_404(Comment ,pk=kwargs.get("pk"), hotel=hotel)
         old_rate = comment.rate
         self.check_object_permissions(request, comment)
         serializer = self.serializer_class(instance=comment, data=request.data, partial=True)
-        if serializer.is_valid():
-            self.perform_update(serializer)
-            self.update_reply(hotel=hotel, comment=serializer.instance, old_rate=old_rate)
-        else:
-            return Response(serializer.errors, http.HTTPStatus.BAD_REQUEST)
-
-        return Response(serializer.data, http.HTTPStatus.OK)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        self.update_reply(hotel=hotel, comment=serializer.instance, old_rate=old_rate)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 class UserHotelCommentViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
