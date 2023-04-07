@@ -5,7 +5,7 @@ from django.contrib.auth.models import (
 
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth.models import PermissionsMixin
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -61,11 +61,12 @@ class UserManager(BaseUserManager):
         )
         user.is_admin = True
         user.is_active = True
+        user.is_superuser=True
         user.save(using=self._db)
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser,PermissionsMixin):
     
     
     
@@ -86,6 +87,7 @@ class User(AbstractBaseUser):
     )
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_superuser=models.BooleanField(default=False)
     objects = UserManager()
     phone_number = models.CharField(_('phone number'),max_length=11,validators=valid_number,blank=True)
     balance = models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
