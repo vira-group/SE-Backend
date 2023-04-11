@@ -13,9 +13,9 @@ class  TicketForm(models.Model):
     text =models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     status= models.CharField(max_length=1,default=TaskStatus.PENDING,choices=TaskStatus.choices)
+    request  = models.ForeignKey("RequestForm", on_delete=models.CASCADE,related_name="task_list")
 
 
 class RequestForm(models.Model):
      name=models.CharField(max_length=155)
-     ticketform  = models.ForeignKey(TicketForm, on_delete=models.CASCADE)
      
