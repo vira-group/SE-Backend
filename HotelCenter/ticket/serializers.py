@@ -19,6 +19,15 @@ class TicketFormSerializer(serializers.ModelSerializer):
         Model=TicketForm
         fields=['id','sender','status','text','created_date','request']
         
+        
+class AdminTicketSerializer(serializers.ModelSerializer):
+    text=serializers.CharField(max_length=None,read_only=True)
+    created_date=serializers.DateTimeField(read_only=True)
+    request=PublicUserSerializer(read_only=True)
+    class Meta:
+        Model=TicketForm
+        fields=['status','text','created_date','response_text','requset']
+        
 
         
         
