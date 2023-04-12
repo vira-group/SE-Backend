@@ -13,8 +13,7 @@ from django.shortcuts import get_object_or_404
 
 from ..permissions import *
 from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
-from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
-    , FavoriteHotelSerializer, BestHotelSerializer
+from ..serializers.hotel_serializers import *
 from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
 from ..filter_backends import HotelMinRateFilters
 
@@ -29,34 +28,12 @@ class HotelViewSet(viewsets.ModelViewSet):
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
 
-    # def get_serializer_context(self):
-    #     """
-    #     Extra context provided to the serializer class.
-    #     """
-    #     return {
-    #         'request': self.request,
-    #         'format': self.format_kwarg,
-    #         'view': self
-    #     }
-
-    # def create(self, request, *args, **kwargs):
-    #     """
-    #         if current user does not have a hotel already create a hotel
-    #     """
-    #     if Hotel.objects.filter(creator=request.user).count() > 0:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
-    #                         , content_type='json')
-    #     else:
-    #         return super().create(request, *args, **kwargs)
 
     def filter_size(self, hotels, size: int):
 
         valid_h = []
-        # print('\nhotels ', hotels)
         for h in hotels:
-            # print('\nh in hotels ', h)
             rooms = h.rooms.all()
-            # print('\n rooms : ', rooms)
 
             for r in rooms:
                 if r.sleeps >= size:
@@ -85,14 +62,11 @@ class HotelViewSet(viewsets.ModelViewSet):
 
         query_set = self.filter_queryset(queryset=self.queryset)
         size = 0
-        # print('\nquery.size: ', request.query_params.get('size'))
         if request.query_params.get('size'):
             try:
-                # print("before cast Size")
                 size = int(request.query_params['size'])
                 if size < 0:
                     size = 0
-                # print('before filter size\n', size)
                 query_set = self.filter_size(query_set, size)
 
             except:
@@ -103,8 +77,6 @@ class HotelViewSet(viewsets.ModelViewSet):
                 check_in = parse_date(request.query_params['check_in'])
                 check_out = parse_date(request.query_params['check_out'])
 
-                # print("check_in", check_in)
-                # print("check_out", check_out)
 
                 if (check_in is None) or (check_out is None):
                     raise ValueError(message='Not valid date')
@@ -112,13 +84,9 @@ class HotelViewSet(viewsets.ModelViewSet):
             except:
                 return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
 
-        # valid_hotel=[]
-        # for hotel in query_set
-
         return Response(self.serializer_class(query_set, many=True, context=self.get_serializer_context()).data,
                         status=http.HTTPStatus.OK)
 
-    # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
 
 class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -170,15 +138,11 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             try:
                 # self.req_hotel.header = request.FILES['image']
                 img = request.FILES['image']
-                # print("in changing header2", self.h_id)
                 self.req_hotel = Hotel.objects.get(pk=self.h_id)
-                # print("req_hotel", self.req_hotel)
                 self.req_hotel.header = img
                 self.req_hotel.save()
-                # print('change header')
                 return Response(HotelSerializer(self.req_hotel).data, 200)
             except:
-                # print(' in is header error')
                 return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
         files = request.data.copy()
@@ -189,7 +153,6 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             hotelimg.save()
             return Response(hotelimg.data, status=http.HTTPStatus.OK)
         except:
-            # print('in image', hotelimg)
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 

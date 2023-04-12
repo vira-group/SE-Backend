@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import Hotel, Facility, HotelImage, FavoriteHotel
+from rest_framework.permissions import IsAuthenticated
 
 
 class FacilitiesSerializer(serializers.ModelSerializer):
@@ -31,15 +32,18 @@ class HotelSerializer(serializers.ModelSerializer):
 
         if user is None:
             return False
-
-        is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
-        # print("hotel serializer\nuser_id", user.id, "\nhotel_id", obj.id, "\nis_fav", is_fav)
+        us = request.user
+        permission_classes = [IsAuthenticated, ]
+        
+        is_fav = FavoriteHotel.objects.filter(user=us.id, hotel=obj.id).exists()
 
         return is_fav
 
     def create(self, validated_data):
         request = self.context.get("request")
         # validated_data["facilities"] = []
+        user = request.user
+        permission_classes = [IsAuthenticated, ]
 
         validated_data['creator'] = request.user
         validated_data['rate'] = 5
@@ -57,6 +61,9 @@ class HotelSerializer(serializers.ModelSerializer):
 
     def update(self, instance: Hotel, validated_data):
         request = self.context.get("request")
+        user = request.user
+        permission_classes = [IsAuthenticated, ]
+
         if not request.data.get('facilities', None) is None:
             instance.facilities.clear()
             for f in request.data.get('facilities', []):
@@ -113,8 +120,9 @@ class BestHotelSerializer(serializers.ModelSerializer):
 
         if user is None:
             return False
-
-        is_fav = FavoriteHotel.objects.filter(user=user.id, hotel=obj.id).exists()
-        # print("besthotel serializer\nuser_id", user.id, "\nhotel_id", obj.id, "\nis_fav", is_fav)
+        
+        us = request.user
+        permission_classes = [IsAuthenticated, ]
+        is_fav = FavoriteHotel.objects.filter(user=us.id, hotel=obj.id).exists()
 
         return is_fav

@@ -30,6 +30,7 @@ class RoomList(APIView):
         hotel = get_object_or_404(Hotel, id=hotel_id)
         serializer = PublicRoomSerializer(data=request.data)
         if (not request.user == hotel.creator) and (not request.user in hotel.editors.all()):
+            print(hotel.editors.all())
             return Response(status=status.HTTP_403_FORBIDDEN)
         else:
             if serializer.is_valid():
