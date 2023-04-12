@@ -22,3 +22,14 @@ class IsCustomer(BasePermission):
          if request.user.role == 'C':
         
              return True
+         
+class IsAdmin(BasePermission):
+    
+    '''
+    Allows access only Administrator  
+        '''
+    def has_permission(self, request, view):
+       
+         if request.user.role == 'A':
+        
+             return True
