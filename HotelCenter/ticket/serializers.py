@@ -7,17 +7,17 @@ from Account.serializers import PublicUserSerializer
 class RequestFormSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
     class Meta:
-        Model=RequestForm
+        model=RequestForm
         fields=['id','name']
 
 class TicketFormSerializer(serializers.ModelSerializer):
     id=serializers.IntegerField(read_only=True)
-    sender=PublicUserSerializer()
     status=serializers.CharField(read_only=True)
     created_date=serializers.DateTimeField(read_only=True)
     updated_date=serializers.DateTimeField(read_only=True)
+    response_text=serializers.CharField(read_only=True)
     class Meta:
-        Model=TicketForm
+        model=TicketForm
         fields=['id','sender','status','text','created_date','request','response_text','updated_date']
     
         
@@ -26,7 +26,8 @@ class AdminTicketSerializer(serializers.ModelSerializer):
     text=serializers.CharField(max_length=None,read_only=True)
     created_date=serializers.DateTimeField(read_only=True)
     request=RequestFormSerializer(read_only=True)
+    sender=PublicUserSerializer(read_only=True)
     class Meta:
-        Model=TicketForm
-        fields=['status','text','created_date','response_text','requset']
+        model=TicketForm
+        fields=['status','sender','text','created_date','response_text','request']
              

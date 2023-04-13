@@ -16,15 +16,15 @@ from .models import RequestForm,TicketForm
 
 class TypeRequestsList(ListCreateAPIView): #get list type request and post it 
     serializer_class=RequestFormSerializer
-    queryset=RequestForm.objects.all();
+    queryset=RequestForm.objects.all()
 
 
 class MyTicketList(ListCreateAPIView):   #get list ticket and post it 
-    serializer_clas=TicketFormSerializer
+    serializer_class=TicketFormSerializer
     queryset= TicketForm.objects.all()
     
     
-class ResponseAdminList(RetrieveUpdateAPIView): ### get one ticket and update it 
+class ResponseAdminAPIs(RetrieveUpdateAPIView): ### get one ticket and update it 
     queryset=TicketForm.objects.all()
     serializer_class=AdminTicketSerializer
     
