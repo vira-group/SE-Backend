@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination 
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import ListCreateAPIView,RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateAPIView,ListAPIView
 from rest_framework import status
 from .serializers import RequestFormSerializer,TicketFormSerializer,AdminTicketSerializer
 from .models import RequestForm,TicketForm
@@ -25,6 +25,15 @@ class MyTicketList(ListCreateAPIView):   #get list ticket and post it
     
     
 class ResponseAdminAPIs(RetrieveUpdateAPIView): ### get one ticket and update it 
+    queryset=TicketForm.objects.all()
+    serializer_class=AdminTicketSerializer
+
+
+class ResponseAdminAPIs(): ### get one ticket and update it 
+    queryset=TicketForm.objects.all()
+    serializer_class=AdminTicketSerializer
+
+class ShowAdminTicketList(ListAPIView):
     queryset=TicketForm.objects.all()
     serializer_class=AdminTicketSerializer
     
