@@ -17,3 +17,8 @@ from .models import RequestForm,TicketForm
 class TypeRequestsList(ListCreateAPIView):
     serializer_class=RequestFormSerializer
     queryset=RequestForm.objects.all();
+
+
+class MyTicketList(ListCreateAPIView):
+    serializer_clas=TicketFormSerializer
+    queryset= TicketForm.objects.all()
