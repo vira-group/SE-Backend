@@ -5,6 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination 
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListCreateAPIView
 from rest_framework import status
-from .serializers import RequestFormSerializer,ShowTicketSerializer,TicketFormSerializer,AdminTicketSerializer
+from .serializers import RequestFormSerializer,TicketFormSerializer,AdminTicketSerializer
+from .models import RequestForm,TicketForm
 # Create your views here.
+
+
+
+
+class TypeRequestsList(ListCreateAPIView):
+    serializer_class=RequestFormSerializer
+    queryset=RequestForm.objects.all();
