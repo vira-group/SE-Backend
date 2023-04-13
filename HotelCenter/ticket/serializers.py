@@ -15,9 +15,10 @@ class TicketFormSerializer(serializers.ModelSerializer):
     sender=PublicUserSerializer()
     status=serializers.CharField(read_only=True)
     created_date=serializers.DateTimeField(read_only=True)
+    updated_date=serializers.DateTimeField(read_only=True)
     class Meta:
         Model=TicketForm
-        fields=['id','sender','status','text','created_date','request']
+        fields=['id','sender','status','text','created_date','request','response_text','updated_date']
     
         
         
@@ -28,17 +29,4 @@ class AdminTicketSerializer(serializers.ModelSerializer):
     class Meta:
         Model=TicketForm
         fields=['status','text','created_date','response_text','requset']
-        
-        
-class ShowTicketSerializer(serializers.ModelSerializer):
-    sender=PublicUserSerializer(read_only=True)
-    request=RequestFormSerializer(read_only=True)
-    
-    class Meta:
-        Model=TicketForm
-        fields=['sender','status','text','created_date','response_text','requset','updated_date']
-        read_only='__all__'
-
-        
-        
-
+             
