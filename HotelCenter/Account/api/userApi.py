@@ -6,7 +6,7 @@
 # from rest_framework.decorators import api_view, permission_classes
 # from rest_framework.permissions import IsAuthenticated
 # from rest_framework import status
-
+# from HotelCenter.permissions import IsManager, IsCustomer
 
 # class publicUserList(viewsets.ViewSet, generics.ListAPIView):
 #     queryset = User.objects.all()
@@ -17,7 +17,7 @@
 #     serializer_class = PublicUserSerializer
 
 # @api_view(['GET', 'PUT', 'DELETE'])
-# @permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated & IsCustomer])
 # def myProfileDetail(request):
 #     """
 #     Retrieve, update or delete a code snippet.

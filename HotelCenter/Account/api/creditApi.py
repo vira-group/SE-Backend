@@ -8,7 +8,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-
 class CreditViewSet(viewsets.GenericViewSet, viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelMixin):
     serializer_class = CreditSerializer
     permission_classes = [IsAuthenticated]
