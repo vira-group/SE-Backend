@@ -38,3 +38,5 @@
 2023-03-14 10:55:58.120 +0330 [1296] LOG:  background worker "logical replication launcher" (PID 1303) exited with exit code 1
 2023-03-14 10:55:58.120 +0330 [1298] LOG:  shutting down
 2023-03-14 10:55:58.126 +0330 [1296] LOG:  database system is shut down
+2023-04-12 21:31:03.100 +0430 [7403] FATAL:  lock file "postmaster.pid" already exists
+2023-04-12 21:31:03.100 +0430 [7403] HINT:  Is another postmaster (PID 6598) running in data directory "/usr/local/var/postgres2"?
