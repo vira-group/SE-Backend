@@ -25,7 +25,7 @@ class Commentdetail(APIView):
     serializer_class=WriteCommentSerializer
     
     def post(self,request):
-            comment=Comment(writer_id =1)
+            comment=Comment(writer_id =request.user.id)
             # all_tag=Tag.objects.values_list('id',flat=True)
             # tags=  request.POST.get('tag',[])
             
@@ -39,6 +39,8 @@ class Commentdetail(APIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response("comment posted!",status=status.HTTP_200_OK)
+    
+ 
         
             
             
