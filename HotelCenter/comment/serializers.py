@@ -1,16 +1,44 @@
 from rest_framework import serializers
-from .models import Comment
+from .models import Comment ,Tag,Reply
 from Account.serializers import PublicUserSerializer
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    user_info = serializers.SerializerMethodField()
 
+
+
+
+
+class TagSerializer(serializers.ModelSerializer):
+    
+    
+    class Meta:
+        model=Tag
+        fields=['name']
+        
+class WriteCommentSerializer(serializers.ModelSerializer):
+    
+    tag=TagSerializer(Many=True)
     class Meta:
         model = Comment
-        fields = ['user_info','text','created_at','modified_at','rate']
+        fields = ['writer','text','tag']
+        
+        
+        
+class ReplySerializer(serializers.ModelSerializer):
+    created_reply=serializers.DateTimeField(read_only=True)
 
-    def get_user_info(self, obj):
-        user = obj.writer
-        serialize = PublicUserSerializer(instance=user, context=self.context)
-        return serialize.data
+    class Meta:
+        model=Reply
+        fields=['comment_reply','text_reply','created_reply'] 
+        read_only_fields=['comment_reply']       
+
+
+
+
+
+  
+       
+        
+
+        
+

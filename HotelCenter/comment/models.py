@@ -12,9 +12,10 @@ class Comment(models.Model):
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name="comments")
     hotel = models.ForeignKey(Hotel, related_name='comments', on_delete=models.CASCADE)
     text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    reply=models.OneToOneField("Reply", related_name="comment",on_delete=models.SET_NULL,null=True)
-    tag=models.ManyToManyField("Tag", related_name="comment") 
+    created_comment = models.DateTimeField(auto_now_add=True)
+    reply=models.OneToOneField("Reply", related_name="comment_reply",on_delete=models.SET_NULL,null=True)
+    tag=models.ManyToManyField("Tag", related_name="comment_tag") 
+    
 
     class Meta:
         ordering = ['-created_at']
@@ -22,7 +23,7 @@ class Comment(models.Model):
 
 class Reply(models.Model):
        text_reply=models.TextField()
-       created_at = models.DateTimeField(auto_now_add=True)
+       created_reply = models.DateTimeField(auto_now_add=True)
        
        class Meta:
          ordering = ['-created_at']
