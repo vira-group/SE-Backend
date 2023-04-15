@@ -17,10 +17,9 @@ class TagSerializer(serializers.ModelSerializer):
         
 class WriteCommentSerializer(serializers.ModelSerializer):
     
-    tag=TagSerializer(Many=True)
     class Meta:
         model = Comment
-        fields = ['writer','text','tag']
+        fields = ['hotel','text','tag','rate']
         
         
         
