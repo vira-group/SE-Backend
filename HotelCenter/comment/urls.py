@@ -1,11 +1,13 @@
 from django.urls import path, include
-from rest_framework import routers
-from .comment import UserHotelCommentViewSet, HotelCommentViewSet
+# from .comment import UserHotelCommentViewSet, HotelCommentViewSet
+from .views import TagList,Commentdetail
 
-router = routers.DefaultRouter()
-router.register('comments', HotelCommentViewSet, basename="hotel-comment")
-router.register('mycomment', UserHotelCommentViewSet, basename="hotel-mycomment")
+# router = routers.DefaultRouter()
+# router.register('comments', HotelCommentViewSet, basename="hotel-comment")
+# router.register('mycomment', UserHotelCommentViewSet, basename="hotel-mycomment")
 
 urlpatterns = [
-    path('<int:hid>/', include(router.urls))
+    
+     path('tag/',TagList.as_view()),
+     path('addcomment/',Commentdetail.as_view())
 ]
