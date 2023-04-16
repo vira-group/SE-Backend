@@ -47,7 +47,7 @@ class RetrieveUpdateCommentForReply(APIView):
         
         try: 
             get_comment=Comment.objects.get(pk=pk,is_replied=False)
-            if request.user.id == get_comment.hotel.creator.id:
+            if request.user.id == get_comment.hotel.manager.id:
                 pass
             else:
                  return Response("you can not reply this comment!",status=status.HTTP_400_BAD_REQUEST)
