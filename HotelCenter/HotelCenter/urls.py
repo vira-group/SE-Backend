@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
-    # path('api/hotel/', include("Hotel.urls")),
+    path('api/hotel/', include("Hotel.urls")),
     # # path('api/accounts/', include("Account.urls")),
     # path('api/chat/', include("Chat.urls")),
     # path('api/hotel/', include("comment.urls")),

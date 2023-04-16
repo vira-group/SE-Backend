@@ -1,6 +1,6 @@
 import rest_framework.request
 from rest_framework import permissions
-from .models import Room, Hotel
+from .models import  Hotel
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
