@@ -28,8 +28,8 @@ class ReplySerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Reply
-        fields=['comment_reply','text_reply','created_reply'] 
-        read_only_fields=['comment_reply']       
+        fields=['text_reply','created_reply'] 
+        # read_only_fields=['comment_reply']       
 
 
 

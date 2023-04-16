@@ -15,7 +15,7 @@ class Comment(models.Model):
     created_comment = models.DateTimeField(auto_now_add=True)
     reply=models.OneToOneField("Reply", related_name="comment_reply",on_delete=models.SET_NULL,null=True,blank=True)
     tag=models.ManyToManyField("Tag", related_name="comment_tag",null=True, blank=True) 
-    
+    is_replied = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_comment']
