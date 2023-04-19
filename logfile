@@ -136,3 +136,70 @@
 2023-04-14 14:18:40.738 +0430 [919] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2023-04-14 14:18:40.751 +0430 [920] LOG:  database system was shut down at 2023-04-13 03:19:44 +0430
 2023-04-14 14:18:40.758 +0430 [919] LOG:  database system is ready to accept connections
+2023-04-15 15:13:33.353 +0430 [2875] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-15 15:13:33.368 +0430 [2876] LOG:  database system was shut down at 2023-04-15 01:26:06 +0430
+2023-04-15 15:13:33.375 +0430 [2875] LOG:  database system is ready to accept connections
+2023-04-16 01:37:28.186 +0430 [2875] LOG:  received smart shutdown request
+2023-04-16 01:37:28.188 +0430 [2875] LOG:  background worker "logical replication launcher" (PID 2882) exited with exit code 1
+2023-04-16 01:37:28.188 +0430 [2877] LOG:  shutting down
+2023-04-16 01:37:28.207 +0430 [2875] LOG:  database system is shut down
+2023-04-16 12:47:40.477 +0430 [7136] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-16 12:47:40.479 +0430 [7136] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-16 12:47:40.479 +0430 [7136] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-16 12:47:40.480 +0430 [7136] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-16 12:47:40.492 +0430 [7137] LOG:  database system was shut down at 2023-04-16 01:37:28 +0430
+2023-04-16 12:47:40.497 +0430 [7136] LOG:  database system is ready to accept connections
+2023-04-16 13:04:28.431 +0430 [7136] LOG:  received smart shutdown request
+2023-04-16 13:04:28.431 +0430 [7136] LOG:  background worker "logical replication launcher" (PID 7143) exited with exit code 1
+2023-04-16 13:04:28.431 +0430 [7138] LOG:  shutting down
+2023-04-16 13:04:28.436 +0430 [7136] LOG:  database system is shut down
+2023-04-17 16:59:52.480 +0430 [2295] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-17 16:59:52.496 +0430 [2296] LOG:  database system was shut down at 2023-04-16 13:04:28 +0430
+2023-04-17 16:59:52.502 +0430 [2295] LOG:  database system is ready to accept connections
+2023-04-17 17:39:13.289 +0430 [3220] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:39:13.289 +0430 [3220] DETAIL:  Failing row contains (2, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:39:13.289 +0430 [3220] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:54:18.956 +0430 [3494] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:54:18.956 +0430 [3494] DETAIL:  Failing row contains (3, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:54:18.956 +0430 [3494] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:57:51.922 +0430 [3604] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:57:51.922 +0430 [3604] DETAIL:  Failing row contains (4, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:57:51.922 +0430 [3604] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:58:36.955 +0430 [3637] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:58:36.955 +0430 [3637] DETAIL:  Failing row contains (5, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:58:36.955 +0430 [3637] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:17:57.862 +0430 [3937] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:17:57.862 +0430 [3937] DETAIL:  Failing row contains (6, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:17:57.862 +0430 [3937] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:18:51.023 +0430 [3962] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:18:51.023 +0430 [3962] DETAIL:  Failing row contains (7, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:18:51.023 +0430 [3962] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:20:34.462 +0430 [4008] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:20:34.462 +0430 [4008] DETAIL:  Failing row contains (8, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:20:34.462 +0430 [4008] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:28:55.415 +0430 [4217] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:28:55.415 +0430 [4217] DETAIL:  Failing row contains (9, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:28:55.415 +0430 [4217] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-18 00:09:48.692 +0430 [2295] LOG:  received smart shutdown request
+2023-04-18 00:09:48.693 +0430 [2295] LOG:  background worker "logical replication launcher" (PID 2302) exited with exit code 1
+2023-04-18 00:09:48.693 +0430 [2297] LOG:  shutting down
+2023-04-18 00:09:48.704 +0430 [2295] LOG:  database system is shut down
+2023-04-18 15:16:24.820 +0430 [4185] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-18 15:16:24.822 +0430 [4185] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-18 15:16:24.822 +0430 [4185] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-18 15:16:24.823 +0430 [4185] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-18 15:16:24.834 +0430 [4186] LOG:  database system was shut down at 2023-04-18 00:09:48 +0430
+2023-04-18 15:16:24.840 +0430 [4185] LOG:  database system is ready to accept connections
+2023-04-18 15:24:23.081 +0430 [4356] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-18 15:24:23.081 +0430 [4356] DETAIL:  Failing row contains (10, null, 0, null, 1, 5, null, 1).
+2023-04-18 15:24:23.081 +0430 [4356] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-18 15:59:29.556 +0430 [4185] LOG:  received smart shutdown request
+2023-04-18 15:59:29.557 +0430 [4185] LOG:  background worker "logical replication launcher" (PID 4192) exited with exit code 1
+2023-04-18 15:59:29.557 +0430 [4187] LOG:  shutting down
+2023-04-18 15:59:29.562 +0430 [4185] LOG:  database system is shut down

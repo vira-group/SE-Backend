@@ -40,3 +40,13 @@
 2023-03-14 10:55:58.126 +0330 [1296] LOG:  database system is shut down
 2023-04-12 21:31:03.100 +0430 [7403] FATAL:  lock file "postmaster.pid" already exists
 2023-04-12 21:31:03.100 +0430 [7403] HINT:  Is another postmaster (PID 6598) running in data directory "/usr/local/var/postgres2"?
+2023-04-19 13:49:57.191 +0430 [985] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-19 13:49:57.193 +0430 [985] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-19 13:49:57.193 +0430 [985] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-19 13:49:57.194 +0430 [985] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-19 13:49:57.206 +0430 [986] LOG:  database system was shut down at 2023-04-18 15:59:29 +0430
+2023-04-19 13:49:57.212 +0430 [985] LOG:  database system is ready to accept connections
+2023-04-19 13:58:00.175 +0430 [1431] FATAL:  lock file "postmaster.pid" already exists
+2023-04-19 13:58:00.175 +0430 [1431] HINT:  Is another postmaster (PID 985) running in data directory "/usr/local/var/postgres2"?
+2023-04-19 14:13:58.570 +0430 [2081] ERROR:  column "adults" of relation "Hotel_reserve" contains null values
+2023-04-19 14:13:58.570 +0430 [2081] STATEMENT:  ALTER TABLE "Hotel_reserve" ADD COLUMN "adults" integer NOT NULL
