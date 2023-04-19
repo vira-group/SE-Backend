@@ -12,10 +12,11 @@ from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
 
 from ..permissions import *
-from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
-from ..serializers.hotel_serializers import HotelSerializer, FacilitiesSerializer, HotelImgSerializer \
-    , FavoriteHotelSerializer, BestHotelSerializer
-from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
+# from ..models import Hotel, Facility, HotelImage, Room, RoomSpace, Reserve, FavoriteHotel
+from ..models import Hotel, Facility, HotelImage, Room, Reserve, FavoriteHotel
+from ..serializers.hotel_serializers import *
+# from ..serializers.room_serializers import PublicRoomSerializer, RoomSpaceSerializer
+from ..serializers.room_serializers import PublicRoomSerializer
 from ..filter_backends import HotelMinRateFilters
 
 
@@ -29,34 +30,12 @@ class HotelViewSet(viewsets.ModelViewSet):
     filterset_class = HotelMinRateFilters
     search_fields = ['city', 'state']
 
-    # def get_serializer_context(self):
-    #     """
-    #     Extra context provided to the serializer class.
-    #     """
-    #     return {
-    #         'request': self.request,
-    #         'format': self.format_kwarg,
-    #         'view': self
-    #     }
-
-    # def create(self, request, *args, **kwargs):
-    #     """
-    #         if current user does not have a hotel already create a hotel
-    #     """
-    #     if Hotel.objects.filter(creator=request.user).count() > 0:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
-    #                         , content_type='json')
-    #     else:
-    #         return super().create(request, *args, **kwargs)
 
     def filter_size(self, hotels, size: int):
 
         valid_h = []
-        # print('\nhotels ', hotels)
         for h in hotels:
-            # print('\nh in hotels ', h)
             rooms = h.rooms.all()
-            # print('\n rooms : ', rooms)
 
             for r in rooms:
                 if r.sleeps >= size:
@@ -72,12 +51,19 @@ class HotelViewSet(viewsets.ModelViewSet):
             raise ValueError('not valid dates')
 
         valid_hotels = set()
-        reserves = Reserve.objects.filter(start_day__gte=check_out, end_day__lte=check_in
-                                          , roomspace__room__hotel__in=hotels).select_related('roomspace').all()
-        spaces = [r.roomspace_id for r in reserves]
-        spaces = RoomSpace.objects.filter(room__hotel__in=hotels).exclude(pk__in=spaces).all()
-        for s in spaces:
-            valid_hotels.add(s.room.hotel)
+        # reserves = Reserve.objects.filter(check_in__gte=check_out, check_out__lte=check_in
+        #                                   , roomspace__room__hotel__in=hotels).select_related('roomspace').all()
+        # spaces = [r.roomspace_id for r in reserves]
+        # spaces = RoomSpace.objects.filter(room__hotel__in=hotels).exclude(pk__in=spaces).all()
+        # for s in spaces:
+        #     valid_hotels.add(s.room.hotel)
+
+        reserves = Reserve.objects.filter(check_in__gte=check_out, check_out__lte=check_in
+                                          , room__hotel__in=hotels).select_related('room').all()
+        rooms = [r.room_id for r in reserves]
+        rooms = Room.objects.filter(room__hotel__in=hotels).exclude(pk__in=rooms).all()
+        for r in rooms:
+            valid_hotels.add(r.room.hotel)
 
         return list(valid_hotels)
 
@@ -85,14 +71,11 @@ class HotelViewSet(viewsets.ModelViewSet):
 
         query_set = self.filter_queryset(queryset=self.queryset)
         size = 0
-        # print('\nquery.size: ', request.query_params.get('size'))
         if request.query_params.get('size'):
             try:
-                # print("before cast Size")
                 size = int(request.query_params['size'])
                 if size < 0:
                     size = 0
-                # print('before filter size\n', size)
                 query_set = self.filter_size(query_set, size)
 
             except:
@@ -103,8 +86,6 @@ class HotelViewSet(viewsets.ModelViewSet):
                 check_in = parse_date(request.query_params['check_in'])
                 check_out = parse_date(request.query_params['check_out'])
 
-                # print("check_in", check_in)
-                # print("check_out", check_out)
 
                 if (check_in is None) or (check_out is None):
                     raise ValueError(message='Not valid date')
@@ -112,13 +93,9 @@ class HotelViewSet(viewsets.ModelViewSet):
             except:
                 return Response('Arguments not valid', http.HTTPStatus.BAD_REQUEST)
 
-        # valid_hotel=[]
-        # for hotel in query_set
-
         return Response(self.serializer_class(query_set, many=True, context=self.get_serializer_context()).data,
                         status=http.HTTPStatus.OK)
 
-    # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
 
 class FacilityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -170,15 +147,11 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             try:
                 # self.req_hotel.header = request.FILES['image']
                 img = request.FILES['image']
-                # print("in changing header2", self.h_id)
                 self.req_hotel = Hotel.objects.get(pk=self.h_id)
-                # print("req_hotel", self.req_hotel)
                 self.req_hotel.header = img
                 self.req_hotel.save()
-                # print('change header')
                 return Response(HotelSerializer(self.req_hotel).data, 200)
             except:
-                # print(' in is header error')
                 return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
         files = request.data.copy()
@@ -189,7 +162,6 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             hotelimg.save()
             return Response(hotelimg.data, status=http.HTTPStatus.OK)
         except:
-            # print('in image', hotelimg)
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 
@@ -272,8 +244,7 @@ class HotelSearchViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin
         for room in rooms:
             spaces = room.spaces.all()
 
-            # print('\n\nspaces: ', spaces)
-            resv = Reserve.objects.filter(roomspace__in=spaces, start_day__gte=check_out, end_day__lte=check_in).all()
+            resv = Reserve.objects.filter(roomspace__in=spaces, check_in__gte=check_out, check_out__lte=check_in).all()
             spa_id = [r.roomspace for r in resv]
             for s in spaces:
                 if not (s in spa_id):
@@ -351,20 +322,20 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         """
         number of check_in in the specified date
         """
-        return Reserve.objects.filter(room__hotel=hotel, start_day=date).count()
+        return Reserve.objects.filter(room__hotel=hotel, check_in=date).count()
 
     def check_out_count(self, hotel: Hotel, date):
         """
         number of check_out in the specified date
         """
-        return Reserve.objects.filter(room__hotel=hotel, end_day=date).count()
+        return Reserve.objects.filter(room__hotel=hotel, check_out=date).count()
 
     def people_count(self, hotel: Hotel, date):
         """
         number of people(based on reserved rooms) in the specified date
         """
-        reserves = Reserve.objects.filter(room__hotel=hotel, start_day__lte=date,
-                                          end_day__gt=date).select_related('room').all()
+        reserves = Reserve.objects.filter(room__hotel=hotel, check_in__lte=date,
+                                          check_out__gt=date).select_related('room').all()
         # print('people count: ', reserves)
         count = 0
 
@@ -379,7 +350,7 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         in the specified date
         """
         rooms = hotel.rooms.prefetch_related('spaces').all()
-        reserved_spaces = (Reserve.objects.filter(room__in=rooms, start_day__lte=date, end_day__gt=date)
+        reserved_spaces = (Reserve.objects.filter(room__in=rooms, check_in__lte=date, check_out__gt=date)
                            .values_list('roomspace').all())
         reserved_spaces = [r for tup in reserved_spaces for r in tup]
 
@@ -406,18 +377,17 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         fr = PublicRoomSerializer(full_rooms, many=True)
         nfr = PublicRoomSerializer(not_full_rooms, many=True)
 
-        fs = {r.type: RoomSpaceSerializer(full_spaces[r.type], many=True).data for r in rooms}
-        es = {r.type: RoomSpaceSerializer(empty_spaces[r.type], many=True).data for r in rooms}
+        # fs = {r.type: RoomSpaceSerializer(full_spaces[r.type], many=True).data for r in rooms}
+        # es = {r.type: RoomSpaceSerializer(empty_spaces[r.type], many=True).data for r in rooms}
 
-        # s_count = (len(empty_spaces[r.type]) + len(full_spaces[r.type]))
-        # if s_count < 1:
-        #     s_count = 1
         percent = {
             ro.type: (len(full_spaces[ro.type]) / max((len(empty_spaces[ro.type]) + len(full_spaces[ro.type])),
                                                       1) * 100)
             for ro in rooms}
-        return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
-                'percent': percent}
+        # return {"rooms": {"full": fr.data, "not_full": nfr.data}, 'spaces': {'full': fs, 'empty': es},
+        #         'percent': percent}
+        return {"rooms": {"full": fr.data, "not_full": nfr.data},'percent': percent}
+
 
     def room_type_count(self, dic):
         """
@@ -442,10 +412,10 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         return count
 
     def reserve_days_count(self, reserve: Reserve):
-        return (reserve.end_day - reserve.start_day).days
+        return (reserve.check_out - reserve.check_in).days
 
     def reserve_month_past(self, reserve: Reserve, date):
-        diff = reserve.start_day
+        diff = reserve.check_in
         if date - relativedelta(month=6) <= diff < date - relativedelta(month=5):
             return 0
         elif date - relativedelta(month=5) <= diff < date - relativedelta(month=4):
@@ -470,8 +440,8 @@ class HotelInfoViewSet(viewsets.GenericViewSet, viewsets.mixins.RetrieveModelMix
         reserve = [0] * 6
 
         rooms = hotel.rooms.all()
-        reserves = Reserve.objects.filter(start_day__gte=date - relativedelta(months=6)
-                                          , start_day__lt=date, room__in=rooms).all()
+        reserves = Reserve.objects.filter(check_in__gte=date - relativedelta(months=6)
+                                          , check_in__lt=date, room__in=rooms).all()
         # print("reserve income, reserves past 6m: ", reserves, "\n date: ", date - relativedelta(months=0))
         for r in reserves:
             i = self.reserve_month_past(r, date)

@@ -88,42 +88,23 @@ class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False)  # The room that this image is for
 
 
-class RoomSpace(models.Model):
-    name = models.CharField(max_length=100, null=False, blank=False)
-    room = models.ForeignKey(Room, related_name='spaces', on_delete=models.CASCADE)
-
-    # available = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f'RoomSpace {self.name} for {self.room}'
-
-    @property
-    def hotel_id(self):
-        return self.room.hotel.id
-
 
 class Reserve(models.Model):
-    start_day = models.DateField()
-    end_day = models.DateField()
+    check_in = models.DateField()
+    check_out = models.DateField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
-    roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING, related_name='reserves')
-    price_per_day = models.IntegerField(default=None)
+    adults = models.IntegerField(default=None)
+    children = models.IntegerField(default=None)
+    total_price = models.IntegerField(default=None)
     firstname = models.CharField(max_length=64, blank=False, null=False)
     lastname = models.CharField(max_length=64, blank=False, null=False)
-    national_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=64, blank=True, null=True)
     room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, related_name='reserves')
     create_at = models.DateTimeField(auto_now_add=True)
 
     @property
-    def total_price(self):
-        total_days = (self.end_day - self.start_day)
-        total_price = (total_days.days + 1) * self.price_per_day
-        return total_price
-
-    @property
     def hotel_id(self):
-        room = self.roomspace.room
+        room = self.room
         hotel = room.hotel
         return (hotel.id)
 
@@ -136,10 +117,9 @@ class FavoriteHotel(models.Model):
         unique_together = ('hotel', 'user',)
 
 class CancelReserve(models.Model):
-    start_day = models.DateField()
-    end_day = models.DateField()
+    check_in = models.DateField()
+    check_out = models.DateField()
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    roomspace = models.ForeignKey(RoomSpace, on_delete=models.DO_NOTHING)
     price_per_day = models.IntegerField(default=None)
     firstname = models.CharField(max_length=64, blank=False, null=False)
     lastname = models.CharField(max_length=64, blank=False, null=False)
