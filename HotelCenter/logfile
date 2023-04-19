@@ -50,3 +50,7 @@
 2023-04-19 13:58:00.175 +0430 [1431] HINT:  Is another postmaster (PID 985) running in data directory "/usr/local/var/postgres2"?
 2023-04-19 14:13:58.570 +0430 [2081] ERROR:  column "adults" of relation "Hotel_reserve" contains null values
 2023-04-19 14:13:58.570 +0430 [2081] STATEMENT:  ALTER TABLE "Hotel_reserve" ADD COLUMN "adults" integer NOT NULL
+2023-04-19 15:48:08.806 +0430 [985] LOG:  received smart shutdown request
+2023-04-19 15:48:08.808 +0430 [985] LOG:  background worker "logical replication launcher" (PID 992) exited with exit code 1
+2023-04-19 15:48:08.808 +0430 [987] LOG:  shutting down
+2023-04-19 15:48:08.814 +0430 [985] LOG:  database system is shut down
