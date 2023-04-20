@@ -1,9 +1,8 @@
-from pyexpat import model
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-from Account.models import User
-from rest_framework.authentication import get_user_model
+
+
 
 
 
