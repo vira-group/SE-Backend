@@ -70,11 +70,13 @@ class User(AbstractBaseUser,PermissionsMixin):
     
     
     
+    role_Admin='A'
     role_manager='M'
     role_customer='C'
     role_unknown='U'
     
     ROLE_CHOICES=[
+        (role_Admin,'Admin'),
         (role_manager,'Manager'),
         (role_customer,'Customer'),
         (role_unknown,'Unkown'),
