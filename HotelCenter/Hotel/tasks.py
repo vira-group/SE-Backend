@@ -1,4 +1,4 @@
-# import datetime
+import datetime
 
 # from django.conf import settings
 # from django.core.mail import EmailMessage, get_connection
@@ -81,28 +81,28 @@
 #     send_mail(subject, plain_message, from_email, [to], html_message=html_message, fail_silently=True)
 
 
-# # @shared_task
-# def set_reserve_tasks(Reserve, Reserve_dic=None, **kwargs):
-#     """
-#     set before and after reserve tasks
-#     """
-#     # room_type = kwargs['room']
-#     now = datetime.datetime.today() + datetime.timedelta(minutes=20)
-#     # if now < Reserve.start_day:
-#     sdt = datetime.datetime.combine(date=Reserve.start_day, time=datetime.time(0, 0))
-#     rem_date = max(sdt - datetime.timedelta(days=2), now)
+# @shared_task
+def set_reserve_tasks(Reserve, Reserve_dic=None, **kwargs):
+    """
+    set before and after reserve tasks
+    """
+    # room_type = kwargs['room']
+    now = datetime.datetime.today() + datetime.timedelta(minutes=20)
+    # if now < Reserve.check_in:
+    sdt = datetime.datetime.combine(date=Reserve.check_in, time=datetime.time(0, 0))
+    rem_date = max(sdt - datetime.timedelta(days=2), now)
 
-#     edt = datetime.datetime.combine(date=Reserve.start_day, time=datetime.time(0, 0))
-#     feedback_date = max(edt + datetime.timedelta(days=1), now)
+    edt = datetime.datetime.combine(date=Reserve.check_in, time=datetime.time(0, 0))
+    feedback_date = max(edt + datetime.timedelta(days=1), now)
 
-#     user = Reserve.user
-#     kwargs = {'username': user.username,
-#               'email': user.email,
-#               'room': Reserve.room.type,
-#               'size': Reserve.room.size,
-#               'start_date': Reserve.start_day,
-#               'end_date': Reserve.end_day,
-#               'hotel': Reserve.room.hotel.name}
+    user = Reserve.user
+    kwargs = {'username': user.username,
+              'email': user.email,
+              'room': Reserve.room.type,
+              'size': Reserve.room.size,
+              'start_date': Reserve.check_in,
+              'end_date': Reserve.check_out,
+              'hotel': Reserve.room.hotel.name}
 
 #     pre_reserve.apply_async(args=[Reserve_dic], kwargs=kwargs, eta=rem_date)
 #     after_reserve.apply_async(args=[Reserve_dic], kwargs=kwargs, eta=feedback_date)

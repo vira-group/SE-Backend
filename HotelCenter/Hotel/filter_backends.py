@@ -1,5 +1,6 @@
-# from django_filters import rest_framework as filters
-# from .models import Hotel, Reserve, RoomSpace, Room
+from django_filters import rest_framework as filters
+#from .models import Hotel, Reserve, RoomSpace, Room
+from .models import Hotel, Reserve, Room
 
 
 # class HotelMinRateFilters(filters.FilterSet):
@@ -11,15 +12,16 @@
 #         fields = ['min_rate', 'name', 'rate', 'facilities', 'name_contain', 'rooms__facilities']
 
 
-# class AdminReserveFilter(filters.FilterSet):
-#     start_before = filters.DateFilter(field_name='start_day', lookup_expr='lt')
-#     start_after = filters.DateFilter(field_name='start_day', lookup_expr='gte')
-#     end_before = filters.DateFilter(field_name='end_day', lookup_expr='lt')
-#     end_after = filters.DateFilter(field_name='end_day', lookup_expr='gte')
+class AdminReserveFilter(filters.FilterSet):
+    start_before = filters.DateFilter(field_name='check_in', lookup_expr='lt')
+    start_after = filters.DateFilter(field_name='check_in', lookup_expr='gte')
+    end_before = filters.DateFilter(field_name='check_out', lookup_expr='lt')
+    end_after = filters.DateFilter(field_name='check_out', lookup_expr='gte')
 
-#     class Meta:
-#         model = Reserve
-#         fields = ['room', 'roomspace', 'start_day', 'end_day', 'start_before', 'start_after', 'end_before', 'end_after']
+    class Meta:
+        model = Reserve
+        # fields = ['room', 'roomspace', 'check_in', 'check_out', 'start_before', 'start_after', 'end_before', 'end_after']
+        fields = ['room', 'check_in', 'check_out', 'start_before', 'start_after', 'end_before', 'end_after']
 
 
 # class AdminRoomSpaceFilter(filters.FilterSet):
@@ -31,8 +33,8 @@
 #         fields = ['room', 'name', 'name_start', 'name_icontain']
 
 
-# class AdminRoomFilter(filters.FilterSet):
-#     size = filters.RangeFilter(field_name='size')
-#     class Meta:
-#         model = Room
-#         fields = ['type', 'sleeps', 'option', 'size', 'view']
+class AdminRoomFilter(filters.FilterSet):
+    size = filters.RangeFilter(field_name='size')
+    class Meta:
+        model = Room
+        fields = ['type', 'sleeps', 'option', 'size', 'view']
