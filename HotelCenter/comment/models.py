@@ -7,13 +7,41 @@ from Hotel.models import Hotel
 class Comment(models.Model):
     rate = models.FloatField(
         validators=[MinValueValidator(0.0), MaxValueValidator(5.0)]
-        , null=False, blank=False
+        , default=2.5
     )
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name="comments")
     hotel = models.ForeignKey(Hotel, related_name='comments', on_delete=models.CASCADE)
-    text = models.CharField(max_length=1024, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    text = models.TextField()
+    created_comment = models.DateTimeField(auto_now_add=True)
+    reply=models.OneToOneField("Reply", related_name="comment_reply",on_delete=models.SET_NULL,null=True,blank=True)
+    tag=models.ManyToManyField("Tag", related_name="comment_tag",null=True, blank=True) 
+    is_replied = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-modified_at']
+        ordering = ['-created_comment']
+        
+    def __str__(self) -> str:
+        return f"text: {self.text}" + " " + f"####### {list(self.tag.all())}"
+
+
+
+
+class Reply(models.Model):
+       text_reply=models.TextField()
+       created_reply = models.DateTimeField(auto_now_add=True)
+       
+       class Meta:
+         ordering = ['-created_reply']
+        
+
+
+
+
+
+class Tag(models.Model):
+    name=models.CharField(max_length=40)
+        
+    def __str__(self) -> str:
+        return  self.name
+
+    

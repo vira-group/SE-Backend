@@ -44,8 +44,11 @@ urlpatterns = [
     path('api/hotel/', include("Hotel.urls")),
     # # path('api/accounts/', include("Account.urls")),
     # path('api/chat/', include("Chat.urls")),
-    # path('api/hotel/', include("comment.urls")),
+
+    path('comment/', include("comment.urls")),
+
     path('ticket/', include('ticket.urls')),
+
     path('users/activate/<uid>/<token>', ActivationEmail.as_view({'get': 'activation'}), name='activation'),
 
 ]
