@@ -29,10 +29,6 @@ class ResponseAdminAPIs(RetrieveUpdateAPIView): ### get one ticket and update it
     serializer_class=AdminTicketSerializer
 
 
-class ResponseAdminAPIs(): ### get one ticket and update it 
-    queryset=TicketForm.objects.all()
-    serializer_class=AdminTicketSerializer
-
 class ShowAdminTicketList(ListAPIView):
     queryset=TicketForm.objects.all()
     serializer_class=AdminTicketSerializer
