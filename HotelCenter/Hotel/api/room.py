@@ -20,7 +20,7 @@ from ..permissions import IsUrlHotelEditor
 #                                             RoomSpaceSerializer, AdminRoomSpaceSerializer)
 from ..serializers.room_serializers import (PublicRoomSerializer, roomFacilitiesSerializer, RoomImageSerializer)
 from ..models import Hotel
-
+# from HotelCenter.permissions import IsManager, IsCustomer
 
 class RoomList(APIView):
 
@@ -74,6 +74,7 @@ class ImageList(APIView):
                 serializer.save(room=room)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class AdminRoomViewSet(viewsets.ReadOnlyModelViewSet):

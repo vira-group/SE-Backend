@@ -16,11 +16,11 @@ from ..models import CancelReserve, Reserve, Room
 from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, ReserveSerializer, \
     AdminReserverSerializer
 from ..tasks import set_reserve_tasks
-
+# from HotelCenter.permissions import IsManager, IsCustomer
 
 
 class ReserveList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
 
     def get(self, request, room_id):
         reserveList = Reserve.objects.filter(user=request.user)
@@ -85,7 +85,7 @@ class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserCancelReserveList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
 
     def post(self, request):
         user = request.user
