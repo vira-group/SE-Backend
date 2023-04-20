@@ -17,6 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from .api.hotel import HotelCreateListAPi
+
+
+
+
+
+
 # from .api.hotel import HotelViewSet
 # HotelImgViewSet, BestHotelViewSet, \
 #     MyHotelsViewSet, HotelSearchViewSet, FavoriteViewSet, HotelInfoViewSet, NewHotelViewSet
@@ -24,7 +31,7 @@ from rest_framework import routers
     # AdminRoomViewSet
 # from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
 
-router = routers.DefaultRouter()
+# router = routers.DefaultRouter()
 # router.register('hotels', HotelViewSet, basename='user-hotel')
 # router.register('facilities', FacilityViewSet, basename='facility-list')
 # router.register('best', BestHotelViewSet, basename='best-hotel')
@@ -33,17 +40,17 @@ router = routers.DefaultRouter()
 # router.register('favorites', FavoriteViewSet, basename="favorite_hotels")
 # router.register("newhotels", NewHotelViewSet, basename="new-hotel")
 
-hotel_admin_router = routers.DefaultRouter()
+# hotel_admin_router = routers.DefaultRouter()
 # hotel_admin_router.register('panel', HotelInfoViewSet, basename='hotel-admin-panel')
 
-hotel_router = routers.DefaultRouter()
+# hotel_router = routers.DefaultRouter()
 # hotel_router.register('images', HotelImgViewSet, basename='hotel-images')
 # hotel_router.register('search', HotelSearchViewSet, basename='hotel-room-search')
 # hotel_router.register('reserves', AdminReserveViewSet, basename='hotel-admin-reserve')
 # hotel_router.register('roomspaces', AdminRoomSpaceViewSet, basename='hotel-admin-roomspace')
 # hotel_router.register('rooms', AdminRoomViewSet, basename='hotel-admin-room')
 
-room_router = routers.DefaultRouter()
+# room_router = routers.DefaultRouter()
 # room_router.register('spaces', RoomSpaceViewSet, basename='room-space')
 
 urlpatterns = [
@@ -56,5 +63,6 @@ urlpatterns = [
     # path('admin/', include(hotel_admin_router.urls)),
     # # path('cancelreserve/', UserCancelReserveList.as_view()),
     # path('room/<int:room_id>/', include(room_router.urls)),
+    path("create/",HotelCreateListAPi.as_view())
 
 ]

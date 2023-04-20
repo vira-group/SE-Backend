@@ -10,18 +10,23 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
-
+from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 from ..permissions import *
 from ..models import Hotel,HotelImage
 from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer
 # from ..serializers.room_serializers import 
 # from ..filter_backends import HotelMinRateFilters
+from ..serializers.hotel_serializers import  HotelSerializer
 
 
 
+class HotelCreateListAPi(ListCreateAPIView):
+    
+     serializer_class=HotelSerializer
+     queryset=Hotel.objects.all()
 
-
-
+        
 
 
 
