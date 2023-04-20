@@ -2,22 +2,50 @@ from rest_framework import serializers
 from ..models import Hotel, HotelImage
 
 
+
+
+
+class HotelSerializer(serializers.ModelSerializer):
+    id=serializers.IntegerField(read_only=True)
+    class Meta:
+        fields = ['id',"manager" ,"name","phone_number" ,"description", "country","city","longitude","latitude","address"]
+        model = Hotel
+    
+    
+        
+class HotelImgSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = HotelImage
+        fields = ['image', 'id', 'hotel', 'image_url']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+
+
+
 # class FacilitiesSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Facility
 #         fields = ['name']
 
 
-class HotelSerializer(serializers.ModelSerializer):
-    # facilities = FacilitiesSerializer(required=False, many=True, read_only=True)
-    # is_favorite = serializers.SerializerMethodField()
+
+      
+class HotelImgSerializer(serializers.ModelSerializer):
+    # hotel_name = serializers.RelatedField(source='Hotel.name', read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = Hotel
-        fields = ['id', "name", "description", "country","city","longitude","latitude","address"]
-        # read_only_fields = ['id', "rate", 'reply_count', 'start_date', 'capacity']  # lookup_field = 'id'
+        model = HotelImage
+        fields = ['image', 'id', 'hotel', 'image_url']
+        # read_only_fields = ['hotel']
 
-    # def get_is_favorite(self, obj):
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
     #     user = None
 
     #     request = self.context.get("request")
@@ -65,18 +93,6 @@ class HotelSerializer(serializers.ModelSerializer):
     #     return super(HotelSerializer, self).update(instance, validated_data)
 
 
-class HotelImgSerializer(serializers.ModelSerializer):
-    # hotel_name = serializers.RelatedField(source='Hotel.name', read_only=True)
-    image_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = HotelImage
-        fields = ['image', 'id', 'hotel', 'image_url']
-        # read_only_fields = ['hotel']
-
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
 
 
 # class FavoriteHotelSerializer(serializers.ModelSerializer):
