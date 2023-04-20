@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Hotel, HotelImage
+from ..models import Hotel, HotelImage,Reserve,Room
 
 
 
@@ -23,6 +23,22 @@ class HotelImgSerializer(serializers.ModelSerializer):
     def get_image_url(self, obj):
         if obj.image:
             return obj.image.url
+        
+class HotelSearchSerializer(serializers.ModelSerializer):
+    hotel=HotelSerializer()
+    class Meta:
+        model=Room
+        fields = ['size','option','price','hotel']
+        
+class ReserveSerializer(serializers.ModelSerializer):
+    room=HotelSearchSerializer()
+    class Meta:
+        model=Reserve
+        fields = ['room']
+        
+
+        
+    
 
 
 
