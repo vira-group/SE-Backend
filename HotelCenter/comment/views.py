@@ -65,9 +65,11 @@ class RetrieveUpdateCommentForReply(APIView):
             return Response("comment posted!",status=status.HTTP_200_OK)
             
         
-        
-        
-    
-            
+class GetAllManagerComments(APIView):
+    def get(self,request):
+        all_comments=Comment.objects.filter(hotel__manager__id=request.user.id , is_replied=False)
+        serializer=WriteCommentSerializer(all_comments,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+           
             
 
