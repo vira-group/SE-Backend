@@ -31,21 +31,6 @@ class HotelImgSerializer(serializers.ModelSerializer):
 #         model = Facility
 #         fields = ['name']
 
-
-
-      
-class HotelImgSerializer(serializers.ModelSerializer):
-    # hotel_name = serializers.RelatedField(source='Hotel.name', read_only=True)
-    image_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = HotelImage
-        fields = ['image', 'id', 'hotel', 'image_url']
-        # read_only_fields = ['hotel']
-
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
     #     user = None
 
     #     request = self.context.get("request")
