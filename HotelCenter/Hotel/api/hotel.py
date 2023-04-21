@@ -13,19 +13,81 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from ..permissions import *
-from ..models import Hotel, HotelImage, Reserve
-from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer
+from ..models import Hotel,HotelImage,Reserve
+from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,HotelSearchSerializer,ReserveSerializer
 # from ..serializers.room_serializers import 
 # from ..filter_backends import HotelMinRateFilters
 from ..serializers.hotel_serializers import  HotelSerializer
+from django.db.models import F
+from math import sqrt
+from django .db.models.query import QuerySet
 
-
+from rest_framework.permissions import IsAuthenticated
+from HotelCenter.permissions import IsManager
 
 class HotelCreateListAPi(ListCreateAPIView):
+     
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
+    
     serializer_class=HotelSerializer
     queryset=Hotel.objects.all()
+
+
+class HotelSearchAPi(APIView):
+    def get(self , request, *args, **kwargs):
+        city=request.GET.get('city','')
+        check_in=request.GET.get('check_in','1990-1-01')
+        check_out=request.GET.get('check_out','1990-12-01')
+        size=request.GET.get('size',None)
+        
+        queryset=None
+        
+        if size ==None:
+            # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
+            queryset=Reserve.objects.exclude(check_in__gte=check_in,check_out__lte=check_out,room__size__gte=1,room__hotel__city__icontains=city)
+        else:
+            #  queryset=Room.objects.filter(hotel__city__icontains=city,size=size)
+            queryset=Reserve.objects.exclude(check_in__gte=check_in,check_out__lte=check_out,room__size=size,room__hotel__city__icontains=city)
+            
+             
+        ser=ReserveSerializer(queryset,many=True)
+        return Response(ser.data,status=status.HTTP_200_OK)
+
+
+class NearHotelSearchApi(APIView):
+    def get(self, request):
+        x=request.GET.get('x',0)
+        y=request.GET.get('y',0)
+        radius=1
+        queryset=Hotel.objects.all()
+        li_queryset=list(queryset)
+        for h in li_queryset:
+            cal=sqrt(int((x-h.latitude))**2 +int((y-h.longitude))**2)
+            print(cal)
+            if cal>radius:
+                li_queryset.remove(h)
+        ser=HotelSerializer(li_queryset,many=True)
+        return Response(ser.data,status=status.HTTP_200_OK)
+    
+
+class MyHotels(APIView):
+    permission_classes=[IsAuthenticated,IsManager]
+    def get(self, request):
+        queryset=Hotel.objects.filter(manager_id=request.user.id)
+        ser=HotelSerializer(queryset,many=True)
+        return Response(ser.data,status=status.HTTP_200_OK)
+      
+        
+    
+
+
+        
+         
+
+
+
+
 
 
 class HotelViewSet(viewsets.ModelViewSet):
