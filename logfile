@@ -237,3 +237,5 @@
 2023-04-21 16:41:13.992 +0430 [2217] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
 2023-04-21 16:41:13.992 +0430 [2217] DETAIL:  Failing row contains (1, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
 2023-04-21 16:41:13.992 +0430 [2217] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 18:51:00.434 +0430 [5543] FATAL:  lock file "postmaster.pid" already exists
+2023-04-21 18:51:00.434 +0430 [5543] HINT:  Is another postmaster (PID 1043) running in data directory "/usr/local/var/postgres2"?

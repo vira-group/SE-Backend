@@ -71,24 +71,6 @@ class NearHotelSearchApi(APIView):
         return Response(ser.data,status=status.HTTP_200_OK)
     
 
-class MyHotels(APIView):
-    permission_classes=[IsAuthenticated,IsManager]
-    def get(self, request):
-        queryset=Hotel.objects.filter(manager_id=request.user.id)
-        ser=HotelSerializer(queryset,many=True)
-        return Response(ser.data,status=status.HTTP_200_OK)
-      
-        
-    
-
-
-        
-         
-
-
-
-
-
 
 class HotelViewSet(viewsets.ModelViewSet):
     

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .api.hotel import HotelCreateListAPi,HotelSearchAPi,NearHotelSearchApi,MyHotels,MyHotelsViewSet
+from .api.hotel import HotelCreateListAPi,HotelSearchAPi,NearHotelSearchApi, MyHotelsViewSet
 # from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
 #     AdminRoomViewSet
 # from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
@@ -51,6 +51,5 @@ urlpatterns = [
     path('create/',HotelCreateListAPi.as_view()),
     path('search/',HotelSearchAPi.as_view()),
     path('nearhotel/',NearHotelSearchApi.as_view()),
-    path('myhotels/', MyHotels.as_view()),
 
 ]
