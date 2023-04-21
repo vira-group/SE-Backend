@@ -32,6 +32,12 @@ class ReplySerializer(serializers.ModelSerializer):
         # read_only_fields=['comment_reply']       
 
 
+class ReadCommentSerializer(serializers.ModelSerializer):
+    tag=TagSerializer(many=True)
+    class Meta:
+        model = Comment
+        fields = ['hotel','text','tag','rate']
+
 
 
 

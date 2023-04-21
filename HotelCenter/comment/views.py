@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateAPIView
 from rest_framework import status
-from .serializers import TagSerializer,WriteCommentSerializer,ReplySerializer
+from .serializers import TagSerializer,WriteCommentSerializer,ReplySerializer,ReadCommentSerializer
 from .models import Tag,Comment,Reply
 from Account.models import User
 # Create your views here.
@@ -68,8 +68,8 @@ class RetrieveUpdateCommentForReply(APIView):
 class GetAllManagerComments(APIView):
     def get(self,request):
         all_comments=Comment.objects.filter(hotel__manager__id=request.user.id , is_replied=False)
-        serializer=WriteCommentSerializer(all_comments,many=True)
+        serializer=ReadCommentSerializer(all_comments,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-           
+
             
 
