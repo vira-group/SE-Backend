@@ -14,11 +14,11 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from ..permissions import *
 from ..models import Hotel,HotelImage,Reserve
-from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,HotelSearchSerializer,ReserveSerializer
+from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,HotelSearchSerializer
 # from ..serializers.room_serializers import 
 # from ..filter_backends import HotelMinRateFilters
 from ..serializers.hotel_serializers import  HotelSerializer
-from django.db.models import F
+from django.db.models import F,Q
 from math import sqrt
 from django .db.models.query import QuerySet
 
@@ -45,13 +45,23 @@ class HotelSearchAPi(APIView):
         
         if size ==None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
-            queryset=Reserve.objects.exclude(check_in__gte=check_in,check_out__lte=check_out,room__size__gte=1,room__hotel__city__icontains=city)
+            # ids_room=list(Room.objects.filter(room__size__gte=1,room__hotel__city__icontains=city).values_list('id',flat=True))
+            # queryset=Reserve.objects.filter(~(Q(check_in__gte=check_in) & Q(check_out__lte=check_out))).filter(room__size__gte=1,room__hotel__city__icontains=city)
+            # queryset2=Reserve.objects.select_related("reserves").get()
+            result=[]
+            queryset=Room.objects.filter(Q(size__gte=1)&Q(hotel__city__icontains=city)&~(Q(reserves__check_in__gte=check_in)&Q(reserves__check_out__lte=check_out)))
+            # for i in list(queryset):
+            #     if len(list(i.reserves))==0:
+            #         result.append(i)
+            
+            
+
         else:
             #  queryset=Room.objects.filter(hotel__city__icontains=city,size=size)
-            queryset=Reserve.objects.exclude(check_in__gte=check_in,check_out__lte=check_out,room__size=size,room__hotel__city__icontains=city)
+            queryset=Room.objects.filter(Q(size=size)&Q(hotel__city__icontains=city)&~(Q(reserves__check_in__gte=check_in)&Q(reserves__check_out__lte=check_out)))
             
              
-        ser=ReserveSerializer(queryset,many=True)
+        ser=HotelSearchSerializer(queryset,many=True)
         return Response(ser.data,status=status.HTTP_200_OK)
 
 
