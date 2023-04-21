@@ -28,13 +28,13 @@ class HotelSearchSerializer(serializers.ModelSerializer):
     hotel=HotelSerializer()
     class Meta:
         model=Room
-        fields = ['size','option','price','hotel']
+        fields = ['hotel','size','option','price']
         
-class ReserveSerializer(serializers.ModelSerializer):
-    room=HotelSearchSerializer()
-    class Meta:
-        model=Reserve
-        fields = ['room']
+# class ReserveSerializer(serializers.ModelSerializer):
+#     room=HotelSearchSerializer()
+#     class Meta:
+#         model=Reserve
+#         fields = ['room']
         
 
         
