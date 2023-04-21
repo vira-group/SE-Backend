@@ -18,9 +18,9 @@ from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,
 # from ..serializers.room_serializers import 
 # from ..filter_backends import HotelMinRateFilters
 from ..serializers.hotel_serializers import  HotelSerializer
-
-
-
+from django.db.models import F
+from math import sqrt
+from django .db.models.query import QuerySet
 class HotelCreateListAPi(ListCreateAPIView):
     
      serializer_class=HotelSerializer
@@ -46,6 +46,29 @@ class HotelSearchAPi(APIView):
              
         ser=ReserveSerializer(queryset,many=True)
         return Response(ser.data,status=status.HTTP_200_OK)
+
+
+class NearHotelSearchApi(APIView):
+    def get(self, request):
+        x=request.GET.get('x',0)
+        y=request.GET.get('y',0)
+        radius=1
+        queryset=Hotel.objects.all()
+        li_queryset=list(queryset)
+        for h in li_queryset:
+            cal=sqrt(int((x-h.latitude))**2 +int((y-h.longitude))**2)
+            print(cal)
+            if cal>radius:
+                li_queryset.remove(h)
+        ser=HotelSerializer(li_queryset,many=True)
+        return Response(ser.data,status=status.HTTP_200_OK)
+
+         
+        
+        
+    
+
+
         
          
 
