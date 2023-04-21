@@ -10,7 +10,7 @@ class Hotel(models.Model):
    manager=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="HotelManager")
    name=models.CharField(max_length=70)
    address=models.CharField(max_length=70)
-   phone_number=models.CharField(max_length=11,blank=True,null=True)
+   phone_number=models.CharField(max_length=20,blank=True,null=True)
    email=models.EmailField(blank=True,null=True)
    description=models.TextField(blank=True,null=True)
    floor_count=models.IntegerField(null=True,blank=True)
