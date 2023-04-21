@@ -21,6 +21,9 @@ from ..serializers.hotel_serializers import  HotelSerializer
 from django.db.models import F
 from math import sqrt
 from django .db.models.query import QuerySet
+
+from rest_framework.permissions import IsAuthenticated
+from HotelCenter.permissions import IsManager
 class HotelCreateListAPi(ListCreateAPIView):
     
      serializer_class=HotelSerializer
@@ -62,9 +65,15 @@ class NearHotelSearchApi(APIView):
                 li_queryset.remove(h)
         ser=HotelSerializer(li_queryset,many=True)
         return Response(ser.data,status=status.HTTP_200_OK)
+    
 
-         
-        
+class MyHotels(APIView):
+    permission_classes=[IsAuthenticated,IsManager]
+    def get(self, request):
+        queryset=Hotel.objects.filter(manager_id=request.user.id)
+        ser=HotelSerializer(queryset,many=True)
+        return Response(ser.data,status=status.HTTP_200_OK)
+      
         
     
 
