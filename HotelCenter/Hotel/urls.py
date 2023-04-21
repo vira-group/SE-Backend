@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .api.hotel import HotelCreateListAPi
+from .api.hotel import HotelCreateListAPi, MyHotelsViewSet
 # from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
 #     AdminRoomViewSet
 # from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
@@ -32,7 +32,7 @@ hotel_admin_router = routers.DefaultRouter()
 
 hotel_router = routers.DefaultRouter()
 hotel_router.register('reserves', AdminReserveViewSet, basename='hotel-admin-reserve')
-# hotel_router.register('roomspaces', AdminRoomSpaceViewSet, basename='hotel-admin-roomspace')
+router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
 hotel_router.register('rooms', AdminRoomViewSet, basename='hotel-admin-room')
 
 room_router = routers.DefaultRouter()

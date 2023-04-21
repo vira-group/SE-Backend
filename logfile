@@ -203,3 +203,37 @@
 2023-04-18 15:59:29.557 +0430 [4185] LOG:  background worker "logical replication launcher" (PID 4192) exited with exit code 1
 2023-04-18 15:59:29.557 +0430 [4187] LOG:  shutting down
 2023-04-18 15:59:29.562 +0430 [4185] LOG:  database system is shut down
+2023-04-21 16:03:09.035 +0430 [1043] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-21 16:03:09.037 +0430 [1043] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-21 16:03:09.037 +0430 [1043] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-21 16:03:09.038 +0430 [1043] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-21 16:03:09.049 +0430 [1044] LOG:  database system was shut down at 2023-04-21 02:08:38 +0430
+2023-04-21 16:03:09.054 +0430 [1043] LOG:  database system is ready to accept connections
+2023-04-21 16:03:33.719 +0430 [1070] ERROR:  cannot drop table "Hotel_hotel" because other objects depend on it
+2023-04-21 16:03:33.719 +0430 [1070] DETAIL:  constraint Hotel_room_hotel_id_b7beb409_fk_Hotel_hotel_id on table "Hotel_room" depends on table "Hotel_hotel"
+	constraint Hotel_hotel_editors_hotel_id_762a0aac_fk_Hotel_hotel_id on table "Hotel_hotel_editors" depends on table "Hotel_hotel"
+	constraint Hotel_hotel_facilities_hotel_id_3602d772_fk_Hotel_hotel_id on table "Hotel_hotel_facilities" depends on table "Hotel_hotel"
+	constraint Hotel_hotelimage_hotel_id_bb053ffc_fk_Hotel_hotel_id on table "Hotel_hotelimage" depends on table "Hotel_hotel"
+	constraint Hotel_favoritehotel_hotel_id_881054bd_fk_Hotel_hotel_id on table "Hotel_favoritehotel" depends on table "Hotel_hotel"
+	constraint Chat_hotelchat_hotel_id_638cb64e_fk_Hotel_hotel_id on table "Chat_hotelchat" depends on table "Hotel_hotel"
+	constraint comment_comment_hotel_id_b812a80b_fk_Hotel_hotel_id on table comment_comment depends on table "Hotel_hotel"
+2023-04-21 16:03:33.719 +0430 [1070] HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2023-04-21 16:03:33.719 +0430 [1070] STATEMENT:  drop table "Hotel_hotel"
+2023-04-21 16:30:45.955 +0430 [1800] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:30:45.955 +0430 [1800] DETAIL:  Failing row contains (1, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:30:45.955 +0430 [1800] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:31:59.303 +0430 [1838] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:31:59.303 +0430 [1838] DETAIL:  Failing row contains (2, Parsian, Esfahan, Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 0, 0, null, null, 2.5, null).
+2023-04-21 16:31:59.303 +0430 [1838] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan, Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 0.0, 0.0, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:32:32.000 +0430 [1860] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:32:32.000 +0430 [1860] DETAIL:  Failing row contains (3, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:32:32.000 +0430 [1860] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:33:36.800 +0430 [1888] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:33:36.800 +0430 [1888] DETAIL:  Failing row contains (4, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:33:36.800 +0430 [1888] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:33:55.199 +0430 [1909] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:33:55.199 +0430 [1909] DETAIL:  Failing row contains (5, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:33:55.199 +0430 [1909] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:41:13.992 +0430 [2217] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:41:13.992 +0430 [2217] DETAIL:  Failing row contains (1, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:41:13.992 +0430 [2217] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"

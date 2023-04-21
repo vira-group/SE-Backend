@@ -18,7 +18,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import Hotel, Facility, HotelImage, Room, roomFacility, Reserve, FavoriteHotel
+from .models import Hotel, HotelImage, Room, roomFacility, Reserve, FavoriteHotel
 
 
 # def my_reverse(viewname, kwargs=None, query_kwargs=None):
@@ -37,8 +37,8 @@ from .models import Hotel, Facility, HotelImage, Room, roomFacility, Reserve, Fa
 
 class HotelTestCase(APITestCase):
     test_urls = {
-        "hotel-list": "/api/hotel/hotels/",
-        "hotel-obj": "/api/hotel/hotels/{}/",
+        "hotel-list": "/api/hotel/create/",
+        "hotel-obj": "/api/hotel/create/",
         #"hotel-images": "/api/hotel/{}/images/",
         #"hotel-image": "/api/hotel/{}/images/{}/",
         #"best-hotel": '/api/hotel/best/'
@@ -53,34 +53,26 @@ class HotelTestCase(APITestCase):
         self.facility1 = {"name": "free_wifi"}
         self.facility2 = {"name": "parking"}
 
-        Facility.objects.create(**self.facility1)
-        Facility.objects.create(**self.facility2)
-
         self.hotel_data1 = {
             "name": "Parsian",
-            "city": "Esfehan",
-            "state": "Esfehan",
+            "phone_number": "0912345678",
+            "description": "Nice Hotel",
             "country": "Iran",
-            "type": "Hotel",
-            "check_in_range": "9:00-12:00",
-            "check_out_range": "15:00-23:00",
-            "description": "good quality including breakfast",
-            "phone_numbers": "09123456700",
-
-            "facilities": [{"name": "free_wifi"}],
-            "address": "Esfahan,Iran"
-        }
+            "city": "Esfahan",
+            "longitude": 0,
+            "latitude": 0,
+            "address": "Esfahan, Iran"
+            }
+        
         self.hotel_data2 = {
             "name": "Ferdosi",
             "city": "Khorasan",
-            "state": "mashhad",
             "country": "Iran",
-            "check_in_range": "9:00-12:00",
-            "check_out_range": "15:00-23:00",
+            "check_in": "15:00",
+            "check_out": "12:00",
             "description": "with best view of the city and places",
-            "phone_numbers": "09123456709",
+            "phone_number": "09123456709",
             'rate': 4.4,
-            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
             "address": "Khorasan,Iran"
         }
 
@@ -126,6 +118,7 @@ class HotelTestCase(APITestCase):
         # create hotel for user1
         self.set_credential(token=self.token1)
         current_count = Hotel.objects.count()
+        self.hotel_data1['manager']=self.user1.id
         data = self.hotel_data1
 
         resp = self.client.post(self.test_urls["hotel-list"], data=data, format="json")
@@ -137,15 +130,14 @@ class HotelTestCase(APITestCase):
 
         current_count = Hotel.objects.count()
         # each person can have more than one hotel
+        self.hotel_data2['manager']=self.user1.id
+        data = self.hotel_data2
+
         resp = self.client.post(self.test_urls["hotel-list"], data=data, format="json")
+        content = resp.data
         self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
         self.assertTrue(Hotel.objects.count() == current_count + 1)
 
-        data["name"] = "old parsian"
-        resp = self.client.put(self.test_urls["hotel-obj"].format(1), data=data, format="json")
-        content = resp.data
-
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(content["name"], data["name"])
         self.assertTrue(Hotel.objects.count() == current_count + 1)
 
@@ -166,6 +158,8 @@ class HotelTestCase(APITestCase):
 
         self.unset_credential()
         data = self.hotel_data1
+        self.hotel_data1['manager']=self.user1.id
+        
         resp = self.client.post(self.test_urls["hotel-list"], data=data, format="json")
         self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
@@ -173,20 +167,19 @@ class HotelTestCase(APITestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.UNAUTHORIZED)
 
     def test_hotel_retrieve(self):
-        self.hotel_data1.pop("facilities")
-        Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        Hotel.objects.create(**self.hotel_data1, creator_id=self.user2.id)
+        
+        Hotel.objects.create(**self.hotel_data2, manager_id=self.user2.id)
 
         resp = self.client.get(self.test_urls["hotel-list"], format="json")
 
         content = resp.data
         self.assertTrue(resp.status_code == http.HTTPStatus.OK)
-        self.assertTrue(len(content) == 2)
+        self.assertTrue(len(content) == 1)
 
         resp = self.client.get(self.test_urls["hotel-obj"].format(1), format="json")
         content = resp.data
         self.assertTrue(resp.status_code == http.HTTPStatus.OK)
-        self.assertTrue(content['name'] == self.hotel_data1['name'])
+        self.assertTrue(content[0]['name'] == self.hotel_data2['name'])
 
     # def test_Hotel_header_set(self):  # ***
     #     self.hotel_data2.pop("facilities")
@@ -313,23 +306,19 @@ class HotelTestCase(APITestCase):
         self.assertEqual(http.HTTPStatus.UNAUTHORIZED, resp.status_code)
 
     def test_my_hotels_success(self):
-        self.hotel_data1.pop("facilities")
-        self.hotel_data2.pop("facilities")
         hotel_data3 = self.hotel_data2.copy()
         hotel_data3['rate'] = 3.9
-        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, creator_id=self.user2.id)
-        hotel3: Hotel = Hotel.objects.create(**hotel_data3, creator_id=self.user3.id)
-        hotel2.editors.add(self.user1)
+        hotel1: Hotel = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
+        hotel2: Hotel = Hotel.objects.create(**self.hotel_data2, manager_id=self.user2.id)
+        hotel3: Hotel = Hotel.objects.create(**hotel_data3, manager_id=self.user3.id)
         hotel2.save()
-        hotel3.editors.add(self.user1)
         hotel3.save()
 
         self.set_credential(self.token1)
 
         resp = self.client.get(reverse.reverse('my_hotels-list'))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue((len(resp.data['owners']) == 1) and (len(resp.data['editors']) == 2))
+        self.assertTrue((len(resp.data['managers']) == 1))
 
     # def test_favorite_hotel_unauthorized(self):
     #     self.hotel_data1.pop("facilities")
@@ -445,9 +434,6 @@ class RoomTestCase(APITestCase):
         self.facility1 = {"name": "free_wifi"}
         self.facility2 = {"name": "parking"}
 
-        Facility.objects.create(**self.facility1)
-        Facility.objects.create(**self.facility2)
-
         self.roomfacility1 = {"name": "rf1"}
         self.roomfacility2 = {"name": "rf2"}
 
@@ -455,26 +441,25 @@ class RoomTestCase(APITestCase):
         roomFacility.objects.create(**self.roomfacility2)
 
         self.hotel_data1 = {
-            "name": "parsian",
-            "city": "Esfehan",
-            "state": "Esfehan",
-
+            "name": "Parsian",
+            "phone_number": "0912345678",
+            "description": "Nice Hotel",
             "country": "Iran",
-            "description": "good quality including breakfast",
-            "phone_numbers": "09123456700",
-
-            "facilities": [{"name": "free_wifi"}],
-            "address": "Esfahan,Iran"
-        }
+            "city": "Esfahan",
+            "longitude": 0,
+            "latitude": 0,
+            "address": "Esfahan, Iran"
+            }
+        
         self.hotel_data2 = {
             "name": "Ferdosi",
             "city": "Khorasan",
-            "state": "mashhad",
             "country": "Iran",
+            "check_in": "15:00",
+            "check_out": "12:00",
             "description": "with best view of the city and places",
-            "phone_numbers": "09123456709",
+            "phone_number": "09123456709",
             'rate': 4.4,
-            "facilities": [{"name": "free_wifi"}, {"name": "parking"}],
             "address": "Khorasan,Iran"
         }
 
@@ -524,28 +509,26 @@ class RoomTestCase(APITestCase):
         """
         self.client.credentials()
 
-    def generate_photo_file(self):
-        file = io.BytesIO()
-        r = random.Random().random()
-        image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
-        file.name = './test.png'
-        image.save("test.png", 'PNG')
+    # def generate_photo_file(self):
+    #     file = io.BytesIO()
+    #     r = random.Random().random()
+    #     image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
+    #     file.name = './test.png'
+    #     image.save("test.png", 'PNG')
 
-        file.seek(0)
-        return file
+    #     file.seek(0)
+    #     return file
 
     def test_room_creation_success(self):
         # create hotel for user1
-        self.hotel_data1.pop("facilities")
-        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel1 = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
         self.set_credential(self.token1)
         resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
     def test_room_creation_unauthorized(self):
         # create hotel for user1
-        self.hotel_data1.pop("facilities")
-        hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
+        hotel1 = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
         resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
