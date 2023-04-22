@@ -152,7 +152,7 @@ TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBacke
 DJOSER = {
     'DOMAIN': 'localhost:8000',
     'SITE_NAME': 'net',
-    'USER_CREATE_PASSWORD_RETYPE': True,
+    # 'USER_CREATE_PASSWORD_RETYPE': True,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'LOGOUT_ON_PASSWORD_CHANGE': True,
