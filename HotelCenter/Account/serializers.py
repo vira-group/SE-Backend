@@ -17,8 +17,10 @@ class PublicUserSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ['firstName', 'lastName']
         
-
-
+class GetRollSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['role']
         
         
   
