@@ -50,8 +50,7 @@ urlpatterns = [
 
     path('ticket/', include('ticket.urls')),
 
-    path('users/activate/<uid>/<token>', ActivationEmail, name='user-activate'),
-
+    #path('user/activate/<uid>/<token>', ActivationEmail, name='activation'),
 ]
 
 from django.conf import settings

@@ -159,17 +159,21 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password/?uid={uid}&token={token}', 
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'users/activate/{uid}/{token}',
+    'ACTIVATION_URL': 'user/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-
+    'SERIALIZERS': {
+        
+        'user_create':'Account.serializers.UserCreateSerializer'
+        
+        
+        },
     'EMAIL':
         {
             'activation': 'Account.email.ActivationEmail',
             'confirmation': 'djoser.email.ConfirmationEmail',
             'password_reset': 'djoser.email.PasswordResetEmail',
         },
-        
 }
 
 # Internationalization
