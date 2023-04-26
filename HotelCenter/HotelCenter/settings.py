@@ -162,15 +162,14 @@ DJOSER = {
     'ACTIVATION_URL': 'users/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
-    'SERIALIZERS': {
-        'user_create':'Account.serializers.UserCreateSerializer'
-        },
+
     'EMAIL':
         {
             'activation': 'Account.email.ActivationEmail',
             'confirmation': 'djoser.email.ConfirmationEmail',
             'password_reset': 'djoser.email.PasswordResetEmail',
         },
+        
 }
 
 # Internationalization

@@ -1,23 +1,23 @@
-
-from djoser.views import UserViewSet
-from rest_framework.response import Response
-from rest_framework import status
-from djoser import email
+from django.contrib.auth.tokens import default_token_generator
 from templated_mail.mail import BaseEmailMessage
+from djoser import utils
+from djoser.conf import settings
 
- 
-class ActivateUserEmail(UserViewSet):
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        kwargs.setdefault('context', self.get_serializer_context())
- 
-        kwargs['data'] = {"uid": self.kwargs['uid'], "token": self.kwargs['token']}
- 
-        return serializer_class(*args, **kwargs)
- 
-    def activation(self, request, uid, token, *args, **kwargs):
-        super().activation(request, *args, **kwargs)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+EMAILS = {}
 
-class ActivationEmail(email.ActivationEmail):
+class ActivationEmail(BaseEmailMessage):
+    """Email Activation Token Generator
+    """
     template_name = 'email/emailVerification.html'
+
+    def get_context_data(self):
+        # ActivationEmail can be deleted
+        context = super().get_context_data()
+        user = context.get("user")
+        context["uid"] = utils.encode_uid(user.pk)
+        context["token"] = default_token_generator.make_token(user)
+        context["url"] = settings.ACTIVATION_URL.format(**context)
+        uid, token = context['uid'], context['token']
+        # here we store all the requested tokens in a dictionary for later use
+        EMAILS[user.email] = {'uid': uid, 'token': token}
+        return context
