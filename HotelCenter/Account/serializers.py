@@ -28,6 +28,12 @@ class CustomerSerializer(serializers.ModelSerializer):
             model=Customer
             fields = ['user','firstName', 'lastName','national_code','gender']
 
+class ManagerSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Manager
+        fields=['user','name']
+
 
 
         
