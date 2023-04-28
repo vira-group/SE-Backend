@@ -24,20 +24,20 @@ class GetRollSerializer(serializers.ModelSerializer):
         fields = ['role']
         
         
-class UserSerializer(serializers.ModelSerializer):
+class UserShowSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['eamil','role','phone_number','balance','is_active']
+        fields=['email','role','phone_number','balance','is_active']
 
 class CustomerSerializer(serializers.ModelSerializer):
-    user=UserSerializer()
+    user=UserShowSerializer()
     class Meta:
             model=Customer
-            fields = ['user','firstName', 'lastName','national_code','gender']
+            fields = ['user','first_name', 'last_name','national_code','gender']
 
 class ManagerSerializer(serializers.ModelSerializer):
     
-    user=UserSerializer()
+    user=UserShowSerializer()
     class Meta:
         model=Manager
         fields=['user','name']
