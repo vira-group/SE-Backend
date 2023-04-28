@@ -22,6 +22,12 @@ class GetRollSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['role']
+        
+        
+class UserSetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['eamil','role','phone_number','balance','is_active']
 
 class CustomerSerializer(serializers.ModelSerializer):
      class Meta:
