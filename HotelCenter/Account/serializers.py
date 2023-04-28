@@ -5,6 +5,7 @@ from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateS
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
+    password = serializers.CharField(write_only=True)
     class Meta(BaseUserCreateSerializer.Meta):
         model=User
         fields=['email','phone_number','role','password']
@@ -21,6 +22,14 @@ class GetRollSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['role']
+
+class CustomerSerializer(serializers.ModelSerializer):
+     class Meta:
+            model=Customer
+            fields = ['user','firstName', 'lastName','national_code','gender']
+
+
+
         
         
   
