@@ -32,7 +32,6 @@ class GetRoll(APIView):
 #                  return User.objects.all()
 class GetMyPro(APIView):
     permission_classes=[IsAuthenticated]
-    
     def get_serializer_class(self,request):
             if request.user.role=="M":
                  return ManagerSerializer
@@ -55,3 +54,13 @@ class GetMyPro(APIView):
           user=self.get_queryset(request)
           ser=serializer_class(user)
           return Response(ser.data,status=status.HTTP_200_OK)
+      
+    def patch(self,request):
+          serializer_class=self.get_serializer_class(request)
+          user=self.get_queryset(request)
+          ser=serializer_class(instance=user,data=request.data, partial=True)
+          ser.is_valid(raise_exception=True)
+          ser.save()
+          return Response(ser.data,status=status.HTTP_200_OK)
+          
+        
