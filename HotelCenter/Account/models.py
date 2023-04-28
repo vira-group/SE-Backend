@@ -33,6 +33,8 @@ class UserManager(BaseUserManager):
             elif user.role=="C":
                     customer=Customer(user=user,first_name=f"cutomer{user.pk}",last_name=f"customer_last_name")
                     customer.save()
+            elif user.role=="A":
+                pass
             else :
                     raise ValueError("Value is invalid!")
             
