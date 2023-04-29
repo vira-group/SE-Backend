@@ -1,13 +1,12 @@
 from djoser import email
 from djoser import utils
 from djoser.conf import settings
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator  
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-
- 
-    # def activation(self, request, uid, token, *args, **kwargs):
-    #     super().activation(request, *args, **kwargs)
-    #     return Response(status=status.HTTP_204_NO_CONTENT)    
+from Account.models import User
 
 
 class ActivationEmail(email.ActivationEmail):
@@ -20,3 +19,4 @@ class ActivationEmail(email.ActivationEmail):
         context["token"] = default_token_generator.make_token(user)
         context["url"] = settings.ACTIVATION_URL.format(**context)
         return context
+    

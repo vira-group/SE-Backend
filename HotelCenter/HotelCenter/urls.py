@@ -20,7 +20,7 @@ from django.urls import re_path as url
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from Account.email import ActivationEmail
+
 
 
 schema_view = get_schema_view(
@@ -50,7 +50,6 @@ urlpatterns = [
 
     path('ticket/', include('ticket.urls')),
 
-    #path('user/activate/<uid>/<token>', ActivationEmail, name='activation'),
 ]
 
 from django.conf import settings
