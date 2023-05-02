@@ -243,6 +243,11 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 
+
+
+
+
+
 # class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
 #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 #     # queryset = Hotel.objects.order(rate).all()
