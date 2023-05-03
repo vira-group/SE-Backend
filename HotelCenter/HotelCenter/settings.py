@@ -148,18 +148,18 @@ DEFAULT_FROM_EMAIL = "hotelcenter.noreply@yahoo.com"
 
 TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'
 
-
+DOMAIN = 'localhost:3000'
 DJOSER = {
-    'DOMAIN': 'localhost:8000',
+    
     'SITE_NAME': 'net',
-    # 'USER_CREATE_PASSWORD_RETYPE': True,
+    'USER_CREATE_PASSWORD_RETYPE': False,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'LOGOUT_ON_PASSWORD_CHANGE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password/?uid={uid}&token={token}', 
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'users/activate/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/?uid={uid}&token={token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'SERIALIZERS': {
@@ -170,7 +170,7 @@ DJOSER = {
         },
     'EMAIL':
         {
-            'activation': 'djoser.email.ActivationEmail',
+            'activation': 'Account.email.ActivationEmail',
             'confirmation': 'djoser.email.ConfirmationEmail',
             'password_reset': 'djoser.email.PasswordResetEmail',
         },

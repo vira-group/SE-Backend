@@ -22,7 +22,7 @@ from ..tasks import set_reserve_tasks
 class ReserveList(APIView):
     permission_classes = [IsAuthenticated ]
 
-    def get(self, request, room_id):
+    def get(self, request):
         reserveList = Reserve.objects.filter(user=request.user)
         serializer = RoomReserveSerializer(reserveList, many=True)
         return Response(serializer.data)
