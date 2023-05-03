@@ -1,7 +1,7 @@
 import json
 from rest_framework import status
 from django.test import TestCase
-from . import models
+# from . import models
 import json
 from urllib import response
 import http
@@ -18,7 +18,7 @@ import io
 import random
 from PIL import Image
 from django.http import HttpResponseBadRequest
-from .models import User
+from ..models import User
 from Account.serializers import *
 
 
