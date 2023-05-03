@@ -65,7 +65,7 @@ class ManagerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         user_infos = validated_data.get('user',None)
-        instance.name = validated_data.get('name', instance.first_name)
+        instance.name = validated_data.get('name', instance.name)
         instance.save()
       
         if user_infos!=None :
@@ -73,6 +73,9 @@ class ManagerSerializer(serializers.ModelSerializer):
             # user_common.email=user_infos.get('email',instance.user.email)
             user_common.phone_number=user_infos.get('phone_number',instance.user.phone_number)
             user_common.save()
+            
+        return instance
+
 
 
 
