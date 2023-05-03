@@ -13,7 +13,7 @@ from .views import GetRoll,GetMyPro
 
 urlpatterns = [
     path('getroll/', GetRoll.as_view()),
-    path('profile/', GetMyPro.as_view()),
+    path('profile/', GetMyPro.as_view(),name="profile"),
     # path('', include(router.urls)),
 
 ]
