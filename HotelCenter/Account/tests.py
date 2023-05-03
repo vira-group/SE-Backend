@@ -35,7 +35,7 @@ class UserRegisterAPITests(TestCase):
         '''
         testing normal register process
         '''
-        data = {"email": "hello@gmail.com", "password": "strongpass", "re_password": "strongpass"}
+        data = {"email": "hello@gmail.com", "password": "strongpass"}
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -43,7 +43,7 @@ class UserRegisterAPITests(TestCase):
         '''
         sending request with no password
         '''
-        data = {"email": "hello@gmail.com", "password": "", "re_password": "strongpass"}
+        data = {"email": "hello@gmail.com", "password": ""}
         response = self.client.post(self.url, data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -51,7 +51,7 @@ class UserRegisterAPITests(TestCase):
         '''
         sending request with email by incorrect format
         '''
-        data = {"email": "hello.cemailcom", "password": "strongpass", "re_password": "strongpass"}
+        data = {"email": "hello.cemailcom", "password": "strongpass"}
         response = self.client.post(self.url, data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -59,7 +59,7 @@ class UserRegisterAPITests(TestCase):
         '''
         sending request with no email
         '''
-        data = {"email": "", "password": "strongpass", "re_password": "strongpass"}
+        data = {"email": "", "password": "strongpass"}
         response = self.client.post(self.url, data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -67,24 +67,24 @@ class UserRegisterAPITests(TestCase):
         '''
         full numeric password
         '''
-        data = {"email": "hello@gmail.com", "password": "1", "re_password": "1"}
+        data = {"email": "hello@gmail.com", "password": "1"}
         response = self.client.post(self.url, data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_password_repassword_nomatch(self):
-        data = {"email": "hello@gmail.com", "password": "1", "re_password": "2"}
+        data = {"email": "hello@gmail.com", "password": "1"}
         response = self.client.post(self.url, data)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginApiTest(APITestCase):
     def setUp(self) -> None:
-        data = {"email": "hello@gmail.com", "password": "strongpass", "re_password": "strongpass"}
+        data = {"email": "hello@gmail.com", "password": "strongpass"}
         self.client.post("/api/auth/users/", data)
         user = get_user_model().objects.get(email="hello@gmail.com")
         user.is_active = True
         user.save()
-        data1 = {"email": "hello1@gmail.com", "password": "strongpass1", "re_password": "strongpass1"}
+        data1 = {"email": "hello1@gmail.com", "password": "strongpass1"}
         self.client.post("/api/auth/users/", data1)
         user = get_user_model().objects.get(email="hello@gmail.com")
         user.save()
