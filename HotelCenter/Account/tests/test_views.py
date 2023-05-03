@@ -283,7 +283,6 @@ class ProfileTest(APITestCase):
         self.assertEqual(response1.status_code,status.HTTP_200_OK)
         self.assertEqual(response2.status_code,status.HTTP_200_OK)
     
-   
     def test_update_empty_required_fields_customer(self):
         
         show_fisrt={
@@ -330,7 +329,7 @@ class ProfileTest(APITestCase):
         self.assertEqual(response1.status_code,status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response2.status_code,status.HTTP_400_BAD_REQUEST)
     
-    def test_update_empty_reqiured_field_customer(self):
+    def test_update_empty_reqiured_field_manager(self):
         show_fisrt={
             'user': 
                 {'phone_number': '09133630095',
@@ -381,7 +380,49 @@ class ProfileTest(APITestCase):
                 'gender': 'M'}
         self.set_credential(token=self.token1)
         response=self.client.patch(reverse("profile"),data,format="json")
-        print(response.json())
-        # self.assertEqual(response.json(),data)
-        # self.assertNotEqual( response.json() ,show_fisrt)
+        # print(response.json())
+        self.assertEqual(response.json(),data)
+        self.assertNotEqual( response.json() ,show_fisrt)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+    
+    def test_update_prof_manager(self):
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'M', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':f"Manager{self.user2.id}"
+        }
+        data={
+               'user': 
+                {'phone_number': '09131357845',
+                 'role': 'M', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':"new_name"}
+        self.set_credential(token=self.token2)
+        response=self.client.patch(reverse("profile"),data,format="json")
+        # print(response.json())
+        self.assertEqual(response.json(),data)
+        self.assertNotEqual( response.json() ,show_fisrt)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+    
+    def test_update_prof_admin(self):
+        show_fisrt={
+            'phone_number': '09133630092',
+                 'role': 'B', 
+                 'email': 'reza@gmail.com'
+                 }
+        data={
+               
+            'phone_number': '09133630045',
+                 'role': 'A', 
+                 'email': 'reza@gmail.com'
+                 }
+        self.set_credential(token=self.token3)
+        response=self.client.patch(reverse("profile"),data,format="json")
+        # print(response.json())
+        self.assertEqual(response.json(),data)
+        self.assertNotEqual( response.json() ,show_fisrt)
         self.assertEqual(response.status_code,status.HTTP_200_OK)
