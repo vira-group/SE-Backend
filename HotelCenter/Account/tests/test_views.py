@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from Account.models import Customer,Manager
 from rest_framework import status
 from django.contrib.auth import get_user_model
-
+import json
 
 class ProfileTest(APITestCase):
     
@@ -147,3 +147,241 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.json(),show_fisrt)
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self.assertNotEqual( response.json() ,{})
+    
+    def test_cannot_update_role_customer(self):
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630096',
+                 'role': 'C', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        new_data1={
+            'user' :{
+                 'role': 'M', 
+                 },
+        }
+        new_data2={
+            'user' :{
+                 'role': 'A', 
+                 },
+        }
+        wrong1={
+            'user': 
+                {'phone_number': '09133630096',
+                 'role': 'M', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        wrong2={
+            'user': 
+                {'phone_number': '0913363',
+                 'role': 'A', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        
+        self.set_credential(token=self.token1)
+        response1=self.client.patch(reverse("profile"),new_data1,format="json")
+        response2=self.client.patch(reverse("profile"),new_data2,format="json")
+        self.assertEqual(response1.json(),show_fisrt)
+        self.assertNotEqual( response1.json() ,wrong1)
+        self.assertEqual(response2.json(),show_fisrt)
+        self.assertNotEqual( response2.json() ,wrong2)
+        self.assertEqual(response1.status_code,status.HTTP_200_OK)
+        self.assertEqual(response2.status_code,status.HTTP_200_OK)
+
+    def test_cannot_update_role_manager(self):
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'M', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':f"Manager{self.user2.id}"
+        }
+        new_data1={
+            'user' :{
+                 'role': 'C', 
+                 },
+        }
+        new_data2={
+            'user' :{
+                 'role': 'A', 
+                 },
+        }
+        wrong1={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'C', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':f"Manager{self.user2.id}"
+        }
+        wrong2={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'A', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':f"Manager{self.user2.id}"
+        }
+        
+        self.set_credential(token=self.token2)
+        response1=self.client.patch(reverse("profile"),new_data1,format="json")
+        response2=self.client.patch(reverse("profile"),new_data2,format="json")
+        self.assertEqual(response1.json(),show_fisrt)
+        self.assertNotEqual( response1.json() ,wrong1)
+        self.assertEqual(response2.json(),show_fisrt)
+        self.assertNotEqual( response2.json() ,wrong2)
+        self.assertEqual(response1.status_code,status.HTTP_200_OK)
+        self.assertEqual(response2.status_code,status.HTTP_200_OK)
+    
+    def test_cannot_update_role_manager(self):
+        show_fisrt={
+            'phone_number': '09133630092',
+                 'role': 'A', 
+                 'email': 'reza@gmail.com'
+                 }
+        
+        new_data1={
+            'user' :{
+                 'role': 'M', 
+                 },
+        }
+        new_data2={
+            'user' :{
+                 'role': 'C', 
+                 },
+        }
+        wrong1={
+            'phone_number': '09133630092',
+                 'role': 'M', 
+                 'email': 'reza@gmail.com'
+                 }
+        wrong2={
+            'phone_number': '09133630092',
+            'role': 'C', 
+            'email': 'reza@gmail.com'
+                 }
+        self.set_credential(token=self.token3)
+        response1=self.client.patch(reverse("profile"),new_data1,format="json")
+        response2=self.client.patch(reverse("profile"),new_data2,format="json")
+        self.assertEqual(response1.json(),show_fisrt)
+        self.assertNotEqual( response1.json() ,wrong1)
+        self.assertEqual(response2.json(),show_fisrt)
+        self.assertNotEqual( response2.json() ,wrong2)
+        self.assertEqual(response1.status_code,status.HTTP_200_OK)
+        self.assertEqual(response2.status_code,status.HTTP_200_OK)
+    
+   
+    def test_update_empty_required_fields_customer(self):
+        
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630096',
+                 'role': 'C', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        new_data1={
+                
+                'first_name': ''}
+        new_data2={
+            'last_name':''
+
+        }
+        wrong1={
+            'user': 
+                {'phone_number': '09133630096',
+                 'role': 'M', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': '', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        wrong2={
+            'user': 
+                {'phone_number': '0913363',
+                 'role': 'A', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': '', 
+                'national_code': '',
+                'gender': 'M'}
+        
+        self.set_credential(token=self.token1)
+        response1=self.client.patch(reverse("profile"),new_data1,format="json")
+        response2=self.client.patch(reverse("profile"),new_data2,format="json")
+        self.assertEqual(response1.status_code,status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response2.status_code,status.HTTP_400_BAD_REQUEST)
+    
+    def test_update_empty_reqiured_field_customer(self):
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'M', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':f"Manager{self.user2.id}"
+        }
+        new_data1={
+            'name':""
+        }
+       
+        wrong1={
+            'user': 
+                {'phone_number': '09133630095',
+                 'role': 'C', 
+                 'email': 'ali@gmail.com'
+                 },
+                'name':""
+        }
+        
+        
+        self.set_credential(token=self.token2)
+        response1=self.client.patch(reverse("profile"),new_data1,format="json")
+
+        self.assertEqual(response1.status_code,status.HTTP_400_BAD_REQUEST)
+        
+    def test_update_prof_customer(self):
+        show_fisrt={
+            'user': 
+                {'phone_number': '09133630096',
+                 'role': 'C', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'cutomer1', 
+                'last_name': 'customer_last_name', 
+                'national_code': '',
+                'gender': 'M'}
+        data={
+               'user': 
+                {'phone_number': '09133630055',
+                 'role': 'C', 
+                 'email': 'amin@gmail.com'
+                 },
+                'first_name': 'hesam', 
+                'last_name': 'heydari', 
+                'national_code': '1250624231',
+                'gender': 'M'}
+        self.set_credential(token=self.token1)
+        response=self.client.patch(reverse("profile"),data,format="json")
+        print(response.json())
+        # self.assertEqual(response.json(),data)
+        # self.assertNotEqual( response.json() ,show_fisrt)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
