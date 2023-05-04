@@ -82,6 +82,67 @@ class NearHotelSearchApi(APIView):
     
 
 
+class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
+                      viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin):
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly]
+    serializer_class = HotelImgSerializer
+
+    def get_queryset(self):
+        self.queryset = HotelImage.objects.filter(hotel_id=self.h_id).all()
+        return self.queryset
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        return {
+            'request': self.request,
+            'format': self.format_kwarg,
+            'view': self
+        }
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.h_id = int(kwargs.get('hid'))
+            self.req_hotel: Hotel = Hotel.objects.get(pk=self.h_id)
+        except:
+            return Response("hotel not found", status=http.HTTPStatus.NOT_FOUND)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def create(self, request: rest_framework.request.Request, *args, **kwargs):
+        
+        """
+        if is_header==true:
+            set hotel.header to request.files[image]
+        else
+            add new image to hotel images
+        """
+
+        is_header = request.GET.get("is_header", None)
+        if is_header == 'true':
+            try:
+                img = request.FILES['image']
+                self.req_hotel = Hotel.objects.get(pk=self.h_id)
+                self.req_hotel.header = img
+                self.req_hotel.save()
+                return Response(HotelSerializer(self.req_hotel).data, 200)
+            except:
+                return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
+
+        files = request.data.copy()
+        files['hotel'] = self.h_id
+        hotelimg = HotelImgSerializer(data=files)
+        try:
+            hotelimg.is_valid(raise_exception=True)
+            hotelimg.save()
+            return Response(hotelimg.data, status=http.HTTPStatus.OK)
+        except:
+            return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
+
+
+
+
 class HotelViewSet(viewsets.ModelViewSet):
     
     serializer_class=HotelSerializer
@@ -183,64 +244,6 @@ class HotelViewSet(viewsets.ModelViewSet):
 #     serializer_class = FacilitiesSerializer
 #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-
-class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
-                      viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin):
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly]
-    serializer_class = HotelImgSerializer
-
-    def get_queryset(self):
-        self.queryset = HotelImage.objects.filter(hotel_id=self.h_id).all()
-        return self.queryset
-
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self
-        }
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.h_id = int(kwargs.get('hid'))
-            self.req_hotel: Hotel = Hotel.objects.get(pk=self.h_id)
-        except:
-            return Response("hotel not found", status=http.HTTPStatus.NOT_FOUND)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def create(self, request: rest_framework.request.Request, *args, **kwargs):
-        
-        """
-        if is_header==true:
-            set hotel.header to request.files[image]
-        else
-            add new image to hotel images
-        """
-
-        is_header = request.GET.get("is_header", None)
-        if is_header == 'true':
-            try:
-                img = request.FILES['image']
-                self.req_hotel = Hotel.objects.get(pk=self.h_id)
-                self.req_hotel.header = img
-                self.req_hotel.save()
-                return Response(HotelSerializer(self.req_hotel).data, 200)
-            except:
-                return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
-
-        files = request.data.copy()
-        files['hotel'] = self.h_id
-        hotelimg = HotelImgSerializer(data=files)
-        try:
-            hotelimg.is_valid(raise_exception=True)
-            hotelimg.save()
-            return Response(hotelimg.data, status=http.HTTPStatus.OK)
-        except:
-            return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 
 

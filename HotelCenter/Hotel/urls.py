@@ -51,5 +51,5 @@ urlpatterns = [
     path('create/',HotelCreateListAPi.as_view()),
     path('search/',HotelSearchAPi.as_view()),
     path('nearhotel/',NearHotelSearchApi.as_view()),
-    # path('hotelimg/',HotelImgViewSet.as_view()),
+    path('hotelimg/',HotelImgViewSet.as_view()),
 ]
