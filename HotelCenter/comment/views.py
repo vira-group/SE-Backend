@@ -14,14 +14,19 @@ from .models import Tag,Comment,Reply
 from Account.models import User
 # Create your views here.
 
+from HotelCenter.permissions import IsManager , IsCustomer
+
 class TagList(ListCreateAPIView):
+    permission_classes = [IsAuthenticated , IsManager]
+
     queryset=Tag.objects.all()
     serializer_class=TagSerializer
     paginate_by = 5
 
 
 class Commentdetail(APIView):
-    
+    permission_classes = [IsAuthenticated , IsCustomer]
+
     serializer_class=WriteCommentSerializer
     
     def post(self,request):
@@ -42,7 +47,8 @@ class Commentdetail(APIView):
     
  
 class RetrieveUpdateCommentForReply(APIView):
- 
+    permission_classes = [IsAuthenticated , IsManager]
+
     def put(self,request,pk):
         
         try: 
@@ -66,6 +72,8 @@ class RetrieveUpdateCommentForReply(APIView):
             
         
 class GetAllManagerComments(APIView):
+    permission_classes = [IsAuthenticated , IsManager]
+
     def get(self,request):
         all_comments=Comment.objects.filter(hotel__manager__id=request.user.id , is_replied=False)
         serializer=ReadCommentSerializer(all_comments,many=True)
