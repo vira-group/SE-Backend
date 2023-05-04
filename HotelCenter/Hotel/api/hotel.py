@@ -22,7 +22,7 @@ from django.db.models import F,Q
 from math import sqrt
 from django .db.models.query import QuerySet
 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated , AllowAny
 from HotelCenter.permissions import IsManager
 
 class HotelCreateListAPi(ListCreateAPIView):
@@ -35,6 +35,9 @@ class HotelCreateListAPi(ListCreateAPIView):
 
 
 class HotelSearchAPi(APIView):
+
+    permission_classes = [AllowAny]
+
     def get(self , request, *args, **kwargs):
         city=request.GET.get('city','')
         check_in=request.GET.get('check_in','1990-1-01')
@@ -66,6 +69,9 @@ class HotelSearchAPi(APIView):
 
 
 class NearHotelSearchApi(APIView):
+
+    permission_classes = [AllowAny]
+
     def get(self, request):
         x=request.GET.get('x',0)
         y=request.GET.get('y',0)

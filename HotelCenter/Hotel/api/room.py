@@ -24,6 +24,7 @@ from ..models import Hotel
 
 class RoomList(APIView):
 
+
     def get(self, request, hotel_id, format=None):
         hotel = get_object_or_404(Hotel, id=hotel_id)
         rooms = Room.objects.filter(hotel=hotel)
