@@ -35,7 +35,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
             model=Customer
             fields = ['user','first_name', 'last_name','national_code','gender']
-            read_only_fields = ['national_code','gender']
+            read_only_fields = ['gender']
             
     def update(self, instance, validated_data):
 
@@ -48,8 +48,9 @@ class CustomerSerializer(serializers.ModelSerializer):
         if user_infos!=None :
             user_common=User.objects.get(id=instance.user.id)
             # user_common.email=user_infos.get('email',instance.user.email)
-            user_common.phone_number=user_infos.get('phone_number',instance.user.phone_number)
-            user_common.save()
+            # user_common.phone_number=user_infos.get('phone_number',instance.user.phone_number)
+            instance.user.phone_number=user_infos.get('phone_number',instance.user.phone_number)
+            # user_common.save()
             
             
 
@@ -65,14 +66,18 @@ class ManagerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         user_infos = validated_data.get('user',None)
-        instance.name = validated_data.get('name', instance.first_name)
+        instance.name = validated_data.get('name', instance.name)
         instance.save()
       
         if user_infos!=None :
             user_common=User.objects.get(id=instance.user.id)
             # user_common.email=user_infos.get('email',instance.user.email)
-            user_common.phone_number=user_infos.get('phone_number',instance.user.phone_number)
-            user_common.save()
+            # user_common.phone_number=user_infos.get('phone_number',instance.user.phone_number)
+            instance.user.phone_number=user_infos.get('phone_number',instance.user.phone_number)
+            # user_common.save()
+            
+        return instance
+
 
 
 

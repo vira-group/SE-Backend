@@ -42,9 +42,9 @@ class GetMyPro(APIView):
              
     def get_queryset(self,request):
              if request.user.role=="M":
-                 return get_object_or_404(Manager,pk=request.user.pk)
+                 return get_object_or_404(Manager,user=request.user)
              elif request.user.role=="C":
-                 return get_object_or_404(Customer,pk=request.user.pk)
+                 return get_object_or_404(Customer,user=request.user)
              else :
                  return get_object_or_404(User,pk=request.user.pk)
 
