@@ -36,9 +36,14 @@ class roomFacility(models.Model):
   
 
 
+def get_upload_path(instance, imagename):
+    return 'hotel/{0}/{1}'.format(instance.hotel.id
+                                      , imagename)
+
 class HotelImage(models.Model):
-    image = models.ImageField(null=False, blank=False, upload_to='hotel')
+    image = models.ImageField(null=False, blank=False, upload_to=get_upload_path)
     hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_query_name='images')
+
 
 
 class Room(models.Model):
