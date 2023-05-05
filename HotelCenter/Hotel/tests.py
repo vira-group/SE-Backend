@@ -181,7 +181,7 @@ class HotelTestCase(APITestCase):
         self.assertTrue(resp.status_code == http.HTTPStatus.OK)
         self.assertTrue(content[0]['name'] == self.hotel_data2['name'])
 
-    # def test_Hotel_header_set(self):  # ***
+    # def test_Hotel_header_set(self):  
     #     self.hotel_data2.pop("facilities")
     #     hotel1 = Hotel.objects.create(**self.hotel_data2, creator_id=self.user1.id)
     #     self.set_credential(self.token1)

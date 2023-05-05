@@ -107,19 +107,21 @@ class NearHotel(APITestCase):
             self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_is_not_None(self):
-        request1=self.client.get(reverse("nearhotel"),self.myloc1).json()
-        request2=self.client.get(reverse("nearhotel"),self.myloc2).json()
-        request3=self.client.get(reverse("nearhotel"),self.myloc3).json()
+        # request1=self.client.get(reverse("nearhotel"),self.myloc1).json()
+        # request2=self.client.get(reverse("nearhotel"),self.myloc2).json()
+        # request3=self.client.get(reverse("nearhotel"),self.myloc3).json()
         
-        self.assertNotEqual(request1,None)
-        self.assertNotEqual(request2,None)
-        self.assertNotEqual(request3,None)
-    
+        # self.assertNotEqual(request1,None)
+        # self.assertNotEqual(request2,None)
+        # self.assertNotEqual(request3,None)
+        pass 
     def test_result(self):
         
         request1=self.client.get(reverse("nearhotel"),self.myloc1).json()
         request2=self.client.get(reverse("nearhotel"),self.myloc2).json()
         request3=self.client.get(reverse("nearhotel"),self.myloc3).json()
         
-        # print(request1)
+        self.assertEqual({2,3},{i["id"] for i in request1})
+        self.assertEqual({2,3},{i["id"] for i in request2})
+        self.assertEqual({3,1},{i["id"] for i in request3})
         
