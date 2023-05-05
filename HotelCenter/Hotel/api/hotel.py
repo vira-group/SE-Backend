@@ -19,7 +19,7 @@ from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,
 # from ..filter_backends import HotelMinRateFilters
 from ..serializers.hotel_serializers import  HotelSerializer
 from django.db.models import F,Q
-from math import sqrt
+from math import sqrt,pow
 from django .db.models.query import QuerySet
 
 from rest_framework.permissions import IsAuthenticated , AllowAny
@@ -79,7 +79,7 @@ class NearHotelSearchApi(APIView):
         queryset=Hotel.objects.all()
         li_queryset=list(queryset)
         for h in li_queryset:
-            cal=sqrt(int((x-h.latitude))**2 +int((y-h.longitude))**2)
+            cal=sqrt(pow((float(x)-h.latitude),2) +pow((float(y)-h.longitude),2))
             print(cal)
             if cal>radius:
                 li_queryset.remove(h)
