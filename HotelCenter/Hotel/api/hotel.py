@@ -13,59 +13,59 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from ..permissions import *
-from ..models import Hotel,HotelImage,Reserve
-from ..serializers.hotel_serializers import HotelSerializer ,HotelImgSerializer,HotelSearchSerializer
-# from ..serializers.room_serializers import 
+from ..models import Hotel, HotelImage, Reserve
+from ..serializers.hotel_serializers import HotelSerializer, HotelImgSerializer, HotelSearchSerializer
+# from ..serializers.room_serializers import
 # from ..filter_backends import HotelMinRateFilters
-from ..serializers.hotel_serializers import  HotelSerializer
-from django.db.models import F,Q
-from math import sqrt,pow
+from ..serializers.hotel_serializers import HotelSerializer
+from django.db.models import F, Q
+from math import sqrt, pow
 from django .db.models.query import QuerySet
 
-from rest_framework.permissions import IsAuthenticated , AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from HotelCenter.permissions import IsManager
 
+
 class HotelCreateListAPi(ListCreateAPIView):
-     
+
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
-    
-    serializer_class=HotelSerializer
-    queryset=Hotel.objects.all()
+
+    serializer_class = HotelSerializer
+    queryset = Hotel.objects.all()
 
 
 class HotelSearchAPi(APIView):
 
     permission_classes = [AllowAny]
 
-    def get(self , request, *args, **kwargs):
-        city=request.GET.get('city','')
-        check_in=request.GET.get('check_in','1990-1-01')
-        check_out=request.GET.get('check_out','1990-12-01')
-        size=request.GET.get('size',None)
-        
-        queryset=None
-        
-        if size ==None:
+    def get(self, request, *args, **kwargs):
+        city = request.GET.get('city', '')
+        check_in = request.GET.get('check_in', '1990-1-01')
+        check_out = request.GET.get('check_out', '1990-12-01')
+        size = request.GET.get('size', None)
+
+        queryset = None
+
+        if size == None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
             # ids_room=list(Room.objects.filter(room__size__gte=1,room__hotel__city__icontains=city).values_list('id',flat=True))
             # queryset=Reserve.objects.filter(~(Q(check_in__gte=check_in) & Q(check_out__lte=check_out))).filter(room__size__gte=1,room__hotel__city__icontains=city)
             # queryset2=Reserve.objects.select_related("reserves").get()
-            result=[]
-            queryset=Room.objects.filter(Q(size__gte=1)&Q(hotel__city__icontains=city)&~(Q(reserves__check_in__gte=check_in)&Q(reserves__check_out__lte=check_out)))
+            result = []
+            queryset = Room.objects.filter(Q(size__gte=1) & Q(hotel__city__icontains=city) & ~(
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
             # for i in list(queryset):
             #     if len(list(i.reserves))==0:
             #         result.append(i)
-            
-            
 
         else:
             #  queryset=Room.objects.filter(hotel__city__icontains=city,size=size)
-            queryset=Room.objects.filter(Q(size=size)&Q(hotel__city__icontains=city)&~(Q(reserves__check_in__gte=check_in)&Q(reserves__check_out__lte=check_out)))
-            
-             
-        ser=HotelSearchSerializer(queryset,many=True)
-        return Response(ser.data,status=status.HTTP_200_OK)
+            queryset = Room.objects.filter(Q(size=size) & Q(hotel__city__icontains=city) & ~(
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
+
+        ser = HotelSearchSerializer(queryset, many=True)
+        return Response(ser.data, status=status.HTTP_200_OK)
 
 
 class NearHotelSearchApi(APIView):
@@ -73,22 +73,22 @@ class NearHotelSearchApi(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        x=request.GET.get('x',0)
-        y=request.GET.get('y',0)
-        radius=1
-        queryset=Hotel.objects.all()
-        li_queryset=list(queryset)
-        result=[]
+        x = request.GET.get('x', 0)
+        y = request.GET.get('y', 0)
+        radius = 1
+        queryset = Hotel.objects.all()
+        li_queryset = list(queryset)
+        result = []
         for h in li_queryset:
-            cal=sqrt(pow((float(x)-h.latitude),2) +pow((float(y)-h.longitude),2))
+            cal = sqrt(pow((float(x)-h.latitude), 2) +
+                       pow((float(y)-h.longitude), 2))
 
             # print(cal,h.id)
 
-            if cal<=radius:
+            if cal <= radius:
                 result.append(h)
-        ser=HotelSerializer(result,many=True)
-        return Response(ser.data,status=status.HTTP_200_OK)
-    
+        ser = HotelSerializer(result, many=True)
+        return Response(ser.data, status=status.HTTP_200_OK)
 
 
 class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
@@ -120,7 +120,6 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
         return super().dispatch(request, *args, **kwargs)
 
     def create(self, request: rest_framework.request.Request, *args, **kwargs):
-        
         """
         if is_header==true:
             set hotel.header to request.files[image]
@@ -150,12 +149,10 @@ class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
             return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 
-
-
 class HotelViewSet(viewsets.ModelViewSet):
-    
-    serializer_class=HotelSerializer
-    queryset=Hotel.objects.all()
+
+    serializer_class = HotelSerializer
+    queryset = Hotel.objects.all()
 
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly,
     #                       IsOwnerOrReadOnly]
@@ -179,15 +176,14 @@ class HotelViewSet(viewsets.ModelViewSet):
             if current user does not have a hotel already create a hotel
         """
         if Hotel.objects.filter(manager=request.user).count() > 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}
-                            , content_type='json')
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': "Already Have A Hotel."}, content_type='json')
         else:
             return super().create(request, *args, **kwargs)
 
     def filter_size(self, hotels, size: int):
 
         valid_h = []
-       
+
         for h in hotels:
 
             rooms = h.rooms.all()
@@ -205,10 +201,10 @@ class HotelViewSet(viewsets.ModelViewSet):
             raise ValueError('not valid dates')
 
         valid_hotels = set()
-        reserves = Reserve.objects.filter(start_day__gte=check_out, end_day__lte=check_in
-                                          , roomspace__room__hotel__in=hotels).select_related('roomspace').all()
+        reserves = Reserve.objects.filter(start_day__gte=check_out, end_day__lte=check_in,
+                                          roomspace__room__hotel__in=hotels).select_related('roomspace').all()
         spaces = [r.roomspace_id for r in reserves]
-        #spaces = RoomSpace.objects.filter(room__hotel__in=hotels).exclude(pk__in=spaces).all()
+        # spaces = RoomSpace.objects.filter(room__hotel__in=hotels).exclude(pk__in=spaces).all()
         for s in spaces:
             valid_hotels.add(s.room.hotel)
 
@@ -244,7 +240,6 @@ class HotelViewSet(viewsets.ModelViewSet):
         # valid_hotel=[]
         # for hotel in query_set
 
-
     # return super(HotelViewSet, self).list(request, *args, **kwargs)
 
 
@@ -252,12 +247,6 @@ class HotelViewSet(viewsets.ModelViewSet):
 #     queryset = Facility.objects.all()
 #     serializer_class = FacilitiesSerializer
 #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-
-
-
-
 
 
 # class BestHotelViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
@@ -282,7 +271,7 @@ class HotelViewSet(viewsets.ModelViewSet):
 
 class MyHotelsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     serializer_class = HotelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsManager]
 
     def dispatch(self, request, *args, **kwargs):
         self.request = request
@@ -291,9 +280,9 @@ class MyHotelsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
     def list(self, request, *args, **kwargs):
         user = request.user
         managers = list(Hotel.objects.filter(manager=user).all())
-        #editors = list(Hotel.objects.filter(editors__in=[user]).all())
+        # editors = list(Hotel.objects.filter(editors__in=[user]).all())
         managers_data = self.serializer_class(instance=managers, many=True)
-        #editors_data = self.serializer_class(instance=editors, many=True)
+        # editors_data = self.serializer_class(instance=editors, many=True)
 
         data = {
             'managers': managers_data.data,
