@@ -8,6 +8,7 @@ from ..models import Message, HotelChat
 from ..serializers.chat_serializer import MessageSerializer, HotelChatSerializer
 import numpy as np
 from django.shortcuts import get_object_or_404
+# from HotelCenter.permissions import IsManager, IsCustomer
 
 class MessageAPI(APIView):
     def post(self, request):
@@ -37,7 +38,7 @@ class MessageAPI(APIView):
 
 class UserChatList(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
     def get(self, request, format=None):
         user = request.user
         chatlist = HotelChat.objects.filter(user = user).all()
@@ -48,7 +49,7 @@ class UserChatList(APIView):
 
 
 class HotelChatAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
     def get(self, request, hotel_id, format=None):
         try:
             hotel = get_object_or_404(Hotel, id = hotel_id )
@@ -63,7 +64,7 @@ class HotelChatAPI(APIView):
 
 
 class HotelChatList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
     def get(self, request, hotel_id, format=None):
         hotel = get_object_or_404(Hotel, id = hotel_id )
         if(request.user == hotel.creator or request.user in hotel.editors.all()):
