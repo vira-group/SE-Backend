@@ -81,7 +81,9 @@ class NearHotelSearchApi(APIView):
         result=[]
         for h in li_queryset:
             cal=sqrt(pow((float(x)-h.latitude),2) +pow((float(y)-h.longitude),2))
-            # print(cal)
+
+            # print(cal,h.id)
+
             if cal<=radius:
                 result.append(h)
         ser=HotelSerializer(result,many=True)
