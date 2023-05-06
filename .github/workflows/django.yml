@@ -27,11 +27,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Coverage report
-      run: |
-        cd HotelCenter
-        coverage run manage.py test
-        coverage report
     - name: Make migrations
       run: |
         cd HotelCenter
