@@ -7,19 +7,19 @@ from rest_framework.authentication import get_user_model
 
 
 class Hotel(models.Model):
-   manager=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="HotelManager")
-   name=models.CharField(max_length=70)
-   address=models.CharField(max_length=70)
-   phone_number=models.CharField(max_length=20,blank=True,null=True)
-   email=models.EmailField(blank=True,null=True)
-   description=models.TextField(blank=True,null=True)
-   floor_count=models.IntegerField(null=True,blank=True)
-   country=models.CharField(max_length=55)
-   city=models.CharField(max_length=55)
-   longitude=models.FloatField(null=True  , blank=True)
-   latitude=models.FloatField(null=True,blank=True)
-   check_in=models.TimeField(null=True, blank=True)
-   check_out=models.TimeField(null=True, blank=True)
+   manager = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="HotelManager")
+   name = models.CharField(max_length=70)
+   address = models.CharField(max_length=70)
+   phone_number = models.CharField(max_length=20,blank=True,null=True)
+   email = models.EmailField(blank=True,null=True)
+   description = models.TextField(blank=True,null=True)
+   floor_count = models.IntegerField(null=True,blank=True)
+   country = models.CharField(max_length=55)
+   city = models.CharField(max_length=55)
+   longitude = models.FloatField(null=True  , blank=True)
+   latitude = models.FloatField(null=True,blank=True)
+   check_in = models.TimeField(null=True, blank=True)
+   check_out = models.TimeField(null=True, blank=True)
    rate = models.FloatField( validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=2.5)
 
    class Meta:
@@ -47,13 +47,13 @@ class HotelImage(models.Model):
 
 
 class Room(models.Model):
-    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')  # The hotel that this room is for
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms') 
     type = models.CharField(max_length=100, null=False, blank=False, default=None)
-    size = models.IntegerField(default=0, null=False, blank=False)  # room size(meter)
+    size = models.IntegerField(default=0, null=False, blank=False)  
     view = models.CharField(max_length=100, null=False, blank=False, default=None)
-    sleeps = models.IntegerField(default=1, blank=False, null=False)  # number of people in the room
+    capacity = models.IntegerField(default=1, blank=False, null=False)  
     price = models.IntegerField(blank=False, null=False)
-    option = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True,null=True)
     facilities = models.ManyToManyField(roomFacility, related_name='rooms')
 
     def __str__(self):
