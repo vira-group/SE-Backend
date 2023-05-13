@@ -21,7 +21,7 @@ from .api.hotel import HotelCreateListAPi,HotelSearchAPi,NearHotelSearchApi, MyH
 #     AdminRoomViewSet
 # from .api.reserve import ReserveList, RoomspaceReserveList, AdminReserveViewSet, UserCancelReserveList
 from .api.room import RoomList, roomFacilityViewSet, ImageList, AdminRoomViewSet
-from .api.reserve import ReserveList, AdminReserveViewSet, UserCancelReserveList
+from .api.reserve import MyReservesViewSet, ReserveList, AdminReserveViewSet, UserCancelReserveList
 
 router = routers.DefaultRouter()
 router.register('roomfacilities', roomFacilityViewSet, basename='roomfacility-list')
@@ -33,6 +33,7 @@ hotel_admin_router = routers.DefaultRouter()
 hotel_router = routers.DefaultRouter()
 hotel_router.register('reserves', AdminReserveViewSet, basename='hotel-admin-reserve')
 router.register('myhotels', MyHotelsViewSet, basename='my_hotels')
+router.register('myreserves', MyReservesViewSet, basename='my_reserves')
 hotel_router.register('rooms', AdminRoomViewSet, basename='hotel-admin-room')
 
 room_router = routers.DefaultRouter()

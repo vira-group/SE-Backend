@@ -307,3 +307,13 @@
 2023-05-10 23:02:42.007 +0430 [4950] STATEMENT:  drop database if exists "Hotel_center"
 2023-05-10 23:38:52.079 +0430 [5883] FATAL:  lock file "postmaster.pid" already exists
 2023-05-10 23:38:52.079 +0430 [5883] HINT:  Is another postmaster (PID 4876) running in data directory "/usr/local/var/postgres2"?
+2023-05-11 01:38:35.648 +0430 [4876] LOG:  received smart shutdown request
+2023-05-11 01:38:35.649 +0430 [4876] LOG:  background worker "logical replication launcher" (PID 4883) exited with exit code 1
+2023-05-11 01:38:35.649 +0430 [4878] LOG:  shutting down
+2023-05-11 01:38:35.660 +0430 [4876] LOG:  database system is shut down
+2023-05-13 21:11:44.240 +0430 [2387] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-13 21:11:44.250 +0430 [2388] LOG:  database system was shut down at 2023-05-11 01:38:35 +0430
+2023-05-13 21:11:44.254 +0430 [2387] LOG:  database system is ready to accept connections

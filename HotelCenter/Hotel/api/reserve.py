@@ -70,6 +70,20 @@ def checkCondition(room, start, end):
             return False
     return True
 
+class MyReservesViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
+    serializer_class = RoomReserveSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        return super(MyReservesViewSet, self).dispatch(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        reserves = list(Reserve.objects.filter(user_id=user.id).all())
+        reserve_data = self.serializer_class(instance=reserves, many=True)
+        data = { 'reserves' : reserve_data.data }
+        return Response(data=data, status=http.HTTPStatus.OK)
 
 class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
