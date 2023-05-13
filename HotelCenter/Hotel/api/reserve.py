@@ -13,8 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from ..filter_backends import *
 from ..permissions import *
 from ..models import CancelReserve, Reserve, Room
-from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, ReserveSerializer, \
-    AdminReserverSerializer
+from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, AdminReserverSerializer
 from ..tasks import set_reserve_tasks
 # from HotelCenter.permissions import IsManager, IsCustomer
 

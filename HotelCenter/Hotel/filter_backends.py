@@ -20,8 +20,8 @@ class AdminReserveFilter(filters.FilterSet):
 
     class Meta:
         model = Reserve
-        # fields = ['room', 'roomspace', 'check_in', 'check_out', 'start_before', 'start_after', 'end_before', 'end_after']
-        fields = ['room', 'check_in', 'check_out', 'start_before', 'start_after', 'end_before', 'end_after']
+        fields = ['id', 'check_in', 'check_out', 'adults', 'children', 'total_price', 'firstname', 'lastname',
+                   'phone_number', 'room_id']
 
 
 # class AdminRoomSpaceFilter(filters.FilterSet):
@@ -37,4 +37,4 @@ class AdminRoomFilter(filters.FilterSet):
     size = filters.RangeFilter(field_name='size')
     class Meta:
         model = Room
-        fields = ['type', 'sleeps', 'option', 'size', 'view']
+        fields = ['hotel', 'type', 'size', 'view', 'capacity', 'price', 'description', 'facilities', 'id']
