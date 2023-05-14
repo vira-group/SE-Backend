@@ -437,7 +437,7 @@ class RoomTestCase(APITestCase):
     test_urls = {
         "add_room": '/api/hotel/room/{}/',
         "get_hotel_rooms": '/api/hotel/room/{}',
-        # "add_room_image": '/api/hotel/room/{}/images/'
+        "add_room_image": '/api/hotel/room/{}/images/'
     }
 
     def setUp(self) -> None:
@@ -479,17 +479,15 @@ class RoomTestCase(APITestCase):
         self.room_data1 = {
             "type": "Standard Double Room",
             "view": "no view",
-            "sleeps": "2",
+            "capacity": "2",
             "price": "20000",
-            "option": "free wifi",
         }
         self.room_data2 = {
             "type": "Single Bed Room",
             "view": "sea",
-            "sleeps": 1,
+            "capacity": 1,
             'size': 1,
             "price": "15000",
-            "option": "free wifi",
         }
 
         self.user1 = get_user_model().objects.create(
@@ -523,15 +521,15 @@ class RoomTestCase(APITestCase):
         """
         self.client.credentials()
 
-    # def generate_photo_file(self):
-    #     file = io.BytesIO()
-    #     r = random.Random().random()
-    #     image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
-    #     file.name = './test.png'
-    #     image.save("test.png", 'PNG')
+    def generate_photo_file(self):
+        file = io.BytesIO()
+        r = random.Random().random()
+        image = Image.new('RGB', size=(100, 100), color=(130, int(r * 120), int(10 + 5 * r)))
+        file.name = './test.png'
+        image.save("test.png", 'PNG')
 
-    #     file.seek(0)
-    #     return file
+        file.seek(0)
+        return file
 
     def test_room_creation_success(self):
         # create hotel for user1
@@ -550,56 +548,53 @@ class RoomTestCase(APITestCase):
             self.test_urls['add_room'].format(hotel1.id), self.room_data1)
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
-    # def test_add_room_imgae(self):
-    #     self.hotel_data1.pop("facilities")
-    #     hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-    #     self.set_credential(self.token1)
-    #     resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
-    #     self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-    #     imag = self.generate_photo_file()
+    def test_add_room_imgae(self):
+        hotel1 = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
+        self.set_credential(self.token1)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        imag = self.generate_photo_file()
 
-    #     with open(imag.name, 'rb') as img:
-    #         data = {
-    #             "image": img
-    #         }
-    #         resp: HttpResponseBadRequest = self.client.post(
-    #             self.test_urls['add_room_image'].format(Room.objects.filter(hotel=hotel1)[0].id), data,
-    #             format='multipart')
-    #     self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            resp: HttpResponseBadRequest = self.client.post(
+                self.test_urls['add_room_image'].format(Room.objects.filter(hotel=hotel1)[0].id), data,
+                format='multipart')
+        self.assertEqual(resp.status_code, http.HTTPStatus.CREATED)
 
-    # def test_Invalide_room_image(self):
-    #     self.hotel_data1.pop("facilities")
-    #     hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-    #     self.set_credential(self.token1)
-    #     resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
-    #     self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+    def test_Invalide_room_image(self):
+        hotel1 = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
+        self.set_credential(self.token1)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
-    #     tex = open('text1.txt', 'w')
-    #     tex.close()
+        tex = open('text1.txt', 'w')
+        tex.close()
 
-    #     with open('text1.txt') as txt:
-    #         resp = self.client.post(self.test_urls['add_room_image'].format(hotel1.id), data={"image": txt})
-    #     self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
+        with open('text1.txt') as txt:
+            resp = self.client.post(self.test_urls['add_room_image'].format(hotel1.id), data={"image": txt})
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
-    # def test_room_image_Failed(self):
-    #     self.hotel_data1.pop("facilities")
-    #     hotel1 = Hotel.objects.create(**self.hotel_data1, creator_id=self.user1.id)
-    #     resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
-    #     imag = self.generate_photo_file()
-    #     with open(imag.name, 'rb') as img:
-    #         data = {
-    #             "image": img
-    #         }
-    #         resp = self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
-    #     self.assertEqual(resp.status_code, 404)
-    #     self.set_credential(self.token3)
-    #     with open(imag.name, 'rb') as img:
-    #         data = {
-    #             "image": img
-    #         }
-    #         self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
+    def test_room_image_Failed(self):
+        hotel1 = Hotel.objects.create(**self.hotel_data1, manager_id=self.user1.id)
+        resp = self.client.post(self.test_urls['add_room'].format(hotel1.id), self.room_data1)
+        imag = self.generate_photo_file()
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            resp = self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
+        self.assertEqual(resp.status_code, 404)
+        self.set_credential(self.token3)
+        with open(imag.name, 'rb') as img:
+            data = {
+                "image": img
+            }
+            self.client.post(self.test_urls['add_room_image'].format(1), data, format='multipart')
 
-    #     self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 404)
 
     # def test_room_search(self):
     #     self.hotel_data1.pop("facilities")
@@ -691,9 +686,8 @@ class ReserveTestCase(APITestCase):
         self.room_data1 = {
             "type": "Standard Double Room",
             "view": "no view",
-            "sleeps": "2",
+            "capacity": "2",
             "price": "20000",
-            "option": "free wifi",
         }
 
         self.user1 = get_user_model().objects.create(
