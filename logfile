@@ -317,3 +317,13 @@
 2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2023-05-13 21:11:44.250 +0430 [2388] LOG:  database system was shut down at 2023-05-11 01:38:35 +0430
 2023-05-13 21:11:44.254 +0430 [2387] LOG:  database system is ready to accept connections
+2023-05-14 03:14:21.951 +0430 [2387] LOG:  received smart shutdown request
+2023-05-14 03:14:21.954 +0430 [2387] LOG:  background worker "logical replication launcher" (PID 2394) exited with exit code 1
+2023-05-14 03:14:21.954 +0430 [2389] LOG:  shutting down
+2023-05-14 03:14:21.970 +0430 [2387] LOG:  database system is shut down
+2023-05-14 12:38:22.232 +0430 [1067] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-14 12:38:22.242 +0430 [1068] LOG:  database system was shut down at 2023-05-14 03:14:21 +0430
+2023-05-14 12:38:22.247 +0430 [1067] LOG:  database system is ready to accept connections

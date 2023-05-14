@@ -1,16 +1,11 @@
 import datetime
 
 from rest_framework import serializers
-# from ..models import Room, roomFacility, RoomImage, RoomSpace, Reserve
 from ..models import Room, roomFacility, RoomImage, Reserve
 from .hotel_serializers import HotelSerializer
 
 
 class PublicRoomSerializer(serializers.ModelSerializer):
-    # hotel = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='name'
-    #  )
 
     hotel_info = serializers.SerializerMethodField()
     room_facilities = serializers.SerializerMethodField()
@@ -43,19 +38,11 @@ class RoomImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomImage
         fields = ['image']
+    def update(self, instance, validated_data):
+        instance.image = validated_data['image']
+        instance.save()
+        return instance
 
-
-# class RoomSpaceSerializer(serializers.ModelSerializer):
-#     room_type = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = RoomSpace
-#         fields = ['room', 'name', 'id', 'room_type']
-#         read_only_fields = ['room', 'id']
-
-#     def get_room_type(self, obj):
-#         if obj.room:
-#             return obj.room.type
 
 
 # class AdminRoomSpaceSerializer(serializers.ModelSerializer):

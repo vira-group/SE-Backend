@@ -67,7 +67,8 @@ class ImageList(APIView):
 
         room = get_object_or_404(Room, id=room_id)
         serializer = RoomImageSerializer(data=request.data)
-        if (not request.user == room.hotel.creator) and (not request.user in room.hotel.editors):
+
+        if (not request.user == room.hotel.manager):
             return Response(serializer.data, status=status.HTTP_403_FORBIDDEN,
                             message="You can not add a picture to this room")
         else:
