@@ -49,9 +49,9 @@ class HotelSearchAPi(APIView):
         
         field=""
         if asc!=0:
-            field="-price"
-        else:
             field="price"
+        else:
+            field="-price"
             
         if size == None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
