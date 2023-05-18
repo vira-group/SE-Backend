@@ -47,7 +47,11 @@ class HotelSearchAPi(APIView):
 
         queryset = None
         
-       
+        field=""
+        if asc!=0:
+            field="-price"
+        else:
+            field="price"
             
         if size == None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
@@ -56,7 +60,7 @@ class HotelSearchAPi(APIView):
             # queryset2=Reserve.objects.select_related("reserves").get()
             result = []
             queryset = Room.objects.filter(Q(capacity__gte=1) & Q(hotel__city__icontains=city) & ~(
-                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out))).order_by(field)
             # for i in list(queryset):
             #     if len(list(i.reserves))==0:
             #         result.append(i)
@@ -64,7 +68,7 @@ class HotelSearchAPi(APIView):
         else:
             #  queryset=Room.objects.filter(hotel__city__icontains=city,size=size)
             queryset = Room.objects.filter(Q(capacity=size) & Q(hotel__city__icontains=city) & ~(
-                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out))).order_by(field)
 
         ser = HotelSearchSerializer(queryset, many=True)
         return Response(ser.data, status=status.HTTP_200_OK)
