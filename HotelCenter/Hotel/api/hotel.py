@@ -39,30 +39,36 @@ class HotelSearchAPi(APIView):
 
     permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request,asc,*args, **kwargs):
         city = request.GET.get('city', '')
         check_in = request.GET.get('check_in', '1990-1-01')
         check_out = request.GET.get('check_out', '1990-12-01')
         size = request.GET.get('size', None)
 
         queryset = None
-
+        
+        field=""
+        if asc!=0:
+            field="price"
+        else:
+            field="-price"
+            
         if size == None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
             # ids_room=list(Room.objects.filter(room__size__gte=1,room__hotel__city__icontains=city).values_list('id',flat=True))
             # queryset=Reserve.objects.filter(~(Q(check_in__gte=check_in) & Q(check_out__lte=check_out))).filter(room__size__gte=1,room__hotel__city__icontains=city)
             # queryset2=Reserve.objects.select_related("reserves").get()
             result = []
-            queryset = Room.objects.filter(Q(size__gte=1) & Q(hotel__city__icontains=city) & ~(
-                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
+            queryset = Room.objects.filter(Q(capacity__gte=1) & Q(hotel__city__icontains=city) & ~(
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out))).order_by(field)
             # for i in list(queryset):
             #     if len(list(i.reserves))==0:
             #         result.append(i)
 
         else:
             #  queryset=Room.objects.filter(hotel__city__icontains=city,size=size)
-            queryset = Room.objects.filter(Q(size=size) & Q(hotel__city__icontains=city) & ~(
-                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out)))
+            queryset = Room.objects.filter(Q(capacity=size) & Q(hotel__city__icontains=city) & ~(
+                Q(reserves__check_in__gte=check_in) & Q(reserves__check_out__lte=check_out))).order_by(field)
 
         ser = HotelSearchSerializer(queryset, many=True)
         return Response(ser.data, status=status.HTTP_200_OK)
