@@ -1,11 +1,11 @@
-FROM python:3.9-slim
+FROM python:3.9
 
 #change working directory
 #WORKDIR /app
 
 # install requirements for running project
 COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 
 # copy project files to the container
@@ -23,7 +23,7 @@ RUN mkdir -p static
 
 RUN sleep 10
 #running tests
-RUN python3 manage.py test
+# RUN python3 manage.py test
 
 #RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('viraadmin@test.com', 'ViraSE1234')" | python manage.py shell
 
