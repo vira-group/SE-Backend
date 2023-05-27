@@ -36,11 +36,14 @@ class ReserveList(APIView):
             today = datetime.today()
             if (today.date() > serializer.validated_data["check_in"] or serializer.validated_data["check_in"] >
                     serializer.validated_data["check_out"]):
-                return Response('dates not valid', status=status.HTTP_403_FORBIDDEN)
+                return Response('Dates Not Valid', status=status.HTTP_403_FORBIDDEN)
             if (request.user.balance < (
                     (serializer.validated_data["check_out"] - serializer.validated_data["check_in"]).days + 1) *
                     room.price):
-                return Response(data='credit Not enough', status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response(data='Credit Not enough', status=status.HTTP_406_NOT_ACCEPTABLE)
+            
+            if (request.data['adults'] + request.data['children'] > room.capacity):
+                return Response(data='Not Enough Space', status=status.HTTP_406_NOT_ACCEPTABLE)
 
             if (checkCondition(room, serializer.validated_data["check_in"],
                                 serializer.validated_data["check_out"])):
@@ -52,7 +55,7 @@ class ReserveList(APIView):
                     "check_in"]).days + 1) * room.price
                 user.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response("not enough space", status=status.HTTP_403_FORBIDDEN)
+            return Response('Dates Not Valid', status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def calculate_totalprice(validated_data,room):
