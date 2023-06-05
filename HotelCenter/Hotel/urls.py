@@ -50,9 +50,9 @@ urlpatterns = [
     path('cancelreserve/', UserCancelReserveList.as_view()),
     path('room/<int:room_id>/', include(room_router.urls)),
     path('create/',HotelCreateListAPi.as_view()),
-    path('search/',HotelSearchAPi.as_view()),
+    path('search/<int:asc>',HotelSearchAPi.as_view()),
     # path('hotelimg/',HotelImgViewSet.as_view()),
-    path('nearhotel/<int:asc>',NearHotelSearchApi.as_view(),name="nearhotel"),
+    path('nearhotel/',NearHotelSearchApi.as_view(),name="nearhotel"),
 
 
 ]
