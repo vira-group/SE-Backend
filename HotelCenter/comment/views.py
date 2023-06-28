@@ -3,15 +3,17 @@ from django.shortcuts import render
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateAPIView
 from rest_framework import status
 from .serializers import TagSerializer,WriteCommentSerializer,ReplySerializer,ReadCommentSerializer
-from .models import Tag,Comment,Reply
+from .models import Tag,Comment,Reply,Hotel
 from Account.models import User
+from django.db.models import F, Q
+from rest_framework.viewsets import ModelViewSet
 # Create your views here.
 
 from HotelCenter.permissions import IsManager , IsCustomer , IsManagerOrSafeMethod
@@ -43,6 +45,13 @@ class Commentdetail(APIView):
             serializer=WriteCommentSerializer(comment,data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            
+            count_comment=Comment.objects.filter(hotel_id=request.data['hotel']).count()
+            hotel_ = get_object_or_404(Hotel,pk=request.data['hotel'])
+            hotel_.rate=(F('rate') + serializer.data['rate'])/count_comment
+            hotel_.save()
+            
+            
             return Response("comment posted!",status=status.HTTP_200_OK)
     
  
@@ -78,6 +87,15 @@ class GetAllManagerComments(APIView):
         all_comments=Comment.objects.filter(hotel__manager__id=request.user.id , is_replied=False)
         serializer=ReadCommentSerializer(all_comments,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+class GetAllHotelComments(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self,request,pk):
+        all_comments=Comment.objects.filter(hotel_id=pk)
+        serializer=ReadCommentSerializer(all_comments,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
 
             
 
