@@ -15,7 +15,7 @@ class IsManager(BasePermission):
 class IsManagerOrSafeMethod(BasePermission):
     def has_permission(self, request, view):
        
-        if request.user.role == 'M' or request.meethod in SAFE_METHODS:
+        if request.user.role == 'M' or request.method in SAFE_METHODS:
             return True
         else:
             return False
