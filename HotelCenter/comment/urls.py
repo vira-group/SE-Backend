@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import TagList,Commentdetail,RetrieveUpdateCommentForReply,GetAllManagerComments
+from .views import TagList,Commentdetail,RetrieveUpdateCommentForReply,GetAllManagerComments,GetAllHotelComments
 
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
      path('addcomment/',Commentdetail.as_view()),
      path('reply/<int:pk>',RetrieveUpdateCommentForReply.as_view()),
      path('getallmanagercomments/',GetAllManagerComments.as_view()),
+     path('getallhotelcomments/<int:pk>',GetAllHotelComments.as_view()),
 ]

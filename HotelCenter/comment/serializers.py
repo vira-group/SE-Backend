@@ -34,9 +34,10 @@ class ReplySerializer(serializers.ModelSerializer):
 
 class ReadCommentSerializer(serializers.ModelSerializer):
     tag=TagSerializer(many=True)
+    reply=ReplySerializer()
     class Meta:
         model = Comment
-        fields = ['hotel','text','tag','rate']
+        fields = ['hotel','text','tag','rate','reply']
 
 
 
