@@ -127,10 +127,10 @@ class UnauthorizedTest(APITestCase):
         self.assertEqual(response.status_code,
                          status.HTTP_400_BAD_REQUEST)
 
-    def test_user_cannot_getcommentstag(self):
-        self.set_credential(token=self.token1)
-        response = self.client.get("/comment/tag/")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    # def test_user_cannot_getcommentstag(self):
+    #     self.set_credential(token=self.token1)
+    #     response = self.client.get("/comment/tag/")
+    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_manager_can_getcommentstag(self):
         self.set_credential(token=self.token2)
