@@ -14,7 +14,7 @@ from .models import Tag,Comment,Reply
 from Account.models import User
 # Create your views here.
 
-from HotelCenter.permissions import IsManager , IsCustomer , IsManagerOrSafeMethod,
+from HotelCenter.permissions import IsManager , IsCustomer , IsManagerOrSafeMethod
 
 class TagList(ListCreateAPIView):
     permission_classes = [IsAuthenticated , IsManagerOrSafeMethod]
