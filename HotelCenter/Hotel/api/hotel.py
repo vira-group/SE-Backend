@@ -6,9 +6,11 @@ from rest_framework import viewsets, permissions, \
     filters, status
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.dateparse import parse_date
+from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
@@ -20,39 +22,92 @@ from ..serializers.hotel_serializers import HotelSerializer, HotelImgSerializer,
 from ..serializers.hotel_serializers import HotelSerializer
 from django.db.models import F, Q
 from math import sqrt, pow
+from rest_framework.decorators import action
 from django .db.models.query import QuerySet
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from HotelCenter.permissions import IsManager
 
 
-class HotelCreateListAPi(ListCreateAPIView):
+# class HotelCreateListAPi(ListCreateAPIView):
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly]
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#                           IsOwnerOrReadOnly]
 
+#     serializer_class = HotelSerializer
+#     queryset = Hotel.objects.all()
+class AddNewHotelView(APIView):
+    serializer_class = HotelSerializer
+
+    def post(self, request, *args, **kwargs):
+        notepost = Hotel.objects.create(manager_id=request.user.id)
+        hotel_serializer = HotelSerializer(notepost, data=self.request.data)
+        hotel_serializer.is_valid(raise_exception=True)
+        _hotel = hotel_serializer.save()
+        print(self.request.data)
+        for file in self.request.FILES.getlist('files'):
+            print(file)
+            print(_hotel)
+            hotel_files = HotelImgSerializer(
+
+                data={
+                    'image': file,
+                    'hotel': _hotel.id
+
+                }
+            )
+            hotel_files.is_valid(raise_exception=True)
+            hotel_files.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class HotelQuery(ModelViewSet):
     serializer_class = HotelSerializer
     queryset = Hotel.objects.all()
+
+    pagination_class = PageNumberPagination
+
+    @action(detail=False, methods=['GET'])
+    def show_my_hotels(self, request):
+        paginator = PageNumberPagination()
+        paginator.page_size = 4
+        queryset = paginator.paginate_queryset(
+            Hotel.objects.filter(manager_id=request.user.id), request)
+        serializer = HotelSerializer(queryset, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(detail=False, method=['DELETE'])
+    def delete_image(self, request, id):
+        getimage = get_object_or_404(
+            HotelImage, id=id, hotel__manager_id=request.user.id)
+        getimage.delete()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, method=['DELETE'])
+    def delete_hotel(self, request, id):
+        gethotel = get_object_or_404(Hotel, id=id, manager_id=request.user.id)
+        gethotel.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class HotelSearchAPi(APIView):
 
     permission_classes = [AllowAny]
 
-    def get(self, request,asc,*args, **kwargs):
+    def get(self, request, asc, *args, **kwargs):
         city = request.GET.get('city', '')
         check_in = request.GET.get('check_in', '1990-1-01')
         check_out = request.GET.get('check_out', '1990-12-01')
         size = request.GET.get('size', None)
 
         queryset = None
-        
-        field=""
-        if asc!=0:
-            field="price"
+
+        field = ""
+        if asc != 0:
+            field = "price"
         else:
-            field="-price"
-            
+            field = "-price"
+
         if size == None:
             # queryset=Room.objects.filter(hotel__city__icontains=city,size__gte=1).prefetch_related('reserves').all()
             # ids_room=list(Room.objects.filter(room__size__gte=1,room__hotel__city__icontains=city).values_list('id',flat=True))
@@ -95,64 +150,6 @@ class NearHotelSearchApi(APIView):
                 result.append(h)
         ser = HotelSerializer(result, many=True)
         return Response(ser.data, status=status.HTTP_200_OK)
-
-
-class HotelImgViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin,
-                      viewsets.mixins.CreateModelMixin, viewsets.mixins.DestroyModelMixin):
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsEditorOrReadOnly]
-    serializer_class = HotelImgSerializer
-
-    def get_queryset(self):
-        self.queryset = HotelImage.objects.filter(hotel_id=self.h_id).all()
-        return self.queryset
-
-    def get_serializer_context(self):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {
-            'request': self.request,
-            'format': self.format_kwarg,
-            'view': self
-        }
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            self.h_id = int(kwargs.get('hid'))
-            self.req_hotel: Hotel = Hotel.objects.get(pk=self.h_id)
-        except:
-            return Response("hotel not found", status=http.HTTPStatus.NOT_FOUND)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def create(self, request: rest_framework.request.Request, *args, **kwargs):
-        """
-        if is_header==true:
-            set hotel.header to request.files[image]
-        else
-            add new image to hotel images
-        """
-
-        is_header = request.GET.get("is_header", None)
-        if is_header == 'true':
-            try:
-                img = request.FILES['image']
-                self.req_hotel = Hotel.objects.get(pk=self.h_id)
-                self.req_hotel.header = img
-                self.req_hotel.save()
-                return Response(HotelSerializer(self.req_hotel).data, 200)
-            except:
-                return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
-
-        files = request.data.copy()
-        files['hotel'] = self.h_id
-        hotelimg = HotelImgSerializer(data=files)
-        try:
-            hotelimg.is_valid(raise_exception=True)
-            hotelimg.save()
-            return Response(hotelimg.data, status=http.HTTPStatus.OK)
-        except:
-            return Response("file not valid", http.HTTPStatus.BAD_REQUEST)
 
 
 class HotelViewSet(viewsets.ModelViewSet):
