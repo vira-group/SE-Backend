@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .models import User,Manager,Customer
-from.serializers import GetRollSerializer,ManagerSerializer,CustomerSerializer,UserShowSerializer
+from.serializers import GetRollSerializer,ManagerSerializer,CustomerSerializer,UserShowSerializer,UserBalanceServiceSerializer
 from rest_framework import status
-from rest_framework.generics import RetrieveUpdateAPIView
+from django.db.models import  F
+import decimal
 class GetRoll(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
@@ -63,4 +64,19 @@ class GetMyPro(APIView):
           ser.save()
           return Response(ser.data,status=status.HTTP_200_OK)
           
-        
+class BalanceSer(APIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class = UserBalanceServiceSerializer        
+
+    def get(self,request):
+
+          get=User.objects.get(pk=request.user.pk)
+          ser=self.serializer_class(get)
+          return Response(ser.data,status=status.HTTP_200_OK)
+      
+    def patch(self,request):
+          get=User.objects.get(pk=request.user.pk)
+          get.balance=decimal.Decimal(request.data['amount'])+get.balance
+          get.save()
+          ser=self.serializer_class(get)
+          return Response(ser.data,status=status.HTTP_200_OK)
