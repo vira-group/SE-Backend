@@ -1,6 +1,6 @@
 # from django.contrib import admin
 from django.urls import path, include
-from .views import GetRoll,GetMyPro
+from .views import GetRoll,GetMyPro,BalanceSer
 # from rest_framework import routers
 # from Account.api import userApi
 # from .api.creditApi import CreditViewSet
@@ -14,6 +14,7 @@ from .views import GetRoll,GetMyPro
 urlpatterns = [
     path('getroll/', GetRoll.as_view()),
     path('profile/', GetMyPro.as_view(),name="profile"),
+    path('balance/', BalanceSer.as_view(),name="balance"),
     # path('', include(router.urls)),
 
 ]

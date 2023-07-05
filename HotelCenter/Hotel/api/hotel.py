@@ -5,6 +5,7 @@ from django.utils.datetime_safe import datetime
 from rest_framework import viewsets, permissions, \
     filters, status
 from datetime import timedelta
+from rest_framework.viewsets import ModelViewSet
 from dateutil.relativedelta import relativedelta
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,7 +15,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from ..permissions import *
 from ..models import Hotel, HotelImage, Reserve
-from ..serializers.hotel_serializers import HotelSerializer, HotelImgSerializer, HotelSearchSerializer
+from rest_framework.pagination import PageNumberPagination
+from ..serializers.hotel_serializers import HotelSerializer, HotelImgSerializer, HotelSearchSerializer,HotelFullInfoSerializer
 # from ..serializers.room_serializers import
 # from ..filter_backends import HotelMinRateFilters
 from ..serializers.hotel_serializers import HotelSerializer
@@ -25,6 +27,15 @@ from django .db.models.query import QuerySet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from HotelCenter.permissions import IsManager
 
+class HotelPagination(PageNumberPagination):
+    page_size = 3
+
+class HotelGetInfo(ModelViewSet):
+    queryset=Hotel.objects.all()
+    serializer_class=HotelFullInfoSerializer
+    permission_class=[AllowAny]
+    pagination_class=HotelPagination
+    http_method_names=['get']
 
 class HotelCreateListAPi(ListCreateAPIView):
 
