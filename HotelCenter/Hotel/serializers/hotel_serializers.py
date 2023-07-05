@@ -1,8 +1,22 @@
 from rest_framework import serializers
 from ..models import Hotel, HotelImage,Reserve,Room
 
+class HotelImgSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
 
+    class Meta:
+        model = HotelImage
+        fields = ['image', 'id', 'hotel', 'image_url']
 
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+class HotelFullInfoSerializer(serializers.ModelSerializer):
+    id=serializers.IntegerField(read_only=True)
+    images=HotelImgSerializer(many=True)
+    class Meta:
+        fields = ['id',"manager" ,"name","phone_number" ,"description", "country","city","longitude","latitude","address","images"]
+        model = Hotel
 
 
 class HotelSerializer(serializers.ModelSerializer):

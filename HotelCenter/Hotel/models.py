@@ -42,7 +42,7 @@ def get_upload_path(instance, imagename):
 
 class HotelImage(models.Model):
     image = models.ImageField(null=False, blank=False, upload_to=get_upload_path)
-    hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_query_name='images')
+    hotel = models.ForeignKey('Hotel', on_delete=models.CASCADE, related_name='images')
 
 
 
