@@ -39,7 +39,7 @@ class HotelImgSerializer(serializers.ModelSerializer):
             return obj.image.url
         
 class HotelSearchSerializer(serializers.ModelSerializer):
-    hotel=HotelSerializer()
+    hotel=HotelFullInfoSerializer()
     class Meta:
         model=Room
         fields = ['hotel','size','option','price']
