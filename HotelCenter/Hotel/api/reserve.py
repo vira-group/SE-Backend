@@ -31,6 +31,8 @@ class ReserveList(APIView):
         user = request.user
         room = get_object_or_404(Room, id=room_id)
         serializer = RoomReserveSerializer(data=request.data)
+        hotel = room.hotel
+        manager = hotel.manager
 
         if serializer.is_valid():
             today = datetime.today()
@@ -48,9 +50,12 @@ class ReserveList(APIView):
                 total_price = calculate_totalprice(serializer.validated_data,room)                
                 res = serializer.save(user=user, room=room, total_price=total_price)
                 
-                user.balance -= ((serializer.validated_data["check_out"] - serializer.validated_data[
-                    "check_in"]).days + 1) * room.price
+                user.balance -= total_price
                 user.save()
+
+                manager.balance += total_price
+                manager.save()
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response("not enough space", status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -58,8 +63,8 @@ class ReserveList(APIView):
 def calculate_totalprice(validated_data,room):
     check_in = validated_data["check_in"]
     check_out = validated_data["check_out"]
-    total_days = (check_out - check_in)
-    total_price = total_days.days * room.price
+    total_days = ((check_out - check_in).days +1)
+    total_price = total_days * room.price
     return total_price
 
 def checkCondition(room, start, end):
