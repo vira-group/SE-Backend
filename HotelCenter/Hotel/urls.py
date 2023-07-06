@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from .api.hotel import HotelSearchAPi,NearHotelSearchApi, MyHotelsViewSet , HotelImgViewSet,HotelGetInfo,AddNewHotelView,HotelQuery
-    
+from .api.hotel import HotelSearchAPi, NearHotelSearchApi, MyHotelsViewSet, HotelGetInfo, AddNewHotelView, HotelQuery
+
 
 # from .api.room import RoomList, roomFacilityViewSet, ImageList, RoomSpaceViewSet, AdminRoomSpaceViewSet, \
 #     AdminRoomViewSet
@@ -31,8 +31,8 @@ router.register('roomfacilities', roomFacilityViewSet,
 
 
 hotel_admin_router = routers.DefaultRouter()
-hotel_getinfo=routers.DefaultRouter()
-hotel_getinfo.register('get_info',HotelGetInfo, basename='get_info')
+hotel_getinfo = routers.DefaultRouter()
+hotel_getinfo.register('get_info', HotelGetInfo, basename='get_info')
 
 hotel_router = routers.DefaultRouter()
 hotel_router.register('reserves', AdminReserveViewSet,
@@ -57,8 +57,8 @@ urlpatterns = [
     # path('create/',HotelCreateListAPi.as_view()),
     path('search/<int:asc>', HotelSearchAPi.as_view()),
     # path('hotelimg/',HotelImgViewSet.as_view()),
-    path('nearhotel/',NearHotelSearchApi.as_view(),name="nearhotel"),
-    path('',include(hotel_getinfo.urls))
+    path('nearhotel/', NearHotelSearchApi.as_view(), name="nearhotel"),
+    path('', include(hotel_getinfo.urls)),
 
 
     path('hotel/', AddNewHotelView.as_view()),
