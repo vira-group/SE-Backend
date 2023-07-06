@@ -80,6 +80,14 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 
 
+class UserBalanceServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['balance']
+
+
+
+
 
         
         
