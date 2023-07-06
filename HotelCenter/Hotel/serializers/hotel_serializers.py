@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from ..models import Hotel, HotelImage,Reserve,Room
+
+from ..models import Hotel, HotelImage, Reserve, Room
+
 
 class HotelImgSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
@@ -19,41 +21,39 @@ class HotelFullInfoSerializer(serializers.ModelSerializer):
         model = Hotel
 
 
+
 class HotelSerializer(serializers.ModelSerializer):
-    id=serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(read_only=True)
+
     class Meta:
-        fields = ['id',"manager" ,"name","phone_number" ,"description", "country","city","longitude","latitude","address"]
+        fields = ['id', "manager", "name", "phone_number", "description",
+                  "country", "city", "longitude", "latitude", "address"]
         model = Hotel
-    
-    
-        
+
+
 class HotelImgSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+    # image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = HotelImage
-        fields = ['image', 'id', 'hotel', 'image_url']
+        fields = ['image', 'id', 'hotel',]
 
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
-        
+    # def get_image_url(self, obj):
+    #     if obj.image:
+    #         return obj.image.url
+
+
 class HotelSearchSerializer(serializers.ModelSerializer):
     hotel=HotelFullInfoSerializer()
     class Meta:
-        model=Room
-        fields = ['hotel','size','option','price']
-        
+        model = Room
+        fields = ['hotel', 'size', 'option', 'price']
+
 # class ReserveSerializer(serializers.ModelSerializer):
 #     room=HotelSearchSerializer()
 #     class Meta:
 #         model=Reserve
 #         fields = ['room']
-        
-
-        
-    
-
 
 
 # class FacilitiesSerializer(serializers.ModelSerializer):
@@ -76,7 +76,7 @@ class HotelSearchSerializer(serializers.ModelSerializer):
         # # print("hotel serializer\nuser_id", user.id, "\nhotel_id", obj.id, "\nis_fav", is_fav)
 
         # return is_fav
-# 
+#
     # def create(self, validated_data):
     #     request = self.context.get("request")
     #     # validated_data["facilities"] = []
@@ -106,8 +106,6 @@ class HotelSearchSerializer(serializers.ModelSerializer):
     #         instance.save()
     #     # print("in hotel update: ", request.data.get('facilities', []))
     #     return super(HotelSerializer, self).update(instance, validated_data)
-
-
 
 
 # class FavoriteHotelSerializer(serializers.ModelSerializer):
