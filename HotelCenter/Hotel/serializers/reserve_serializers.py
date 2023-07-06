@@ -8,17 +8,16 @@ class RoomReserveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reserve
-        fields = ['id', 'start_day', 'end_day', 'roomspace', 'price_per_day', 'total_price', 'firstname', 'lastname',
-                  'national_code', 'phone_number', 'hotel_id', 'user']
+        fields = ['id', 'check_in', 'check_out', 'adults', 'children', 'total_price', 'firstname', 'lastname',
+                   'phone_number', 'hotel_id', 'room_id']
         read_only_fields = ['total_price']
 
 
-class ReserveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reserve
-        fields = ['id', "create_at", 'start_day', 'end_day', 'room', 'price_per_day', 'firstname', 'lastname',
-                  'national_code', 'phone_number']
-
+# class ReserveSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Reserve
+#         fields = ['id', 'check_in', 'check_out', 'adults', 'children', 'total_price', 'firstname', 'lastname',
+#                    'phone_number', 'hotel_id', 'room_id']
 
 class AdminReserverSerializer(serializers.ModelSerializer):
     class Meta:

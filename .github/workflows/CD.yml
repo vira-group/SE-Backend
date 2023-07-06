@@ -5,9 +5,7 @@ on:
     branches:
       - main
       - Develop
-      - sprint3-cd
       - deploy
-#      - origin/sprint2
   pull_request:
     branches: [ main ]
 

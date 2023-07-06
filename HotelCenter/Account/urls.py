@@ -1,17 +1,20 @@
-from django.contrib import admin
+# from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from Account.api import userApi
-from .api.creditApi import CreditViewSet
-from .api.userApi import publicUserDetail, publicUserList
+from .views import GetRoll,GetMyPro,BalanceSer
+# from rest_framework import routers
+# from Account.api import userApi
+# from .api.creditApi import CreditViewSet
+# # from .api.userApi import publicUserDetail, publicUserList
 
-router = routers.DefaultRouter()
-router.register('users', publicUserDetail)
-router.register('users', publicUserList)
-router.register('credit', CreditViewSet, basename='add_credit')
+# # router = routers.DefaultRouter()
+# # router.register('users', publicUserDetail)
+# # router.register('users', publicUserList)
+# # router.register('credit', CreditViewSet, basename='add_credit')
 
 urlpatterns = [
-    path('users/me/', userApi.myProfileDetail),
-    path('', include(router.urls)),
+    path('getroll/', GetRoll.as_view()),
+    path('profile/', GetMyPro.as_view(),name="profile"),
+    path('balance/', BalanceSer.as_view(),name="balance"),
+    # path('', include(router.urls)),
 
 ]

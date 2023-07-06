@@ -1,0 +1,329 @@
+2023-03-07 12:32:50.495 +0330 [1018] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on IPv6 address "::1", port 5432
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-03-07 12:32:50.497 +0330 [1018] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-03-07 12:32:50.502 +0330 [1019] LOG:  database system was shut down at 2023-03-06 16:36:27 +0330
+2023-03-07 12:32:50.507 +0330 [1018] LOG:  database system is ready to accept connections
+2023-03-07 12:33:16.661 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:16.661 +0330 [1040] STATEMENT:  drop database hotel_center
+2023-03-07 12:33:28.000 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:28.000 +0330 [1040] STATEMENT:  drop database if exists hotel_center
+2023-03-07 12:33:59.375 +0330 [1040] ERROR:  must be owner of database hotel_center
+2023-03-07 12:33:59.375 +0330 [1040] STATEMENT:  drop database hotel_center
+2023-03-07 12:36:01.473 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:36:01.473 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:39:08.804 +0330 [1114] ERROR:  syntax error at or near "StrOng1" at character 29
+2023-03-07 12:39:08.804 +0330 [1114] STATEMENT:  create user h_user password StrOng1-paSs2
+2023-03-07 12:40:03.003 +0330 [1114] ERROR:  syntax error at or near "StrOng1paSs2" at character 29
+2023-03-07 12:40:03.003 +0330 [1114] STATEMENT:  create user h_user password StrOng1paSs2
+2023-03-07 12:40:29.792 +0330 [1114] ERROR:  permission denied to create role
+2023-03-07 12:40:29.792 +0330 [1114] STATEMENT:  create user h_user
+2023-03-07 12:42:17.526 +0330 [1114] ERROR:  must be superuser to alter superuser roles or change superuser attribute
+2023-03-07 12:42:17.526 +0330 [1114] STATEMENT:  alter user h_user
+		superuser
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:42:50.513 +0330 [1114] ERROR:  must be superuser to alter superuser roles or change superuser attribute
+2023-03-07 12:42:50.513 +0330 [1114] STATEMENT:  alter user h_user
+		superuser
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:43:03.627 +0330 [1114] ERROR:  must be superuser to alter replication roles or change replication attribute
+2023-03-07 12:43:03.627 +0330 [1114] STATEMENT:  alter user h_user
+		createdb
+		createrole
+		replication
+		bypassrls
+2023-03-07 12:43:17.312 +0330 [1114] ERROR:  permission denied to drop role
+2023-03-07 12:43:17.312 +0330 [1114] STATEMENT:  drop role if exists h_user
+2023-03-07 12:44:22.293 +0330 [1114] ERROR:  must be owner of schema public
+2023-03-07 12:44:22.293 +0330 [1114] STATEMENT:  alter schema public owner to h_user
+2023-03-07 12:45:59.850 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:45:59.850 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:47:43.976 +0330 [1284] ERROR:  syntax error at or near "ALTER" at character 34
+2023-03-07 12:47:43.976 +0330 [1284] STATEMENT:  ALTER ROLE h_user WITH SUPERUSER
+	ALTER ROLE h_user WITH SUPERUSER;
+2023-03-07 12:49:25.659 +0330 [1114] ERROR:  permission denied to create database
+2023-03-07 12:49:25.659 +0330 [1114] STATEMENT:  create database "Hotel_center"
+2023-03-07 12:49:58.125 +0330 [1284] ERROR:  syntax error at or near "ALTER" at character 34
+2023-03-07 12:49:58.125 +0330 [1284] STATEMENT:  ALTER ROLE h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER
+	ALTER USER h_user WITH SUPERUSER;
+2023-03-07 19:02:35.345 +0330 [1018] LOG:  received smart shutdown request
+2023-03-07 19:02:35.346 +0330 [1018] LOG:  background worker "logical replication launcher" (PID 1025) exited with exit code 1
+2023-03-07 19:02:35.346 +0330 [1020] LOG:  shutting down
+2023-03-07 19:02:35.354 +0330 [1018] LOG:  database system is shut down
+2023-03-13 19:49:39.047 +0330 [6253] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on IPv6 address "::1", port 5432
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-03-13 19:49:39.050 +0330 [6253] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-03-13 19:49:39.063 +0330 [6254] LOG:  database system was shut down at 2023-03-11 16:17:50 +0330
+2023-03-13 19:49:39.069 +0330 [6253] LOG:  database system is ready to accept connections
+2023-03-13 20:24:31.140 +0330 [6253] LOG:  received smart shutdown request
+2023-03-13 20:24:31.141 +0330 [6253] LOG:  background worker "logical replication launcher" (PID 6260) exited with exit code 1
+2023-03-13 20:24:31.141 +0330 [6255] LOG:  shutting down
+2023-03-13 20:24:31.146 +0330 [6253] LOG:  database system is shut down
+2023-04-06 16:44:30.256 +0430 [1280] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-06 16:44:30.258 +0430 [1280] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-06 16:44:30.258 +0430 [1280] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-06 16:44:30.258 +0430 [1280] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-06 16:44:30.271 +0430 [1281] LOG:  database system was shut down at 2023-03-14 10:55:58 +0330
+2023-04-06 16:44:30.278 +0430 [1280] LOG:  database system is ready to accept connections
+2023-04-06 17:31:52.926 +0430 [2319] ERROR:  relation "comment_comment" does not exist at character 13
+2023-04-06 17:31:52.926 +0430 [2319] STATEMENT:  DELETE FROM "comment_comment" WHERE "comment_comment"."hotel_id" IN (1)
+2023-04-06 17:31:52.948 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 214
+2023-04-06 17:31:52.948 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at" FROM "comment_comment" WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-06 17:31:52.949 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 214
+2023-04-06 17:31:52.949 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at" FROM "comment_comment" WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-06 17:32:55.261 +0430 [2363] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-06 17:32:55.261 +0430 [2363] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC
+2023-04-06 17:32:55.278 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-06 17:32:55.278 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-06 17:32:55.278 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-06 17:32:55.278 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-06 17:32:55.279 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-06 17:32:55.279 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-06 17:32:55.280 +0430 [2320] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-06 17:32:55.280 +0430 [2320] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-07 02:29:27.336 +0430 [1280] LOG:  received smart shutdown request
+2023-04-07 02:29:27.338 +0430 [1280] LOG:  background worker "logical replication launcher" (PID 1287) exited with exit code 1
+2023-04-07 02:29:27.338 +0430 [1282] LOG:  shutting down
+2023-04-07 02:29:27.349 +0430 [1280] LOG:  database system is shut down
+2023-04-10 19:57:59.797 +0430 [4933] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-10 19:57:59.799 +0430 [4933] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-10 19:57:59.799 +0430 [4933] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-10 19:57:59.800 +0430 [4933] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-10 19:57:59.814 +0430 [4934] LOG:  database system was shut down at 2023-04-07 02:29:27 +0430
+2023-04-10 19:57:59.821 +0430 [4933] LOG:  database system is ready to accept connections
+2023-04-10 19:58:44.055 +0430 [5064] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 19:58:44.055 +0430 [5064] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC
+2023-04-10 19:58:44.083 +0430 [5065] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 19:58:44.083 +0430 [5065] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 19:58:44.084 +0430 [5065] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 19:58:44.084 +0430 [5065] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 19:58:44.085 +0430 [5065] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 19:58:44.085 +0430 [5065] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 19:58:44.086 +0430 [5065] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 19:58:44.086 +0430 [5065] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 20:02:21.326 +0430 [5184] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 20:02:21.326 +0430 [5184] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC
+2023-04-10 20:02:21.345 +0430 [5185] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 20:02:21.345 +0430 [5185] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 20:02:21.346 +0430 [5185] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 20:02:21.346 +0430 [5185] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 20:02:21.347 +0430 [5185] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 20:02:21.347 +0430 [5185] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-10 20:02:21.347 +0430 [5185] ERROR:  relation "comment_comment" does not exist at character 629
+2023-04-10 20:02:21.347 +0430 [5185] STATEMENT:  SELECT "comment_comment"."id", "comment_comment"."rate", "comment_comment"."writer_id", "comment_comment"."hotel_id", "comment_comment"."text", "comment_comment"."created_at", "comment_comment"."modified_at", "Hotel_hotel"."id", "Hotel_hotel"."creator_id", "Hotel_hotel"."name", "Hotel_hotel"."address", "Hotel_hotel"."header", "Hotel_hotel"."phone_numbers", "Hotel_hotel"."city", "Hotel_hotel"."state", "Hotel_hotel"."country", "Hotel_hotel"."type", "Hotel_hotel"."start_date", "Hotel_hotel"."description", "Hotel_hotel"."rate", "Hotel_hotel"."reply_count", "Hotel_hotel"."check_out_range", "Hotel_hotel"."check_in_range" FROM "comment_comment" INNER JOIN "Hotel_hotel" ON ("comment_comment"."hotel_id" = "Hotel_hotel"."id") WHERE "comment_comment"."hotel_id" IN (1) ORDER BY "comment_comment"."modified_at" DESC LIMIT 21
+2023-04-11 02:21:42.781 +0430 [4933] LOG:  received smart shutdown request
+2023-04-11 02:21:42.783 +0430 [4933] LOG:  background worker "logical replication launcher" (PID 4940) exited with exit code 1
+2023-04-11 02:21:42.783 +0430 [4935] LOG:  shutting down
+2023-04-11 02:21:42.798 +0430 [4933] LOG:  database system is shut down
+2023-04-12 21:20:00.144 +0430 [6598] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-12 21:20:00.146 +0430 [6598] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-12 21:20:00.146 +0430 [6598] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-12 21:20:00.147 +0430 [6598] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-12 21:20:00.158 +0430 [6599] LOG:  database system was shut down at 2023-04-11 02:21:42 +0430
+2023-04-12 21:20:00.165 +0430 [6598] LOG:  database system is ready to accept connections
+2023-04-14 14:18:40.736 +0430 [919] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-14 14:18:40.738 +0430 [919] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-14 14:18:40.738 +0430 [919] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-14 14:18:40.738 +0430 [919] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-14 14:18:40.751 +0430 [920] LOG:  database system was shut down at 2023-04-13 03:19:44 +0430
+2023-04-14 14:18:40.758 +0430 [919] LOG:  database system is ready to accept connections
+2023-04-15 15:13:33.353 +0430 [2875] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-15 15:13:33.355 +0430 [2875] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-15 15:13:33.368 +0430 [2876] LOG:  database system was shut down at 2023-04-15 01:26:06 +0430
+2023-04-15 15:13:33.375 +0430 [2875] LOG:  database system is ready to accept connections
+2023-04-16 01:37:28.186 +0430 [2875] LOG:  received smart shutdown request
+2023-04-16 01:37:28.188 +0430 [2875] LOG:  background worker "logical replication launcher" (PID 2882) exited with exit code 1
+2023-04-16 01:37:28.188 +0430 [2877] LOG:  shutting down
+2023-04-16 01:37:28.207 +0430 [2875] LOG:  database system is shut down
+2023-04-16 12:47:40.477 +0430 [7136] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-16 12:47:40.479 +0430 [7136] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-16 12:47:40.479 +0430 [7136] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-16 12:47:40.480 +0430 [7136] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-16 12:47:40.492 +0430 [7137] LOG:  database system was shut down at 2023-04-16 01:37:28 +0430
+2023-04-16 12:47:40.497 +0430 [7136] LOG:  database system is ready to accept connections
+2023-04-16 13:04:28.431 +0430 [7136] LOG:  received smart shutdown request
+2023-04-16 13:04:28.431 +0430 [7136] LOG:  background worker "logical replication launcher" (PID 7143) exited with exit code 1
+2023-04-16 13:04:28.431 +0430 [7138] LOG:  shutting down
+2023-04-16 13:04:28.436 +0430 [7136] LOG:  database system is shut down
+2023-04-17 16:59:52.480 +0430 [2295] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-17 16:59:52.482 +0430 [2295] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-17 16:59:52.496 +0430 [2296] LOG:  database system was shut down at 2023-04-16 13:04:28 +0430
+2023-04-17 16:59:52.502 +0430 [2295] LOG:  database system is ready to accept connections
+2023-04-17 17:39:13.289 +0430 [3220] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:39:13.289 +0430 [3220] DETAIL:  Failing row contains (2, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:39:13.289 +0430 [3220] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:54:18.956 +0430 [3494] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:54:18.956 +0430 [3494] DETAIL:  Failing row contains (3, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:54:18.956 +0430 [3494] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:57:51.922 +0430 [3604] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:57:51.922 +0430 [3604] DETAIL:  Failing row contains (4, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:57:51.922 +0430 [3604] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 17:58:36.955 +0430 [3637] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 17:58:36.955 +0430 [3637] DETAIL:  Failing row contains (5, null, 0, null, 1, 5, null, 1).
+2023-04-17 17:58:36.955 +0430 [3637] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:17:57.862 +0430 [3937] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:17:57.862 +0430 [3937] DETAIL:  Failing row contains (6, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:17:57.862 +0430 [3937] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:18:51.023 +0430 [3962] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:18:51.023 +0430 [3962] DETAIL:  Failing row contains (7, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:18:51.023 +0430 [3962] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:20:34.462 +0430 [4008] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:20:34.462 +0430 [4008] DETAIL:  Failing row contains (8, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:20:34.462 +0430 [4008] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-17 18:28:55.415 +0430 [4217] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-17 18:28:55.415 +0430 [4217] DETAIL:  Failing row contains (9, null, 0, null, 1, 5, null, 1).
+2023-04-17 18:28:55.415 +0430 [4217] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-18 00:09:48.692 +0430 [2295] LOG:  received smart shutdown request
+2023-04-18 00:09:48.693 +0430 [2295] LOG:  background worker "logical replication launcher" (PID 2302) exited with exit code 1
+2023-04-18 00:09:48.693 +0430 [2297] LOG:  shutting down
+2023-04-18 00:09:48.704 +0430 [2295] LOG:  database system is shut down
+2023-04-18 15:16:24.820 +0430 [4185] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-18 15:16:24.822 +0430 [4185] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-18 15:16:24.822 +0430 [4185] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-18 15:16:24.823 +0430 [4185] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-18 15:16:24.834 +0430 [4186] LOG:  database system was shut down at 2023-04-18 00:09:48 +0430
+2023-04-18 15:16:24.840 +0430 [4185] LOG:  database system is ready to accept connections
+2023-04-18 15:24:23.081 +0430 [4356] ERROR:  null value in column "type" of relation "Hotel_room" violates not-null constraint
+2023-04-18 15:24:23.081 +0430 [4356] DETAIL:  Failing row contains (10, null, 0, null, 1, 5, null, 1).
+2023-04-18 15:24:23.081 +0430 [4356] STATEMENT:  INSERT INTO "Hotel_room" ("hotel_id", "type", "size", "view", "sleeps", "price", "option") VALUES (1, NULL, 0, NULL, 1, 5, NULL) RETURNING "Hotel_room"."id"
+2023-04-18 15:59:29.556 +0430 [4185] LOG:  received smart shutdown request
+2023-04-18 15:59:29.557 +0430 [4185] LOG:  background worker "logical replication launcher" (PID 4192) exited with exit code 1
+2023-04-18 15:59:29.557 +0430 [4187] LOG:  shutting down
+2023-04-18 15:59:29.562 +0430 [4185] LOG:  database system is shut down
+2023-04-21 16:03:09.035 +0430 [1043] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-21 16:03:09.037 +0430 [1043] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-21 16:03:09.037 +0430 [1043] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-21 16:03:09.038 +0430 [1043] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-21 16:03:09.049 +0430 [1044] LOG:  database system was shut down at 2023-04-21 02:08:38 +0430
+2023-04-21 16:03:09.054 +0430 [1043] LOG:  database system is ready to accept connections
+2023-04-21 16:03:33.719 +0430 [1070] ERROR:  cannot drop table "Hotel_hotel" because other objects depend on it
+2023-04-21 16:03:33.719 +0430 [1070] DETAIL:  constraint Hotel_room_hotel_id_b7beb409_fk_Hotel_hotel_id on table "Hotel_room" depends on table "Hotel_hotel"
+	constraint Hotel_hotel_editors_hotel_id_762a0aac_fk_Hotel_hotel_id on table "Hotel_hotel_editors" depends on table "Hotel_hotel"
+	constraint Hotel_hotel_facilities_hotel_id_3602d772_fk_Hotel_hotel_id on table "Hotel_hotel_facilities" depends on table "Hotel_hotel"
+	constraint Hotel_hotelimage_hotel_id_bb053ffc_fk_Hotel_hotel_id on table "Hotel_hotelimage" depends on table "Hotel_hotel"
+	constraint Hotel_favoritehotel_hotel_id_881054bd_fk_Hotel_hotel_id on table "Hotel_favoritehotel" depends on table "Hotel_hotel"
+	constraint Chat_hotelchat_hotel_id_638cb64e_fk_Hotel_hotel_id on table "Chat_hotelchat" depends on table "Hotel_hotel"
+	constraint comment_comment_hotel_id_b812a80b_fk_Hotel_hotel_id on table comment_comment depends on table "Hotel_hotel"
+2023-04-21 16:03:33.719 +0430 [1070] HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2023-04-21 16:03:33.719 +0430 [1070] STATEMENT:  drop table "Hotel_hotel"
+2023-04-21 16:30:45.955 +0430 [1800] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:30:45.955 +0430 [1800] DETAIL:  Failing row contains (1, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:30:45.955 +0430 [1800] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:31:59.303 +0430 [1838] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:31:59.303 +0430 [1838] DETAIL:  Failing row contains (2, Parsian, Esfahan, Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 0, 0, null, null, 2.5, null).
+2023-04-21 16:31:59.303 +0430 [1838] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan, Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 0.0, 0.0, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:32:32.000 +0430 [1860] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:32:32.000 +0430 [1860] DETAIL:  Failing row contains (3, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:32:32.000 +0430 [1860] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:33:36.800 +0430 [1888] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:33:36.800 +0430 [1888] DETAIL:  Failing row contains (4, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:33:36.800 +0430 [1888] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:33:55.199 +0430 [1909] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:33:55.199 +0430 [1909] DETAIL:  Failing row contains (5, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:33:55.199 +0430 [1909] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 16:41:13.992 +0430 [2217] ERROR:  null value in column "manager_id" of relation "Hotel_hotel" violates not-null constraint
+2023-04-21 16:41:13.992 +0430 [2217] DETAIL:  Failing row contains (1, Parsian, Esfahan,Iran, 09123456700, null, good quality including breakfast, null, Iran, Esfehan, 1.2, 1.2, null, null, 2.5, null).
+2023-04-21 16:41:13.992 +0430 [2217] STATEMENT:  INSERT INTO "Hotel_hotel" ("manager_id", "name", "address", "phone_number", "email", "description", "floor_count", "country", "city", "longitude", "latitude", "check_in", "check_out", "rate") VALUES (NULL, 'Parsian', 'Esfahan,Iran', '09123456700', NULL, 'good quality including breakfast', NULL, 'Iran', 'Esfehan', 1.2, 1.2, NULL, NULL, 2.5) RETURNING "Hotel_hotel"."id"
+2023-04-21 18:51:00.434 +0430 [5543] FATAL:  lock file "postmaster.pid" already exists
+2023-04-21 18:51:00.434 +0430 [5543] HINT:  Is another postmaster (PID 1043) running in data directory "/usr/local/var/postgres2"?
+2023-04-21 23:23:03.593 +0430 [1043] LOG:  received smart shutdown request
+2023-04-21 23:23:03.594 +0430 [1043] LOG:  background worker "logical replication launcher" (PID 1050) exited with exit code 1
+2023-04-21 23:23:03.594 +0430 [1045] LOG:  shutting down
+2023-04-21 23:23:03.601 +0430 [1043] LOG:  database system is shut down
+2023-04-22 15:07:40.826 +0430 [1078] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-22 15:07:40.828 +0430 [1078] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-22 15:07:40.828 +0430 [1078] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-22 15:07:40.829 +0430 [1078] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-22 15:07:40.843 +0430 [1079] LOG:  database system was shut down at 2023-04-21 23:23:03 +0430
+2023-04-22 15:07:40.849 +0430 [1078] LOG:  database system is ready to accept connections
+2023-04-23 02:28:13.302 +0430 [1078] LOG:  received smart shutdown request
+2023-04-23 02:28:13.304 +0430 [1078] LOG:  background worker "logical replication launcher" (PID 1085) exited with exit code 1
+2023-04-23 02:28:13.304 +0430 [1080] LOG:  shutting down
+2023-04-23 02:28:13.322 +0430 [1078] LOG:  database system is shut down
+2023-04-25 12:23:36.135 +0430 [1259] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-25 12:23:36.137 +0430 [1259] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-25 12:23:36.137 +0430 [1259] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-25 12:23:36.138 +0430 [1259] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-25 12:23:36.150 +0430 [1260] LOG:  database system was shut down at 2023-04-23 02:28:13 +0430
+2023-04-25 12:23:36.156 +0430 [1259] LOG:  database system is ready to accept connections
+2023-04-25 15:56:26.254 +0430 [1259] LOG:  received smart shutdown request
+2023-04-25 15:56:26.255 +0430 [1259] LOG:  background worker "logical replication launcher" (PID 1266) exited with exit code 1
+2023-04-25 15:56:26.255 +0430 [1261] LOG:  shutting down
+2023-04-25 15:56:26.262 +0430 [1259] LOG:  database system is shut down
+2023-04-26 15:09:59.459 +0430 [917] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-26 15:09:59.461 +0430 [917] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-26 15:09:59.461 +0430 [917] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-26 15:09:59.462 +0430 [917] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-26 15:09:59.472 +0430 [918] LOG:  database system was shut down at 2023-04-25 15:56:26 +0430
+2023-04-26 15:09:59.478 +0430 [917] LOG:  database system is ready to accept connections
+2023-04-28 16:01:05.650 +0430 [1026] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-28 16:01:05.652 +0430 [1026] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-28 16:01:05.652 +0430 [1026] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-28 16:01:05.653 +0430 [1026] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-28 16:01:05.664 +0430 [1027] LOG:  database system was shut down at 2023-04-27 04:04:24 +0430
+2023-04-28 16:01:05.670 +0430 [1026] LOG:  database system is ready to accept connections
+2023-04-29 01:34:04.611 +0430 [1026] LOG:  received smart shutdown request
+2023-04-29 01:34:04.611 +0430 [1026] LOG:  background worker "logical replication launcher" (PID 1033) exited with exit code 1
+2023-04-29 01:34:04.612 +0430 [1028] LOG:  shutting down
+2023-04-29 01:34:04.622 +0430 [1026] LOG:  database system is shut down
+2023-04-29 16:31:15.129 +0430 [2620] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-04-29 16:31:15.131 +0430 [2620] LOG:  listening on IPv6 address "::1", port 5432
+2023-04-29 16:31:15.131 +0430 [2620] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-04-29 16:31:15.132 +0430 [2620] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-04-29 16:31:15.144 +0430 [2621] LOG:  database system was shut down at 2023-04-29 01:34:04 +0430
+2023-04-29 16:31:15.153 +0430 [2620] LOG:  database system is ready to accept connections
+2023-05-01 14:06:35.867 +0430 [3922] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-01 14:06:35.869 +0430 [3922] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-01 14:06:35.869 +0430 [3922] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-01 14:06:35.870 +0430 [3922] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-01 14:06:35.882 +0430 [3923] LOG:  database system was shut down at 2023-04-30 16:55:28 +0430
+2023-05-01 14:06:35.888 +0430 [3922] LOG:  database system is ready to accept connections
+2023-05-10 22:52:22.500 +0430 [4876] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-10 22:52:22.502 +0430 [4876] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-10 22:52:22.502 +0430 [4876] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-10 22:52:22.503 +0430 [4876] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-10 22:52:22.514 +0430 [4877] LOG:  database system was shut down at 2023-05-04 02:38:29 +0430
+2023-05-10 22:52:22.521 +0430 [4876] LOG:  database system is ready to accept connections
+2023-05-10 23:01:51.599 +0430 [4950] ERROR:  cannot drop the currently open database
+2023-05-10 23:01:51.599 +0430 [4950] STATEMENT:  drop database if exists "Hotel_center"
+2023-05-10 23:02:05.462 +0430 [4950] ERROR:  cannot drop the currently open database
+2023-05-10 23:02:05.462 +0430 [4950] STATEMENT:  drop database "Hotel_center"
+2023-05-10 23:02:22.102 +0430 [4950] ERROR:  cannot drop the currently open database
+2023-05-10 23:02:22.102 +0430 [4950] STATEMENT:  drop database if exists "Hotel_center"
+2023-05-10 23:02:42.007 +0430 [4950] ERROR:  cannot drop the currently open database
+2023-05-10 23:02:42.007 +0430 [4950] STATEMENT:  drop database if exists "Hotel_center"
+2023-05-10 23:38:52.079 +0430 [5883] FATAL:  lock file "postmaster.pid" already exists
+2023-05-10 23:38:52.079 +0430 [5883] HINT:  Is another postmaster (PID 4876) running in data directory "/usr/local/var/postgres2"?
+2023-05-11 01:38:35.648 +0430 [4876] LOG:  received smart shutdown request
+2023-05-11 01:38:35.649 +0430 [4876] LOG:  background worker "logical replication launcher" (PID 4883) exited with exit code 1
+2023-05-11 01:38:35.649 +0430 [4878] LOG:  shutting down
+2023-05-11 01:38:35.660 +0430 [4876] LOG:  database system is shut down
+2023-05-13 21:11:44.240 +0430 [2387] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-13 21:11:44.242 +0430 [2387] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-13 21:11:44.250 +0430 [2388] LOG:  database system was shut down at 2023-05-11 01:38:35 +0430
+2023-05-13 21:11:44.254 +0430 [2387] LOG:  database system is ready to accept connections
+2023-05-14 03:14:21.951 +0430 [2387] LOG:  received smart shutdown request
+2023-05-14 03:14:21.954 +0430 [2387] LOG:  background worker "logical replication launcher" (PID 2394) exited with exit code 1
+2023-05-14 03:14:21.954 +0430 [2389] LOG:  shutting down
+2023-05-14 03:14:21.970 +0430 [2387] LOG:  database system is shut down
+2023-05-14 12:38:22.232 +0430 [1067] LOG:  starting PostgreSQL 14.4 on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-14 12:38:22.234 +0430 [1067] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-14 12:38:22.242 +0430 [1068] LOG:  database system was shut down at 2023-05-14 03:14:21 +0430
+2023-05-14 12:38:22.247 +0430 [1067] LOG:  database system is ready to accept connections

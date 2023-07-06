@@ -12,69 +12,83 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from ..filter_backends import *
 from ..permissions import *
-from ..models import CancelReserve, Reserve, Room, RoomSpace
-from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, ReserveSerializer, \
-    AdminReserverSerializer
+from ..models import CancelReserve, Reserve, Room
+from ..serializers.reserve_serializers import CancelReserveSerializer, RoomReserveSerializer, AdminReserverSerializer
 from ..tasks import set_reserve_tasks
-
-
-class RoomspaceReserveList(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, roomspace_id, format=None):
-        roomspace = get_object_or_404(RoomSpace, id=roomspace_id)
-        hotel = roomspace.room.hotel
-        reserveList = Reserve.objects.filter(roomspace=roomspace)
-        if (not request.user == hotel.creator) and (not request.user in hotel.editors.all()):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        serializer = RoomReserveSerializer(reserveList, many=True)
-        return Response(serializer.data, status=http.HTTPStatus.OK)
+# from HotelCenter.permissions import IsManager, IsCustomer
 
 
 class ReserveList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
 
     def get(self, request):
         reserveList = Reserve.objects.filter(user=request.user)
-        serializer = ReserveSerializer(reserveList, many=True)
+        serializer = RoomReserveSerializer(reserveList, many=True)
         return Response(serializer.data)
 
-    def post(self, request):
+    def post(self, request, room_id):
+
         user = request.user
-        room_id = request.data['room']
         room = get_object_or_404(Room, id=room_id)
-        roomspace_list = RoomSpace.objects.filter(room=room).all()
-        serializer = ReserveSerializer(data=request.data)
+        serializer = RoomReserveSerializer(data=request.data)
+        hotel = room.hotel
+        manager = hotel.manager
+
         if serializer.is_valid():
             today = datetime.today()
-            if (today.date() > serializer.validated_data["start_day"] or serializer.validated_data["start_day"] >
-                    serializer.validated_data["end_day"]):
+            if (today.date() > serializer.validated_data["check_in"] or serializer.validated_data["check_in"] >
+                    serializer.validated_data["check_out"]):
                 return Response('dates not valid', status=status.HTTP_403_FORBIDDEN)
             if (request.user.balance < (
-                    (serializer.validated_data["end_day"] - serializer.validated_data["start_day"]).days + 1) *
-                    serializer.validated_data["price_per_day"]):
+                    (serializer.validated_data["check_out"] - serializer.validated_data["check_in"]).days + 1) *
+                    room.price):
                 return Response(data='credit Not enough', status=status.HTTP_406_NOT_ACCEPTABLE)
-            for roomspace in roomspace_list:
-                if (checkCondition(roomspace, serializer.validated_data["start_day"],
-                                   serializer.validated_data["end_day"])):
-                    res = serializer.save(user=user, roomspace=roomspace)
-                    
-                    user.balance -= ((serializer.validated_data["end_day"] - serializer.validated_data[
-                        "start_day"]).days + 1) * serializer.validated_data["price_per_day"]
-                    user.save()
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+
+            if (checkCondition(room, serializer.validated_data["check_in"],
+                                serializer.validated_data["check_out"])):
+
+                total_price = calculate_totalprice(serializer.validated_data,room)                
+                res = serializer.save(user=user, room=room, total_price=total_price)
+                
+                user.balance -= total_price
+                user.save()
+
+                manager.balance += total_price
+                manager.save()
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response("not enough space", status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def calculate_totalprice(validated_data,room):
+    check_in = validated_data["check_in"]
+    check_out = validated_data["check_out"]
+    total_days = ((check_out - check_in).days +1)
+    total_price = total_days * room.price
+    return total_price
 
-def checkCondition(roomspace, start, end):
-    roomspace_reserve_list = Reserve.objects.filter(roomspace=roomspace).all()
-    for roomspace_reserve in roomspace_reserve_list:
-        if ((roomspace_reserve.start_day <= start <= roomspace_reserve.end_day) or (
-                roomspace_reserve.start_day <= end <= roomspace_reserve.end_day)):
+def checkCondition(room, start, end):
+    room_reserve_list = Reserve.objects.filter(room=room).all()
+    for room_reserve in room_reserve_list:
+        if ((room_reserve.check_in <= start <= room_reserve.check_out) or (
+                room_reserve.check_in <= end <= room_reserve.check_out)):
             return False
     return True
 
+class MyReservesViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):
+    serializer_class = RoomReserveSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        return super(MyReservesViewSet, self).dispatch(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        reserves = list(Reserve.objects.filter(user_id=user.id).all())
+        reserve_data = self.serializer_class(instance=reserves, many=True)
+        data = { 'reserves' : reserve_data.data }
+        return Response(data=data, status=http.HTTPStatus.OK)
 
 class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
@@ -83,15 +97,13 @@ class AdminReserveViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AdminReserverSerializer
 
     def get_queryset(self):
-        # print('in admin reserve before')
         query_set = Reserve.objects.filter(room__hotel_id=self.kwargs['hid']).all()
-        # print('in admin reserve after ', query_set)
 
         return query_set
 
 
 class UserCancelReserveList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated ]
 
     def post(self, request):
         user = request.user
@@ -101,15 +113,17 @@ class UserCancelReserveList(APIView):
         if serializer.is_valid():
             if user == reserve.user:
                 today = datetime.today()
-                if (today.date() > reserve.start_day):
+                if (today.date() > reserve.check_in):
                     return Response('invalid', status=status.HTTP_403_FORBIDDEN)
-                serializer.save(reserve=reserve_id, start_day=reserve.start_day, end_day=reserve.end_day,
-                                user=user, roomspace=reserve.roomspace, price_per_day=reserve.price_per_day,
+                
+                # roomspace -> room
+                serializer.save(reserve=reserve_id, check_in=reserve.check_in, check_out=reserve.check_out,
+                                user=user, room=reserve.room, price_per_day=reserve.price_per_day,
                                 firstname=reserve.firstname,
                                 lastname=reserve.lastname, national_code=reserve.national_code,
-                                phone_number=reserve.phone_number,
-                                room=reserve.room, )
-                user.balance += ((reserve.end_day - reserve.start_day).days + 1) * reserve.price_per_day
+                                phone_number=reserve.phone_number)
+                
+                user.balance += ((reserve.check_out - reserve.check_in).days + 1) * reserve.price_per_day
                 user.save()
                 reserve.delete()
                 return Response(serializer.data, status=status.HTTP_200_OK)
